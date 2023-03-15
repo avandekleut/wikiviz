@@ -1,5 +1,3 @@
-set -e
-
 PYTHON_VERSION=3.8
 
 VIRTUALENV_NAME=local
@@ -16,12 +14,8 @@ command -v poetry || brew install poetry
 # activate poetry env
 poetry env use $PYTHON_VERSION
 
-poetry shell
-
 poetry install
-
-poetry export -o requirements.txt --without-hashes
 
 export PYTHONPATH=$PYTHONPATH:$(pwd)
 
-set +e
+poetry shell
