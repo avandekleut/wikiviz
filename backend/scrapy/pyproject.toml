@@ -1,0 +1,27 @@
+[tool.poetry]
+name = "webviz"
+version = "0.1.0"
+description = ""
+authors = ["Alexander Van de Kleut <54694031+avandekleut@users.noreply.github.com>"]
+readme = "README.md"
+packages = [
+    { include = "webvis" }
+]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+scrapy = "^2.8.0"
+pyvis = "0.3.1"
+networkx = "^3.0"
+
+[tool.poetry.group.test.dependencies]
+pytest = "^7.2.2"
+
+[tool.poetry.group.dev.dependencies]
+autopep8 = "^2.0.2"
+mypy = "^1.1.1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
