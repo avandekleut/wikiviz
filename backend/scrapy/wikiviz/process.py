@@ -24,4 +24,5 @@ def run_crawler_process(
     process.start()
 
 
-run_crawler_process()
+def handler(event, context):
+    run_crawler_process()
