@@ -1,11 +1,11 @@
 [tool.poetry]
-name = "webviz"
+name = "wikiviz"
 version = "0.1.0"
 description = ""
 authors = ["Alexander Van de Kleut <54694031+avandekleut@users.noreply.github.com>"]
 readme = "README.md"
 packages = [
-    { include = "webvis" }
+    { include = "wikivis" }
 ]
 
 [tool.poetry.dependencies]

@@ -1,4 +1,4 @@
-# Webviz
+# WikiViz
 
 ## Developer Setup
 
@@ -40,7 +40,7 @@ Pass crawler settings with the `-s` flag, like
 scrapy crawl wikipedia -s CLOSESPIDER_ITEMCOUNT=50
 ```
 
-Project-level crawler settings can be found in `webvis/settings.py`.
+Project-level crawler settings can be found in `wikivis/settings.py`.
 
 Pass spider settings with the `-a` flag, like
 
@@ -53,7 +53,7 @@ scrapy crawl wikipedia -a branching_factor=4
 Scrape from python script:
 
 ```
-python webviz/process.py
+python wikiviz/process.py
 ```
 
 ### Test

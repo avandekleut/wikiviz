@@ -6,6 +6,6 @@
 import scrapy
 
 
-class WebvisItem(scrapy.Item):
+class EdgeItem(scrapy.Item):
     source = scrapy.Field()
     dest = scrapy.Field()

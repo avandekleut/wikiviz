@@ -1,4 +1,4 @@
-# Scrapy settings for webvis project
+# Scrapy settings for wikivis project
 #
 # For simplicity, this file contains only settings considered important or
 # commonly used. You can find more settings consulting the documentation:
@@ -7,14 +7,14 @@
 #     https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
 #     https://docs.scrapy.org/en/latest/topics/spider-middleware.html
 
-BOT_NAME = "webvis"
+BOT_NAME = "wikivis"
 
-SPIDER_MODULES = ["webvis.spiders"]
-NEWSPIDER_MODULE = "webvis.spiders"
+SPIDER_MODULES = ["wikivis.spiders"]
+NEWSPIDER_MODULE = "wikivis.spiders"
 
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
-# USER_AGENT = "webvis (+http://www.yourdomain.com)"
+# USER_AGENT = "wikivis (+http://www.yourdomain.com)"
 
 # Obey robots.txt rules
 ROBOTSTXT_OBEY = True
@@ -53,15 +53,13 @@ NETWORK_GROUPS = 6
 
 # Enable or disable spider middlewares
 # See https://docs.scrapy.org/en/latest/topics/spider-middleware.html
-SPIDER_MIDDLEWARES = {
-    #    "webvis.middlewares.WebvisSpiderMiddleware": 543,
-    # "scrapy.extensions.closespider.CloseSpider": 500,
-}
+# SPIDER_MIDDLEWARES = {
+# }
 
 # Enable or disable downloader middlewares
 # See https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
 # DOWNLOADER_MIDDLEWARES = {
-#    "webvis.middlewares.WebvisDownloaderMiddleware": 543,
+#    "wikivis.middlewares.wikivisDownloaderMiddleware": 543,
 # }
 
 # Enable or disable extensions
@@ -73,7 +71,7 @@ SPIDER_MIDDLEWARES = {
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
-    "webvis.pipelines.PyVisPipeline": 300,
+    "wikivis.pipelines.PyVisPipeline": 300,
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)

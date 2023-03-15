@@ -1,8 +1,6 @@
 from networkx import all_neighbors
 from networkx import Graph
 
-from webvis.utils.create_missing_folders import create_missing_folders
-
 
 class NodeResizer:
     def __init__(self, network: Graph):

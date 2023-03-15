@@ -1,9 +1,9 @@
 from networkx import Graph
 
-from webvis.items import WebvisItem
+from wikivis.items import EdgeItem
 
-from webvis.spiders.wikipedia import WikipediaSpider
-from webvis.utils.network.pipeline import Pipeline
+from wikivis.spiders.wikipedia import WikipediaSpider
+from wikivis.utils.network.pipeline import Pipeline
 
 import logging
 
@@ -26,7 +26,7 @@ class PyVisPipeline:
             Pipeline(self.network).run(
                 num_clusters, name=f'out/{num_clusters}')
 
-    def process_item(self, item: WebvisItem, spider: WikipediaSpider):
+    def process_item(self, item: EdgeItem, spider: WikipediaSpider):
         self.network.add_edge(item['source'], item['dest'])
 
         return item

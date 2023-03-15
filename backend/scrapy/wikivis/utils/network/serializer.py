@@ -1,7 +1,7 @@
 import pickle
 from networkx import Graph
 
-from webvis.utils.create_missing_folders import create_missing_folders
+from wikivis.utils.create_missing_folders import create_missing_folders
 
 
 class Serializer:

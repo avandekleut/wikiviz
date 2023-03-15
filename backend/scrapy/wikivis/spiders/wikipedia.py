@@ -1,9 +1,9 @@
 import scrapy
 
-from webvis.items import WebvisItem
-from webvis.utils.crawling.wikipedia_path_filter import WikipediaPathFilter
-from webvis.utils.crawling.path_sampler import PathSampler
-from webvis.utils.parsing.wikipedia_parser import WikipediaParser
+from wikivis.items import EdgeItem
+from wikivis.utils.crawling.wikipedia_path_filter import WikipediaPathFilter
+from wikivis.utils.crawling.path_sampler import PathSampler
+from wikivis.utils.parsing.wikipedia_parser import WikipediaParser
 
 
 class WikipediaSpider(scrapy.Spider):
@@ -42,7 +42,7 @@ class WikipediaSpider(scrapy.Spider):
 
             dest = parsed.get_title_from_url(url)
 
-            item = WebvisItem()
+            item = EdgeItem()
             item['source'] = source
             item['dest'] = dest
 
