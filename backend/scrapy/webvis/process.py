@@ -12,6 +12,8 @@ def run_crawler_process(
 
     process = CrawlerProcess(settings)
 
+    settings['CLOSESPIDER_ITEMCOUNT'] = 100
+
     # override spider-level attributes with params
     process.crawl(WikipediaSpider,
                   start_url=start_url,
