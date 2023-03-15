@@ -13,7 +13,7 @@ export class WikiVizLambda extends Construct {
     new PythonFunction(this, "Function", {
       entry: path.join(projectRoot, "backend", "scrapy"), // location of poetry.lock
       runtime: Runtime.PYTHON_3_8,
-      index: "webvis/process.py",
+      index: "wikiviz/process.py",
       bundling: {
         assetExcludes: [".venv"], // TODO: Determine what else needs to be excluded?
       },
