@@ -18,6 +18,7 @@ export class WikiVizLambda extends Construct {
         assetExcludes: [".venv"], // TODO: Determine what else needs to be excluded?
       },
       timeout: Duration.seconds(30),
+      memorySize: 1024,
     });
   }
 }
