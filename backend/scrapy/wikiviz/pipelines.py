@@ -1,9 +1,9 @@
 from networkx import Graph
 
-from wikivis.items import EdgeItem
+from wikiviz.items import EdgeItem
 
-from wikivis.spiders.wikipedia import WikipediaSpider
-from wikivis.utils.network.pipeline import Pipeline
+from wikiviz.spiders.wikipedia import WikipediaSpider
+from wikiviz.utils.network.pipeline import Pipeline
 
 import logging
 

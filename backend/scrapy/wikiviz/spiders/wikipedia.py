@@ -1,9 +1,9 @@
 import scrapy
 
-from wikivis.items import EdgeItem
-from wikivis.utils.crawling.wikipedia_path_filter import WikipediaPathFilter
-from wikivis.utils.crawling.path_sampler import PathSampler
-from wikivis.utils.parsing.wikipedia_parser import WikipediaParser
+from wikiviz.items import EdgeItem
+from wikiviz.utils.crawling.wikipedia_path_filter import WikipediaPathFilter
+from wikiviz.utils.crawling.path_sampler import PathSampler
+from wikiviz.utils.parsing.wikipedia_parser import WikipediaParser
 
 
 class WikipediaSpider(scrapy.Spider):

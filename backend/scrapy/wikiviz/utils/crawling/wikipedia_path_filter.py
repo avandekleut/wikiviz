@@ -1,4 +1,4 @@
-from wikivis.utils.crawling.path_filter import PathFilter
+from wikiviz.utils.crawling.path_filter import PathFilter
 
 
 class WikipediaPathFilter(PathFilter):

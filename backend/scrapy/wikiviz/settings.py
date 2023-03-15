@@ -1,4 +1,4 @@
-# Scrapy settings for wikivis project
+# Scrapy settings for wikiviz project
 #
 # For simplicity, this file contains only settings considered important or
 # commonly used. You can find more settings consulting the documentation:
@@ -7,14 +7,14 @@
 #     https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
 #     https://docs.scrapy.org/en/latest/topics/spider-middleware.html
 
-BOT_NAME = "wikivis"
+BOT_NAME = "wikiviz"
 
-SPIDER_MODULES = ["wikivis.spiders"]
-NEWSPIDER_MODULE = "wikivis.spiders"
+SPIDER_MODULES = ["wikiviz.spiders"]
+NEWSPIDER_MODULE = "wikiviz.spiders"
 
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
-# USER_AGENT = "wikivis (+http://www.yourdomain.com)"
+# USER_AGENT = "wikiviz (+http://www.yourdomain.com)"
 
 # Obey robots.txt rules
 ROBOTSTXT_OBEY = True
@@ -59,7 +59,7 @@ NETWORK_GROUPS = 6
 # Enable or disable downloader middlewares
 # See https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
 # DOWNLOADER_MIDDLEWARES = {
-#    "wikivis.middlewares.wikivisDownloaderMiddleware": 543,
+#    "wikiviz.middlewares.wikivizDownloaderMiddleware": 543,
 # }
 
 # Enable or disable extensions
@@ -71,7 +71,7 @@ NETWORK_GROUPS = 6
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
-    "wikivis.pipelines.PyVisPipeline": 300,
+    "wikiviz.pipelines.PyVisPipeline": 300,
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)

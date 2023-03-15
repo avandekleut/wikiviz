@@ -40,7 +40,7 @@ Pass crawler settings with the `-s` flag, like
 scrapy crawl wikipedia -s CLOSESPIDER_ITEMCOUNT=50
 ```
 
-Project-level crawler settings can be found in `wikivis/settings.py`.
+Project-level crawler settings can be found in `wikiviz/settings.py`.
 
 Pass spider settings with the `-a` flag, like
 

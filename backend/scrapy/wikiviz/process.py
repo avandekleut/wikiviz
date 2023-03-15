@@ -1,6 +1,6 @@
 from scrapy.crawler import CrawlerProcess
 from scrapy.utils.project import get_project_settings
-from wikivis.spiders.wikipedia import WikipediaSpider
+from wikiviz.spiders.wikipedia import WikipediaSpider
 
 
 def run_crawler_process(

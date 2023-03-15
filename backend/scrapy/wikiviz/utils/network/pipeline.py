@@ -1,9 +1,9 @@
 from networkx import Graph
 
 
-from wikivis.utils.network.clusterizer import Clusterizer
-from wikivis.utils.network.exporter import Exporter
-from wikivis.utils.network.node_resizer import NodeResizer
+from wikiviz.utils.network.clusterizer import Clusterizer
+from wikiviz.utils.network.exporter import Exporter
+from wikiviz.utils.network.node_resizer import NodeResizer
 
 
 class Pipeline:

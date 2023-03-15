@@ -5,7 +5,7 @@ description = ""
 authors = ["Alexander Van de Kleut <54694031+avandekleut@users.noreply.github.com>"]
 readme = "README.md"
 packages = [
-    { include = "wikivis" }
+    { include = "wikiviz" }
 ]
 
 [tool.poetry.dependencies]

@@ -1,7 +1,7 @@
 from networkx import Graph
 from pyvis.network import Network
 
-from wikivis.utils.create_missing_folders import create_missing_folders
+from wikiviz.utils.create_missing_folders import create_missing_folders
 
 
 class Exporter:
