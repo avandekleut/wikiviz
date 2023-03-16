@@ -3,9 +3,12 @@ from scrapy.utils.project import get_project_settings
 from wikiviz.spiders.wikipedia import WikipediaSpider
 
 
+import logging
+
+
 def run_crawler_process(
-    start_url='https://en.wikipedia.org/wiki/Functor',
-    branching_factor=4
+    start_url: str,
+    branching_factor: int
 ):
     # override project-level settings with params
     settings = get_project_settings()
@@ -25,4 +28,16 @@ def run_crawler_process(
 
 
 def handler(event, context):
-    run_crawler_process()
+    logging.debug(event)
+    logging.debug(context)
+
+    for record in event['Records']:
+        logging.debug(record)
+        body = record["body"]
+        logging.debug(str(body))
+        wikid = body['wikid']
+        branching_factor = body['branching_factor']
+        data_path = body['data_path']
+        start_url = f'https://en.wikipedia.org/wiki/{wikid}'
+
+        run_crawler_process(start_url, branching_factor)
