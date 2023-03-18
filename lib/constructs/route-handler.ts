@@ -17,12 +17,26 @@ export class RouteHandler extends NodejsFunction {
   public readonly path: string;
 
   constructor(scope: Construct, id: string, props: RouteHandlerProps) {
-    super(scope, id);
+    console.log(`in RouteHandler.constructor()`);
+    console.log({
+      id,
+      props,
+    });
+
     const projectRoot = path_.join(__dirname, "..", "..");
-    const apiEntry = path_.join(projectRoot, "backend", "api");
+    const apiEntry = path_.join(projectRoot, "backend");
 
     const [method, path] = props.route.split(" ");
     const handlerEntry = path_.join(apiEntry, path, method, "index.ts");
+
+    console.log({
+      id,
+      projectRoot,
+      apiEntry,
+      method,
+      path,
+      handlerEntry,
+    });
 
     super(scope, id, {
       entry: handlerEntry,

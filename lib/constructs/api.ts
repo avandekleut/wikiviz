@@ -1,5 +1,6 @@
 import { HttpApi } from "@aws-cdk/aws-apigatewayv2-alpha";
 import { HttpLambdaIntegration } from "@aws-cdk/aws-apigatewayv2-integrations-alpha";
+import { CfnOutput } from "aws-cdk-lib";
 import { Construct } from "constructs";
 import { RouteHandler, RouteHandlerProps } from "./route-handler";
 import { ScrapyHandler, ScrapyHandlerProps } from "./scrapy-handler";
@@ -21,11 +22,17 @@ export class WikiVizApi extends Construct {
     });
 
     const scrapyHandler = new ScrapyHandler(this, "ScrapyHandler", props);
+
+    new CfnOutput(this, "ApiUrl", {
+      value: this.api.url!,
+    });
   }
 
   private addRoute(props: RouteHandlerProps) {
     const id = this.safeCfnLogicalId(props.route); // convert route to ID
 
+    console.log(`created id: ${id}`);
+    console.log(`creating routeHandler...`);
     const routeHandler = new RouteHandler(this, id, props);
     this.api.addRoutes({
       methods: [routeHandler.method],

@@ -16,9 +16,9 @@ export class ScrapyHandler extends Construct {
 
   constructor(scope: Construct, id: string, props: ScrapyHandlerProps) {
     super(scope, id);
-    const projectRoot = path.join(__dirname, "..", "..", "..");
+    const projectRoot = path.join(__dirname, "..", "..");
 
-    const scrapyHandler = new PythonFunction(scope, id, {
+    const scrapyHandler = new PythonFunction(scope, id + "Function", {
       entry: path.join(projectRoot, "backend", "scrapy"), // location of poetry.lock
       runtime: Runtime.PYTHON_3_8,
       index: "wikiviz/process.py",
