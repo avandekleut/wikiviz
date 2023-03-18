@@ -4,6 +4,7 @@ from wikiviz.spiders.wikipedia import WikipediaSpider
 
 
 import logging
+logging.getLogger().setLevel(logging.DEBUG)
 
 
 def run_crawler_process(
