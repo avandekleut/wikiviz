@@ -10,6 +10,7 @@ command -v python$PYTHON_VERSION || brew install python@$PYTHON_VERSION
 
 # install poetry
 command -v poetry || brew install poetry
+poetry config virtualenvs.in-project false
 
 # activate poetry env
 poetry env use $PYTHON_VERSION
