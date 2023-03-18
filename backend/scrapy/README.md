@@ -6,6 +6,12 @@
 source setup.sh
 ```
 
+when you are done:
+
+```sh
+exit
+```
+
 This project uses [poetry](https://python-poetry.org/docs/) to manage dependencies and virtual environments. No need to use `pip` or `virtualenv`.
 
 ### Poetry
