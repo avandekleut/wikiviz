@@ -13,22 +13,26 @@ export class WikiVizApi extends Construct {
   constructor(scope: Construct, id: string, props: WikiVizApiProps) {
     super(scope, id);
 
+    const scrapyHandler = new ScrapyHandler(this, "ScrapyHandler", props);
+
     this.api = new HttpApi(this, "Api", {
       apiName: "WikiVizApi",
     });
 
-    this.addRoute({
+    const getNetwork = this.addRoute({
       route: "GET /api/v1/networks/{wikid}",
+      environment: {
+        QUEUE_URL: scrapyHandler.queue.queueUrl,
+      },
     });
-
-    const scrapyHandler = new ScrapyHandler(this, "ScrapyHandler", props);
+    scrapyHandler.queue.grantSendMessages(getNetwork);
 
     new CfnOutput(this, "ApiUrl", {
       value: this.api.url!,
     });
   }
 
-  private addRoute(props: RouteHandlerProps) {
+  private addRoute(props: RouteHandlerProps): RouteHandler {
     const id = this.safeCfnLogicalId(props.route); // convert route to ID
 
     console.log(`created id: ${id}`);
@@ -39,6 +43,7 @@ export class WikiVizApi extends Construct {
       path: routeHandler.path,
       integration: new HttpLambdaIntegration(id + "Integration", routeHandler),
     });
+    return routeHandler;
   }
 
   private safeCfnLogicalId(id: string) {
