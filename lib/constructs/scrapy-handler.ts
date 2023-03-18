@@ -22,9 +22,6 @@ export class ScrapyHandler extends Construct {
       entry: path.join(projectRoot, "backend", "scrapy"), // location of poetry.lock
       runtime: Runtime.PYTHON_3_8,
       index: "wikiviz/process.py",
-      bundling: {
-        assetExcludes: [".venv"], // TODO: Determine what else needs to be excluded?
-      },
       timeout: Duration.seconds(30),
       memorySize: 1024,
       environment: {
