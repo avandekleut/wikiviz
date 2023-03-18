@@ -13,6 +13,12 @@ export type ContentType = "application/json";
 
 export type HttpEventHandler = (event: HttpEvent) => Promise<JsonObject>;
 
+type HandlerContext = {
+  successStatusCode?: number;
+  headers?: APIGatewayProxyStructuredResultV2Headers;
+  contentType?: ContentType;
+};
+
 /**
  * Convenience wrapper for error handling. This logic is shared by all API Gateway
  * Lambda HTTP integrations.
@@ -25,9 +31,11 @@ export type HttpEventHandler = (event: HttpEvent) => Promise<JsonObject>;
  */
 export function createHandlerContext(
   eventHandler: HttpEventHandler,
-  successStatusCode = 200,
-  headers: APIGatewayProxyStructuredResultV2Headers = {},
-  contentType: ContentType = "application/json"
+  {
+    successStatusCode = 200,
+    headers = {},
+    contentType = "application/json",
+  }: HandlerContext = {} // default argument = {} to make it "optional"
 ) {
   const contentTypeHeader: Record<string, ContentType> = {
     "content-type": contentType,

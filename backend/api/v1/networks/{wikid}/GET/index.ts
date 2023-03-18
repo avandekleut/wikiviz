@@ -1,6 +1,9 @@
 import { SendMessageCommand, SQSClient } from "@aws-sdk/client-sqs";
 import { env } from "../../../../../utils/env";
-import { HttpEventHandler } from "../../../../../utils/handler-context";
+import {
+  createHandlerContext,
+  HttpEventHandler,
+} from "../../../../../utils/handler-context";
 import { HttpEvent } from "../../../../../utils/http-event";
 
 const queueUrl = env("QUEUE_URL");
@@ -12,7 +15,7 @@ type ScrapyRequestBody = {
   data_path: string;
 };
 
-export const eventHandler: HttpEventHandler = async (event: HttpEvent) => {
+const eventHandler: HttpEventHandler = async (event: HttpEvent) => {
   const wikid = event.getPathParameter("wikid");
   const branching_factor = event.getQueryStringParameter("branching_factor");
 
@@ -34,3 +37,5 @@ export const eventHandler: HttpEventHandler = async (event: HttpEvent) => {
     messageId: response.MessageId,
   };
 };
+
+export const handler = createHandlerContext(eventHandler);
