@@ -30,7 +30,12 @@ export class ScrapyHandler extends Construct {
     });
     props.dataBucket.grantWrite(scrapyHandler);
 
-    this.queue = new Queue(this, "ScrapyQueue");
+    this.queue = new Queue(this, "ScrapyQueue", {
+      deadLetterQueue: {
+        queue: new Queue(this, "DLQ"),
+        maxReceiveCount: 1,
+      },
+    });
     scrapyHandler.addEventSource(new SqsEventSource(this.queue));
   }
 }
