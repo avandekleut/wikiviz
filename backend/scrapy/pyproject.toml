@@ -14,12 +14,20 @@ scrapy = "^2.8.0"
 pyvis = "0.3.1"
 networkx = "^3.0"
 
+[tool.poetry.group.test]
+optional=true
+
 [tool.poetry.group.test.dependencies]
 pytest = "^7.2.2"
 
+[tool.poetry.group.dev]
+optional=true
+
 [tool.poetry.group.dev.dependencies]
 autopep8 = "^2.0.2"
-mypy = "^1.1.1"
+
+[tool.poetry.group.local]
+optional=true
 
 [tool.poetry.group.local.dependencies]
 boto3 = "^1.26.94"

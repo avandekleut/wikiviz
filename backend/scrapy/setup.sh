@@ -17,6 +17,4 @@ poetry env use $PYTHON_VERSION
 
 poetry install
 
-export PYTHONPATH=$PYTHONPATH:$(pwd)
-
 poetry shell
