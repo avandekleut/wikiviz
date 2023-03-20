@@ -8,12 +8,11 @@ class Exporter:
     def __init__(self, network: Graph):
         self.network = network
 
-    def export_pyvis(self, filename: str):
-        create_missing_folders(filename)
-
+    def generate_html(self) -> str:
         net = Network(
             select_menu=True,
             cdn_resources='remote'
         )
         net.from_nx(self.network)
-        net.save_graph(filename)
+        html = net.generate_html()
+        return html
