@@ -27,6 +27,8 @@ class WikipediaSpider(scrapy.Spider):
 
         self.start_urls = [start_url] if start_url else self.start_urls
 
+        self.wid = start_url.split("/wiki/")[-1]
+
         self.filter = WikipediaPathFilter()
         self.sampler = PathSampler(branching_factor)
 

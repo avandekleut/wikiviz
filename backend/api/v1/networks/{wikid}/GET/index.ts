@@ -12,19 +12,15 @@ const client = new SQSClient({});
 type ScrapyRequestBody = {
   wikid: string;
   branching_factor: string;
-  data_path: string;
 };
 
 const eventHandler: HttpEventHandler = async (event: HttpEvent) => {
   const wikid = event.getPathParameter("wikid");
   const branching_factor = event.getQueryStringParameter("branching_factor");
 
-  const data_path = `/data/networks/${wikid}`;
-
   const messageBody: ScrapyRequestBody = {
     wikid,
     branching_factor,
-    data_path,
   };
 
   const command = new SendMessageCommand({
@@ -39,3 +35,12 @@ const eventHandler: HttpEventHandler = async (event: HttpEvent) => {
 };
 
 export const handler = createHandlerContext(eventHandler);
+
+type PathNameParameters = ScrapyRequestBody & {
+  num_clusters: number
+}
+
+function generateName({ wikid, branching_factor, num_clusters }: PathNameParameters) {
+  return `/data/networks/${wikid}?branching_factor=${branching_factor}&num_clusters=${num_clusters}}`;
+}
+

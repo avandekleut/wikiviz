@@ -8,7 +8,7 @@ import json
 import sys
 
 import logging
-logging.getLogger().setLevel(logging.DEBUG)
+# logging.getLogger().setLevel(logging.DEBUG)
 
 # needed for scrapy on lambda
 sys.modules["sqlite"] = imp.new_module("sqlite")
@@ -34,7 +34,7 @@ def run_crawler_process(
                   filepath='out.html'
                   )
 
-    process.start(stop_after_crawl=False)
+    process.start()
 
 
 def handler(event, context):
@@ -51,5 +51,20 @@ def handler(event, context):
             start_url = f'https://en.wikipedia.org/wiki/{wikid}'
 
             run_crawler_process(start_url, branching_factor)
-        except Error as e:
-            logger.error(e)
+        except Exception as e:
+            logging.error(e)
+
+if __name__ == '__main__':
+    body = {
+        "wikid":'Functor',
+        "branching_factor": 4,
+        "data_path":""
+    }
+    event = {
+        'Records': [
+            {
+                "body": json.dumps(body)
+            }
+        ]
+    }
+    handler(event, None)
