@@ -47,24 +47,8 @@ def handler(event, context):
             body = json.loads(record["body"])
             wikid = body['wikid']
             branching_factor = int(body['branching_factor'])
-            data_path = body['data_path']
             start_url = f'https://en.wikipedia.org/wiki/{wikid}'
 
             run_crawler_process(start_url, branching_factor)
         except Exception as e:
             logging.error(e)
-
-if __name__ == '__main__':
-    body = {
-        "wikid":'Functor',
-        "branching_factor": 4,
-        "data_path":""
-    }
-    event = {
-        'Records': [
-            {
-                "body": json.dumps(body)
-            }
-        ]
-    }
-    handler(event, None)
