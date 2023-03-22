@@ -1,5 +1,5 @@
-import { APIGatewayProxyEventV2 } from "aws-lambda";
-import { HttpError } from "./http-error";
+import { APIGatewayProxyEventV2 } from 'aws-lambda';
+import { HttpError } from './http-error';
 
 export type StringRecord = Record<string, string | undefined>;
 

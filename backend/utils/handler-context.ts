@@ -1,7 +1,7 @@
-import { APIGatewayProxyHandlerV2 } from "aws-lambda";
-import { HttpError } from "./http-error";
-import { getHttpEvent, HttpEvent } from "./http-event";
-import { JsonObject } from "./json-types";
+import { APIGatewayProxyHandlerV2 } from 'aws-lambda';
+import { HttpError } from './http-error';
+import { getHttpEvent, HttpEvent } from './http-event';
+import { JsonObject } from './json-types';
 
 export type APIGatewayProxyStructuredResultV2Headers =
   | {
@@ -9,7 +9,7 @@ export type APIGatewayProxyStructuredResultV2Headers =
     }
   | undefined;
 
-export type ContentType = "application/json";
+export type ContentType = 'application/json';
 
 export type HttpEventHandler = (event: HttpEvent) => Promise<JsonObject>;
 
@@ -34,11 +34,11 @@ export function createHandlerContext(
   {
     successStatusCode = 200,
     headers = {},
-    contentType = "application/json",
+    contentType = 'application/json'
   }: HandlerContext = {} // default argument = {} to make it "optional"
 ) {
   const contentTypeHeader: Record<string, ContentType> = {
-    "content-type": contentType,
+    'content-type': contentType
   };
 
   const handler: APIGatewayProxyHandlerV2 = async (event, context) => {
@@ -51,8 +51,8 @@ export function createHandlerContext(
         body: JSON.stringify(result),
         headers: {
           ...headers,
-          ...contentTypeHeader,
-        },
+          ...contentTypeHeader
+        }
       };
     } catch (err) {
       if (err instanceof HttpError) {
@@ -60,8 +60,8 @@ export function createHandlerContext(
           statusCode: err.status,
           body: JSON.stringify({ message: err.message }),
           headers: {
-            "content-type": "application/json",
-          },
+            'content-type': 'application/json'
+          }
         };
       }
 
