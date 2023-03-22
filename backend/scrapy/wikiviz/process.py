@@ -44,9 +44,12 @@ def handler(event, context):
     for record in event['Records']:
         try:
             logging.debug(record)
+            
             body = json.loads(record["body"])
+
             wikid = body['wikid']
             branching_factor = int(body['branching_factor'])
+
             start_url = f'https://en.wikipedia.org/wiki/{wikid}'
 
             run_crawler_process(start_url, branching_factor)
