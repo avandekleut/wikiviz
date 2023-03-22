@@ -11,4 +11,4 @@ class S3Saver:
         self.bucket_name = bucket_name or os.environ.get('DATA_BUCKET', env.DATA_BUCKET_URL)
 
     def save(self, body: str, filename: str):
-       s3.put_object(Body=body, Bucket=self.bucket_name, Key=filename)
+       s3.put_object(Body=body, Bucket=self.bucket_name, Key=filename, ContentDisposition='inline', ContentType='text/html')

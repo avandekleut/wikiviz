@@ -2,9 +2,10 @@ import { CfnOutput, Duration } from 'aws-cdk-lib';
 import {
   AllowedMethods,
   CachePolicy,
+  CacheQueryStringBehavior,
   Distribution,
   OriginAccessIdentity,
-  ViewerProtocolPolicy,
+  ViewerProtocolPolicy
 } from 'aws-cdk-lib/aws-cloudfront';
 import { S3Origin } from 'aws-cdk-lib/aws-cloudfront-origins';
 import { Bucket } from 'aws-cdk-lib/aws-s3';
@@ -54,6 +55,7 @@ export class WikiVizDistribution extends Construct {
     });
 
     const dataCachePolicy = new CachePolicy(this, 'DataCachePolicy', {
+      queryStringBehavior: CacheQueryStringBehavior.all(),
       minTtl: Duration.minutes(5),
       maxTtl: Duration.minutes(5),
     });

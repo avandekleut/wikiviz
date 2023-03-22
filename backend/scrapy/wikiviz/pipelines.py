@@ -34,6 +34,7 @@ class PyVisPipeline:
                 num_clusters, name=name)
 
     def get_run_name(self, num_clusters: int)->str:
+        return f'data/networks/{self.wid}/{self.branching_factor}/{num_clusters}'
         params = urlencode({
                 "branching_factor": self.branching_factor,
                 "num_clusters": num_clusters
