@@ -16,19 +16,19 @@ export class WikiVizApi extends Construct {
     const scrapyHandler = new ScrapyHandler(this, 'ScrapyHandler', props);
 
     this.api = new HttpApi(this, 'Api', {
-      apiName: 'WikiVizApi'
+      apiName: 'WikiVizApi',
     });
 
     const getNetwork = this.addRoute({
       route: 'GET /api/v1/networks/{wikid}',
       environment: {
-        QUEUE_URL: scrapyHandler.queue.queueUrl
-      }
+        QUEUE_URL: scrapyHandler.queue.queueUrl,
+      },
     });
     scrapyHandler.queue.grantSendMessages(getNetwork);
 
     new CfnOutput(this, 'ApiUrl', {
-      value: this.api.url!
+      value: this.api.url!,
     });
   }
 
@@ -41,7 +41,7 @@ export class WikiVizApi extends Construct {
     this.api.addRoutes({
       methods: [routeHandler.method],
       path: routeHandler.path,
-      integration: new HttpLambdaIntegration(id + 'Integration', routeHandler)
+      integration: new HttpLambdaIntegration(id + 'Integration', routeHandler),
     });
     return routeHandler;
   }

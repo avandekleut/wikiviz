@@ -10,15 +10,15 @@ export class WikiVizStack extends cdk.Stack {
     super(scope, id, props);
 
     const dataBucket = new Bucket(this, 'DataBucket', {
-      blockPublicAccess: BlockPublicAccess.BLOCK_ALL
+      blockPublicAccess: BlockPublicAccess.BLOCK_ALL,
     });
 
     const api = new WikiVizApi(this, 'WikiVizApi', {
-      dataBucket
+      dataBucket,
     });
 
     new WikiVizDistribution(this, 'WikiVizDistribution', {
-      dataBucket: dataBucket
+      dataBucket: dataBucket,
     });
   }
 }

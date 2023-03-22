@@ -25,16 +25,16 @@ export class ScrapyHandler extends Construct {
       timeout: Duration.seconds(30),
       memorySize: 1024,
       environment: {
-        DATA_BUCKET: props.dataBucket.bucketName
-      }
+        DATA_BUCKET: props.dataBucket.bucketName,
+      },
     });
     props.dataBucket.grantWrite(scrapyHandler);
 
     this.queue = new Queue(this, 'ScrapyQueue', {
       deadLetterQueue: {
         queue: new Queue(this, 'DLQ'),
-        maxReceiveCount: 1
-      }
+        maxReceiveCount: 1,
+      },
     });
     scrapyHandler.addEventSource(new SqsEventSource(this.queue));
   }

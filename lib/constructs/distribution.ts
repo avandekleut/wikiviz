@@ -4,7 +4,7 @@ import {
   CachePolicy,
   Distribution,
   OriginAccessIdentity,
-  ViewerProtocolPolicy
+  ViewerProtocolPolicy,
 } from 'aws-cdk-lib/aws-cloudfront';
 import { S3Origin } from 'aws-cdk-lib/aws-cloudfront-origins';
 import { Bucket } from 'aws-cdk-lib/aws-s3';
@@ -23,17 +23,17 @@ export class WikiVizDistribution extends Construct {
 
     const distribution = this.createDomainDistribution({
       path: '/data*',
-      bucket: props.dataBucket
+      bucket: props.dataBucket,
     });
 
     new CfnOutput(this, 'DistributionUrl', {
-      value: `https://${distribution.distributionDomainName}`
+      value: `https://${distribution.distributionDomainName}`,
     });
   }
 
   private createDomainDistribution({
     path,
-    bucket
+    bucket,
   }: {
     path: string;
     bucket: Bucket;
@@ -44,25 +44,25 @@ export class WikiVizDistribution extends Construct {
       defaultRootObject: 'index.html',
       defaultBehavior: {
         origin: new S3Origin(bucket, {
-          originAccessIdentity: originAccessIdentity
-        })
-      }
+          originAccessIdentity: originAccessIdentity,
+        }),
+      },
     });
 
     const s3Origin = new S3Origin(bucket, {
-      originAccessIdentity: originAccessIdentity
+      originAccessIdentity: originAccessIdentity,
     });
 
     const dataCachePolicy = new CachePolicy(this, 'DataCachePolicy', {
       minTtl: Duration.minutes(5),
-      maxTtl: Duration.minutes(5)
+      maxTtl: Duration.minutes(5),
     });
 
     distribution.addBehavior(path, s3Origin, {
       allowedMethods: AllowedMethods.ALLOW_GET_HEAD,
       cachedMethods: AllowedMethods.ALLOW_GET_HEAD,
       cachePolicy: dataCachePolicy,
-      viewerProtocolPolicy: ViewerProtocolPolicy.HTTPS_ONLY
+      viewerProtocolPolicy: ViewerProtocolPolicy.HTTPS_ONLY,
     });
 
     return distribution;
@@ -71,7 +71,7 @@ export class WikiVizDistribution extends Construct {
   private createAccessId(bucket: Bucket) {
     const originAccessIdentity = new OriginAccessIdentity(
       this,
-      'OriginAccessIdentity'
+      'OriginAccessIdentity',
     );
     bucket.grantRead(originAccessIdentity);
     return originAccessIdentity;

@@ -1,7 +1,7 @@
 import { HttpMethod } from '@aws-cdk/aws-apigatewayv2-alpha';
 import {
   NodejsFunction,
-  NodejsFunctionProps
+  NodejsFunctionProps,
 } from 'aws-cdk-lib/aws-lambda-nodejs';
 import { Construct } from 'constructs';
 import * as path_ from 'path';
@@ -20,7 +20,7 @@ export class RouteHandler extends NodejsFunction {
     console.log(`in RouteHandler.constructor()`);
     console.log({
       id,
-      props
+      props,
     });
 
     const projectRoot = path_.join(__dirname, '..', '..');
@@ -35,12 +35,12 @@ export class RouteHandler extends NodejsFunction {
       apiEntry,
       method,
       path,
-      handlerEntry
+      handlerEntry,
     });
 
     super(scope, id, {
       entry: handlerEntry,
-      ...props
+      ...props,
     });
 
     this.method = method as HttpMethod;

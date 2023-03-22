@@ -8,9 +8,9 @@ const schema = {
   $schema: 'http://json-schema.org/draft-07/schema#',
   type: 'object',
   properties: {
-    bar: { type: 'string' }
+    bar: { type: 'string' },
   },
-  required: ['bar']
+  required: ['bar'],
 };
 
 // The generated code will have a default export:
@@ -22,5 +22,5 @@ let moduleCode = standaloneCode(ajv, validate);
 // Now you can write the module code to file
 fs.writeFileSync(
   path.join(__dirname, '../consume/validate-cjs.js'),
-  moduleCode
+  moduleCode,
 );

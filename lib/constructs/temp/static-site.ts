@@ -1,7 +1,7 @@
 import { Duration, RemovalPolicy } from 'aws-cdk-lib';
 import {
   CertificateValidation,
-  DnsValidatedCertificate
+  DnsValidatedCertificate,
 } from 'aws-cdk-lib/aws-certificatemanager';
 import {
   AllowedMethods,
@@ -13,25 +13,25 @@ import {
   FunctionEventType,
   OriginAccessIdentity,
   OriginRequestPolicy,
-  ViewerProtocolPolicy
+  ViewerProtocolPolicy,
 } from 'aws-cdk-lib/aws-cloudfront';
 import { S3Origin } from 'aws-cdk-lib/aws-cloudfront-origins';
 import {
   ARecord,
   HostedZone,
   IHostedZone,
-  RecordTarget
+  RecordTarget,
 } from 'aws-cdk-lib/aws-route53';
 import { CloudFrontTarget } from 'aws-cdk-lib/aws-route53-targets';
 import {
   BlockPublicAccess,
   Bucket,
-  BucketEncryption
+  BucketEncryption,
 } from 'aws-cdk-lib/aws-s3';
 import {
   BucketDeployment,
   BucketDeploymentProps,
-  Source
+  Source,
 } from 'aws-cdk-lib/aws-s3-deployment';
 import { StringParameter } from 'aws-cdk-lib/aws-ssm';
 import { execSync } from 'child_process';
@@ -71,7 +71,7 @@ export class StaticSite extends Construct {
       domainName,
       certificate,
       bucket,
-      originAccessIdentity
+      originAccessIdentity,
     });
 
     this.createAliasRecord({ hostedZone, distribution });
@@ -84,19 +84,19 @@ export class StaticSite extends Construct {
 
     execSync(command, {
       cwd: entry,
-      stdio: 'inherit'
+      stdio: 'inherit',
     });
   }
 
   private createBucketDeployment({
     bucket,
-    distribution
+    distribution,
   }: CreateBucketDeploymentParams) {
     const cacheEnabled = true;
     const bucketDeploymentProps = cacheEnabled
       ? this.getBucketDeploymentWithCacheInvalidationProps({
           bucket,
-          distribution
+          distribution,
         })
       : this.getBucketDeploymentProps({ bucket, distribution });
 
@@ -105,23 +105,23 @@ export class StaticSite extends Construct {
 
   private getBucketDeploymentWithCacheInvalidationProps({
     bucket,
-    distribution
+    distribution,
   }: CreateBucketDeploymentParams): BucketDeploymentProps {
     return {
       ...this.getBucketDeploymentProps({
         bucket,
-        distribution
+        distribution,
       }),
       distribution: distribution,
-      distributionPaths: ['/*']
+      distributionPaths: ['/*'],
     };
   }
 
   private getBucketDeploymentProps({
-    bucket
+    bucket,
   }: CreateBucketDeploymentParams): BucketDeploymentProps {
     const staticSiteSources = this.props.bundling.outputDirs.map((source) =>
-      Source.asset(source)
+      Source.asset(source),
     );
 
     const sources = [...staticSiteSources];
@@ -133,7 +133,7 @@ export class StaticSite extends Construct {
 
     return {
       sources,
-      destinationBucket: bucket
+      destinationBucket: bucket,
     };
   }
 
@@ -144,7 +144,7 @@ export class StaticSite extends Construct {
       // Workaround for cross-stack refs: Replace tokens with parameter.stringValue
       // see https://github.com/aws/aws-cdk/issues/19257#issuecomment-1102807097
       parameterConfig[key] = new StringParameter(this, key + 'Parameter', {
-        stringValue: config[key]
+        stringValue: config[key],
       }).stringValue;
     }
 
@@ -154,7 +154,7 @@ export class StaticSite extends Construct {
 
   private createAliasRecord({
     hostedZone,
-    distribution
+    distribution,
   }: {
     hostedZone: IHostedZone;
     distribution: Distribution;
@@ -165,7 +165,7 @@ export class StaticSite extends Construct {
     new ARecord(this, 'ARecord', {
       recordName: recordName,
       zone: hostedZone,
-      target: RecordTarget.fromAlias(new CloudFrontTarget(distribution))
+      target: RecordTarget.fromAlias(new CloudFrontTarget(distribution)),
     });
   }
 
@@ -173,7 +173,7 @@ export class StaticSite extends Construct {
     domainName,
     certificate,
     bucket,
-    originAccessIdentity
+    originAccessIdentity,
   }: {
     domainName: string;
     certificate: DnsValidatedCertificate;
@@ -187,16 +187,16 @@ export class StaticSite extends Construct {
       'AddSecurityHeadersExampleSite',
       {
         code: FunctionCode.fromFile({
-          filePath: path.join(__dirname, 'cloudfront-functions', 'index.js')
-        })
-      }
+          filePath: path.join(__dirname, 'cloudfront-functions', 'index.js'),
+        }),
+      },
     );
 
     const spaRedirectToIndex: ErrorResponse = {
       httpStatus: 404,
       responseHttpStatus: 200,
       responsePagePath: '/index.html',
-      ttl: Duration.seconds(0)
+      ttl: Duration.seconds(0),
     };
 
     const distribution = new Distribution(this, 'Distribution', {
@@ -206,19 +206,19 @@ export class StaticSite extends Construct {
       errorResponses: [spaRedirectToIndex],
       defaultBehavior: {
         origin: new S3Origin(bucket, {
-          originAccessIdentity: originAccessIdentity
+          originAccessIdentity: originAccessIdentity,
         }),
         functionAssociations: [
           {
             function: addSecurityHeadersLambda,
-            eventType: FunctionEventType.VIEWER_RESPONSE
-          }
+            eventType: FunctionEventType.VIEWER_RESPONSE,
+          },
         ],
         viewerProtocolPolicy: ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
         allowedMethods: AllowedMethods.ALLOW_GET_HEAD_OPTIONS,
         cachePolicy: cloudfrontCachePolicy,
-        originRequestPolicy: OriginRequestPolicy.USER_AGENT_REFERER_HEADERS
-      }
+        originRequestPolicy: OriginRequestPolicy.USER_AGENT_REFERER_HEADERS,
+      },
     });
     return distribution;
   }
@@ -227,13 +227,13 @@ export class StaticSite extends Construct {
     const { subdomain } = this.props;
     const { hostedZoneName, hostedZoneId } = {
       hostedZoneId: 'TEMP',
-      hostedZoneName: 'TEMP'
+      hostedZoneName: 'TEMP',
     }; // TODO: Replace this
     const { namespaceDomainName } = { namespaceDomainName: 'TEMP' }; // TODO: Replace this
 
     const hostedZone = HostedZone.fromHostedZoneAttributes(this, 'HostedZone', {
       zoneName: hostedZoneName,
-      hostedZoneId: hostedZoneId
+      hostedZoneId: hostedZoneId,
     });
 
     const domainName = `${subdomain}.${namespaceDomainName}`;
@@ -241,7 +241,7 @@ export class StaticSite extends Construct {
     const certificate = new DnsValidatedCertificate(this, 'Certificate', {
       hostedZone: hostedZone,
       domainName: domainName,
-      validation: CertificateValidation.fromDns(hostedZone)
+      validation: CertificateValidation.fromDns(hostedZone),
     });
     return { domainName, certificate, hostedZone };
   }
@@ -252,12 +252,12 @@ export class StaticSite extends Construct {
       publicReadAccess: false,
       autoDeleteObjects: true,
       removalPolicy: RemovalPolicy.DESTROY,
-      blockPublicAccess: BlockPublicAccess.BLOCK_ALL
+      blockPublicAccess: BlockPublicAccess.BLOCK_ALL,
     });
 
     const originAccessIdentity = new OriginAccessIdentity(
       this,
-      'OriginAccessIdentity'
+      'OriginAccessIdentity',
     );
     bucket.grantRead(originAccessIdentity);
     return { bucket, originAccessIdentity };
