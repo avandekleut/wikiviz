@@ -1,0 +1,13 @@
+{
+    "workbench.colorTheme": "Default Dark+",
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+        "source.organizeImports": true,
+    },
+    "[python]": {
+        "editor.formatOnType": true
+    },
+    "python.analysis.exclude": [
+        "cdk.out"
+    ]
+}
