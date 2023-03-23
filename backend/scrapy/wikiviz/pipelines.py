@@ -31,7 +31,7 @@ class PyVisPipeline:
             name = self.get_run_name(num_clusters=num_clusters)
 
             Pipeline(self.network).run(
-                num_clusters, name=name)
+                num_clusters, file_name=name)
 
     def get_run_name(self, num_clusters: int)->str:
         params = urlencode({
