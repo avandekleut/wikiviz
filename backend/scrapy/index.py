@@ -1,7 +1,9 @@
 import logging
 
-from wikiviz.pipelines import PyVisPipeline
 from wikiviz.process import run_crawler_process
+
+# TODO: Determine how to get result from pipeline in-memory? Or maybe use presigned url
+global_result = {"html": ""}
 
 
 def handler(event, context):
@@ -16,3 +18,12 @@ def handler(event, context):
     start_url = f"https://en.wikipedia.org/wiki/{wikid}"
 
     run_crawler_process(start_url, branching_factor)
+
+    return {
+        "statusCode": 200,
+        "body": global_result["html"],
+        "headers": {
+            "content-type":"text/html",
+            "content-disposition":"inline"
+        }
+    }

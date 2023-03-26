@@ -33,7 +33,6 @@ def run_crawler_process(start_url: str, branching_factor: int):
         WikipediaSpider,
         start_url=start_url,
         branching_factor=branching_factor,
-        filepath="out.html",
     )
 
     process.start()
