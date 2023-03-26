@@ -6,7 +6,7 @@ from networkx import Graph
 class Clusterizer:
     def __init__(self, network: Graph):
         self.network = network
-        self.logger = getLogger('Clusterizer')
+        self.logger = getLogger("Clusterizer")
 
     # TODO: Export once per cluster iteration to save compute
     def cluster(self, num_clusters: int):
@@ -16,7 +16,8 @@ class Clusterizer:
     def get_clusters(self, num_clusters: int) -> "list[list[str]]":
         if num_clusters <= 1:
             self.logger.warn(
-                f'requested get_clusters with num_clusters={int} which is invalid. Returning empty list.')
+                f"requested get_clusters with num_clusters={int} which is invalid. Returning empty list."
+            )
             return []
 
         cluster_generator = girvan_newman(self.network)
@@ -34,4 +35,4 @@ class Clusterizer:
     def update_node_groups_by_clusters(self, clusters: "list[list[str]]"):
         for i, community in enumerate(clusters):
             for node in community:
-                self.network.nodes[node]['group'] = i
+                self.network.nodes[node]["group"] = i

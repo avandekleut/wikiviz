@@ -8,7 +8,7 @@ class WikipediaParser:
         self.url = response.url
 
     def get_urls(self):
-        hrefs = self.response.xpath('//a/@href').getall()
+        hrefs = self.response.xpath("//a/@href").getall()
         full_urls = map(self.href_to_full_url, hrefs)
         return full_urls
 
@@ -22,8 +22,7 @@ class WikipediaParser:
 
         wiki_path = url.split("/wiki/")[-1]
 
-        decoded = urllib.parse.unquote(
-            wiki_path, encoding='utf-8', errors='replace')
+        decoded = urllib.parse.unquote(wiki_path, encoding="utf-8", errors="replace")
 
         pretty = decoded.replace("_", " ")
 

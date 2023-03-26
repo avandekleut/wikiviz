@@ -10,7 +10,7 @@ class Serializer:
 
     def save(self, filename: str):
         create_missing_folders(filename)
-        pickle.dump(self.network, open(filename, 'wb'))
+        pickle.dump(self.network, open(filename, "wb"))
 
     def load(self, filename: str):
-        self.network = pickle.load(open(filename, 'rb'))
+        self.network = pickle.load(open(filename, "rb"))

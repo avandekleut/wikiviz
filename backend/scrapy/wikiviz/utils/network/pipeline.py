@@ -11,8 +11,8 @@ class Pipeline:
     def __init__(self, network: Graph):
         self.network = network
 
-    def run(self, num_clusters=6, file_name='out'):
-        print(f'running pipeline, num_cluster={num_clusters}, name={file_name}')
+    def run(self, num_clusters=6, file_name="out"):
+        print(f"running pipeline, num_cluster={num_clusters}, name={file_name}")
         Clusterizer(self.network).cluster(num_clusters)
         NodeResizer(self.network).update_node_sizes()
         html = Exporter(self.network).generate_html()

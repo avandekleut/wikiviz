@@ -9,10 +9,7 @@ class Exporter:
         self.network = network
 
     def generate_html(self) -> str:
-        net = Network(
-            select_menu=True,
-            cdn_resources='remote'
-        )
+        net = Network(select_menu=True, cdn_resources="remote")
         net.from_nx(self.network)
         html = net.generate_html()
         return html

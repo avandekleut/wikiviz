@@ -9,7 +9,7 @@ class NodeResizer:
     def update_node_sizes(self):
         for node in self.network.nodes:
             size = self.get_node_size(node)
-            self.network.nodes[node]['size'] = size
+            self.network.nodes[node]["size"] = size
 
     def get_node_size(self, node):
         size = self.get_num_neighbours(node)

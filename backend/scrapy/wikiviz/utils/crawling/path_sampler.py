@@ -11,4 +11,4 @@ class PathSampler:
         return list(dict.fromkeys(urls))
 
     def _select_subset(self, urls: list):
-        return urls[:self.branching_factor]
+        return urls[: self.branching_factor]

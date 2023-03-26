@@ -2,11 +2,10 @@ import re
 
 
 class PathFilter:
-    def __init__(self,
-                 allowed_paths: "list[str]" or None,
-                 ignore_paths: "list[str]" or None
-                 ):
-        self.allowed_paths = allowed_paths or ['*']
+    def __init__(
+        self, allowed_paths: "list[str]" or None, ignore_paths: "list[str]" or None
+    ):
+        self.allowed_paths = allowed_paths or ["*"]
         self.ignore_paths = ignore_paths or []
 
         self.visited = []
@@ -42,4 +41,4 @@ class PathFilter:
         return False
 
     def wildcard_to_regular_expression(self, path):
-        return re.escape(path).replace('\\*', '.+')
+        return re.escape(path).replace("\\*", ".+")

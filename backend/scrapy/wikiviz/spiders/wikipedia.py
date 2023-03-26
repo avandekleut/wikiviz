@@ -9,16 +9,11 @@ from wikiviz.utils.parsing.wikipedia_parser import WikipediaParser
 class WikipediaSpider(scrapy.Spider):
     name = "wikipedia"
     allowed_domains = ["en.wikipedia.org"]
-    start_urls = [
-        "https://en.wikipedia.org/wiki/Salix_bebbiana"
-    ]
+    start_urls = ["https://en.wikipedia.org/wiki/Salix_bebbiana"]
 
-    custom_settings = {
-        'CLOSESPIDER_ITEMCOUNT': 100
-    }
+    custom_settings = {"CLOSESPIDER_ITEMCOUNT": 100}
 
-    def __init__(self, name=None, start_url=None,
-                 branching_factor=4, **kwargs):
+    def __init__(self, name=None, start_url=None, branching_factor=4, **kwargs):
         super().__init__(name, **kwargs)
 
         self.name = name
@@ -45,8 +40,8 @@ class WikipediaSpider(scrapy.Spider):
             dest = parsed.get_title_from_url(url)
 
             item = EdgeItem()
-            item['source'] = source
-            item['dest'] = dest
+            item["source"] = source
+            item["dest"] = dest
 
             yield item
 
