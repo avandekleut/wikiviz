@@ -1,28 +1,22 @@
 import { HttpMethod } from '@aws-cdk/aws-apigatewayv2-alpha';
 import {
   NodejsFunction,
-  NodejsFunctionProps,
+  NodejsFunctionProps
 } from 'aws-cdk-lib/aws-lambda-nodejs';
 import { Construct } from 'constructs';
 import * as path_ from 'path';
 
 export type Route = `${HttpMethod} /${string}`;
 
-export type RouteHandlerProps = {
+export type NodeRouteHandlerProps = {
   route: Route;
 } & Omit<NodejsFunctionProps, 'entry'>;
 
-export class RouteHandler extends NodejsFunction {
+export class NodeRouteHandler extends NodejsFunction {
   public readonly method: HttpMethod;
   public readonly path: string;
 
-  constructor(scope: Construct, id: string, props: RouteHandlerProps) {
-    console.log(`in RouteHandler.constructor()`);
-    console.log({
-      id,
-      props,
-    });
-
+  constructor(scope: Construct, id: string, props: NodeRouteHandlerProps) {
     const projectRoot = path_.join(__dirname, '..', '..');
     const apiEntry = path_.join(projectRoot, 'backend');
 
