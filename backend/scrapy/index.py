@@ -22,8 +22,5 @@ def handler(event, context):
     return {
         "statusCode": 200,
         "body": global_result["html"],
-        "headers": {
-            "content-type":"text/html",
-            "content-disposition":"inline"
-        }
+        "headers": {"content-type": "text/html", "content-disposition": "inline"},
     }

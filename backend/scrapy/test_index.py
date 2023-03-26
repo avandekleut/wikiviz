@@ -35,5 +35,8 @@ def test_handler():
         "isBase64Encoded": False,
     }
 
-    handler(event, None)
-    assert True
+    result = handler(event, None)
+    assert result["statusCode"] == 200
+    assert len(result["body"]) > 0
+    assert result["headers"]["content-type"] == "text/html"
+    assert result["headers"]["content-disposition"] == "inline"
