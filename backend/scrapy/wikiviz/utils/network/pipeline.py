@@ -19,6 +19,4 @@ class Pipeline:
         S3Saver().save(html, file_name)
         # Serializer(self.network).save(file_name)
 
-        print(html)
-
         global_result["html"] = html
