@@ -2,8 +2,10 @@ import importlib
 import json
 import sys
 
-from scrapy.crawler import CrawlerProcess
+import scrapy
+from scrapy.crawler import CrawlerProcess, CrawlerRunner
 from scrapy.utils.project import get_project_settings
+from twisted.internet import reactor
 from wikiviz.spiders.wikipedia import WikipediaSpider
 
 sys.modules["sqlite"] = importlib.util.module_from_spec(
@@ -29,13 +31,14 @@ def run_crawler_process(start_url: str, branching_factor: int):
     settings["TELNETCONSOLE_ENABLED"] = False
 
     # override spider-level attributes with params
-    process.crawl(
+    crawler = CrawlerRunner()
+    d = crawler.crawl(
         WikipediaSpider,
         start_url=start_url,
         branching_factor=branching_factor,
     )
-
-    process.start()
+    d.addCallback(lambda _: reactor.stop())
+    reactor.run()
 
 
 def handler(event, context):
