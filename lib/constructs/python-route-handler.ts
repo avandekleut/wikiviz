@@ -5,10 +5,11 @@ import { Construct } from 'constructs';
 import * as path_ from 'path';
 import { Route } from './node-route-handler';
 
+export type Optional<T, K extends keyof T> = Pick<Partial<T>, K> & Omit<T, K>;
 
 export type PythonRouteHandlerProps = {
   route: Route;
-} & Omit<PythonFunctionProps, 'entry'>;
+} & Optional<PythonFunctionProps, 'entry'>;
 
 // TODO: Make more DRY wrt NodeRouteHandler
 export class PythonRouteHandler extends PythonFunction {

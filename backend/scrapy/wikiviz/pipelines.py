@@ -1,5 +1,4 @@
 import logging
-from urllib.parse import urlencode
 
 from networkx import Graph
 from wikiviz.items import EdgeItem

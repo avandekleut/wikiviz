@@ -3,6 +3,7 @@ import { HttpLambdaIntegration } from '@aws-cdk/aws-apigatewayv2-integrations-al
 import { CfnOutput } from 'aws-cdk-lib';
 import { Runtime } from 'aws-cdk-lib/aws-lambda';
 import { Construct } from 'constructs';
+import * as path from "path";
 import { NodeRouteHandler, NodeRouteHandlerProps } from './node-route-handler';
 import { PythonRouteHandler, PythonRouteHandlerProps } from './python-route-handler';
 import { ScrapyHandler, ScrapyHandlerProps } from './scrapy-handler';
@@ -31,6 +32,7 @@ export class WikiVizApi extends Construct {
 
     const getNetworkPython = this.addPythonRoute({
       route: 'GET /api/v2/networks/{wikid}',
+      entry: path.join(__dirname, '..', '..', 'backend', 'scrapy', 'index.py'),
       runtime: Runtime.PYTHON_3_8,
       environment: {
         DATA_BUCKET: props.dataBucket.bucketName,

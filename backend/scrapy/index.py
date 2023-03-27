@@ -3,7 +3,7 @@ import logging
 from wikiviz.process import run_crawler_process
 
 # TODO: Determine how to get result from pipeline in-memory? Or maybe use presigned url
-global_result = {"html": ""}
+from wikiviz.utils.network.pipeline import global_result
 
 
 def handler(event, context):
@@ -22,5 +22,9 @@ def handler(event, context):
     return {
         "statusCode": 200,
         "body": global_result["html"],
-        "headers": {"content-type": "text/html", "content-disposition": "inline"},
+        "headers": {
+            "content-type": "text/html",
+            "content-disposition": "inline",
+            "max-age": 60,
+        },
     }

@@ -5,12 +5,13 @@ import {
 } from 'aws-cdk-lib/aws-lambda-nodejs';
 import { Construct } from 'constructs';
 import * as path_ from 'path';
+import { Optional } from './python-route-handler';
 
 export type Route = `${HttpMethod} /${string}`;
 
 export type NodeRouteHandlerProps = {
   route: Route;
-} & Omit<NodejsFunctionProps, 'entry'>;
+} & Optional<NodejsFunctionProps, 'entry'>
 
 export class NodeRouteHandler extends NodejsFunction {
   public readonly method: HttpMethod;

@@ -1,10 +1,11 @@
-from index import global_result
 from networkx import Graph
 from wikiviz.utils.network.clusterizer import Clusterizer
 from wikiviz.utils.network.exporter import Exporter
 from wikiviz.utils.network.node_resizer import NodeResizer
 from wikiviz.utils.network.s3_saver import S3Saver
 from wikiviz.utils.network.serializer import Serializer
+
+global_result = {"html": ""}
 
 
 class Pipeline:
