@@ -29,4 +29,6 @@ def handler(event, context):
         },
     }
 
+    logging.debug(response)
+
     return response
