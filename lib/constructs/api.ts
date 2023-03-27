@@ -32,7 +32,7 @@ export class WikiVizApi extends Construct {
 
     const getNetworkPython = this.addPythonRoute({
       route: 'GET /api/v2/networks/{wikid}',
-      entry: path.join(__dirname, '..', '..', 'backend', 'scrapy', 'index.py'),
+      entry: path.join(__dirname, '..', '..', 'backend', 'scrapy'),
       runtime: Runtime.PYTHON_3_8,
       environment: {
         DATA_BUCKET: props.dataBucket.bucketName,
