@@ -1,6 +1,6 @@
 import { HttpApi } from '@aws-cdk/aws-apigatewayv2-alpha';
 import { HttpLambdaIntegration } from '@aws-cdk/aws-apigatewayv2-integrations-alpha';
-import { CfnOutput } from 'aws-cdk-lib';
+import { CfnOutput, Duration } from 'aws-cdk-lib';
 import { Runtime } from 'aws-cdk-lib/aws-lambda';
 import { Construct } from 'constructs';
 import * as path from "path";
@@ -34,6 +34,8 @@ export class WikiVizApi extends Construct {
       route: 'GET /api/v2/networks/{wikid}',
       entry: path.join(__dirname, '..', '..', 'backend', 'scrapy'),
       runtime: Runtime.PYTHON_3_8,
+      timeout: Duration.seconds(29),
+      memorySize: 1024,
       environment: {
         DATA_BUCKET: props.dataBucket.bucketName,
       },
