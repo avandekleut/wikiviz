@@ -10,6 +10,7 @@ export type PythonRouteHandlerProps = {
   route: Route;
 } & Omit<PythonFunctionProps, 'entry'>;
 
+// TODO: Make more DRY wrt NodeRouteHandler
 export class PythonRouteHandler extends PythonFunction {
   public readonly method: HttpMethod;
   public readonly path: string;
@@ -19,7 +20,7 @@ export class PythonRouteHandler extends PythonFunction {
     const apiEntry = path_.join(projectRoot, 'backend');
 
     const [method, path] = props.route.split(' ');
-    const handlerEntry = path_.join(apiEntry, path, method, 'index.ts');
+    const handlerEntry = path_.join(apiEntry, path, method,);
 
     console.log({
       id,
