@@ -1,8 +1,7 @@
 import scrapy
-
 from wikiviz.items import EdgeItem
-from wikiviz.utils.crawling.wikipedia_path_filter import WikipediaPathFilter
 from wikiviz.utils.crawling.path_sampler import PathSampler
+from wikiviz.utils.crawling.wikipedia_path_filter import WikipediaPathFilter
 from wikiviz.utils.parsing.wikipedia_parser import WikipediaParser
 
 
@@ -10,8 +9,6 @@ class WikipediaSpider(scrapy.Spider):
     name = "wikipedia"
     allowed_domains = ["en.wikipedia.org"]
     start_urls = ["https://en.wikipedia.org/wiki/Salix_bebbiana"]
-
-    custom_settings = {"CLOSESPIDER_ITEMCOUNT": 100}
 
     def __init__(self, name=None, start_url=None, branching_factor=4, **kwargs):
         super().__init__(name, **kwargs)

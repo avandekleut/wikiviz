@@ -19,7 +19,7 @@ def handler(event, context):
 
     run_crawler_process(start_url, branching_factor)
 
-    return {
+    response = {
         "statusCode": 200,
         "body": global_result["html"],
         "headers": {
@@ -28,3 +28,5 @@ def handler(event, context):
             "max-age": 60,
         },
     }
+
+    return response

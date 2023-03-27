@@ -25,7 +25,7 @@ def run_crawler_process(start_url: str, branching_factor: int):
 
     process = CrawlerProcess(settings)
 
-    settings["CLOSESPIDER_ITEMCOUNT"] = 100
+    settings["CLOSESPIDER_ITEMCOUNT"] = 10
     settings["TELNETCONSOLE_ENABLED"] = False
 
     # override spider-level attributes with params
