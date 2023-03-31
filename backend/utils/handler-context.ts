@@ -11,7 +11,9 @@ export type APIGatewayProxyStructuredResultV2Headers =
 
 export type ContentType = 'application/json';
 
-export type HttpEventHandler = (event: HttpEvent) => Promise<JsonObject>;
+export type HttpEventHandler<T extends JsonObject> = (
+  event: HttpEvent,
+) => Promise<T>;
 
 type HandlerContext = {
   successStatusCode?: number;
@@ -29,8 +31,8 @@ type HandlerContext = {
  * @param contentType @default 'application/json' Content type for response.
  * @returns
  */
-export function createHandlerContext(
-  eventHandler: HttpEventHandler,
+export function createHandlerContext<T extends JsonObject>(
+  eventHandler: HttpEventHandler<T>,
   {
     successStatusCode = 200,
     headers = {},

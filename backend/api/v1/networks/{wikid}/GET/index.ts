@@ -1,12 +1,14 @@
 import { SendMessageCommand, SQSClient } from '@aws-sdk/client-sqs';
-import { env } from '../../../../../utils/env';
+import { getEnvVar } from '../../../../../utils/env';
+
 import {
   createHandlerContext,
   HttpEventHandler,
 } from '../../../../../utils/handler-context';
+import { HttpError } from '../../../../../utils/http-error';
 import { HttpEvent } from '../../../../../utils/http-event';
 
-const queueUrl = env('QUEUE_URL');
+const queueUrl = getEnvVar('QUEUE_URL');
 const client = new SQSClient({});
 
 type ScrapyRequestBody = {
@@ -14,7 +16,13 @@ type ScrapyRequestBody = {
   branching_factor: string;
 };
 
-const eventHandler: HttpEventHandler = async (event: HttpEvent) => {
+type GetNetworksParams_v1 = {
+  messageId: string;
+};
+
+const eventHandler: HttpEventHandler<GetNetworksParams_v1> = async (
+  event: HttpEvent,
+) => {
   const wikid = event.getPathParameter('wikid');
   const branching_factor = event.getQueryStringParameter('branching_factor');
 
@@ -29,8 +37,12 @@ const eventHandler: HttpEventHandler = async (event: HttpEvent) => {
   });
   const response = await client.send(command);
 
+  if (response.MessageId === undefined) {
+    throw new HttpError(500, `No MessageId returned.`, response);
+  }
+
   return {
-    messageId: response.MessageId,
+    messageId: response.MessageId ?? '',
   };
 };
 
