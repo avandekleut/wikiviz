@@ -6,6 +6,7 @@ import { AttributeType, Table } from 'aws-cdk-lib/aws-dynamodb'
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs'
 import { Construct } from 'constructs'
 
+import { CfnOutput } from 'aws-cdk-lib'
 import * as path from 'path'
 
 export class WebSocketApiStack extends cdk.Stack {
@@ -47,6 +48,10 @@ export class WebSocketApiStack extends cdk.Stack {
         'SendMessageIntegration',
         lambda,
       ),
+    })
+
+    new CfnOutput(this, 'WebSocketApiUrl', {
+      value: webSocketApi.apiEndpoint,
     })
   }
 }
