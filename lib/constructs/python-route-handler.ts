@@ -1,5 +1,8 @@
 import { HttpMethod } from '@aws-cdk/aws-apigatewayv2-alpha';
-import { PythonFunction, PythonFunctionProps } from '@aws-cdk/aws-lambda-python-alpha';
+import {
+  PythonFunction,
+  PythonFunctionProps,
+} from '@aws-cdk/aws-lambda-python-alpha';
 
 import { Construct } from 'constructs';
 import * as path_ from 'path';
@@ -21,7 +24,7 @@ export class PythonRouteHandler extends PythonFunction {
     const apiEntry = path_.join(projectRoot, 'backend');
 
     const [method, path] = props.route.split(' ');
-    const handlerEntry = path_.join(apiEntry, path, method,);
+    const handlerEntry = path_.join(apiEntry, path, method);
 
     console.log({
       id,

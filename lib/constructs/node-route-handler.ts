@@ -1,7 +1,7 @@
 import { HttpMethod } from '@aws-cdk/aws-apigatewayv2-alpha';
 import {
   NodejsFunction,
-  NodejsFunctionProps
+  NodejsFunctionProps,
 } from 'aws-cdk-lib/aws-lambda-nodejs';
 import { Construct } from 'constructs';
 import * as path_ from 'path';
@@ -11,7 +11,7 @@ export type Route = `${HttpMethod} /${string}`;
 
 export type NodeRouteHandlerProps = {
   route: Route;
-} & Optional<NodejsFunctionProps, 'entry'>
+} & Optional<NodejsFunctionProps, 'entry'>;
 
 export class NodeRouteHandler extends NodejsFunction {
   public readonly method: HttpMethod;
