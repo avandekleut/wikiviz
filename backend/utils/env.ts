@@ -1,7 +1,22 @@
-export function env(name: string, json = false) {
+type ConvertiblePrimitive = string | number | boolean;
+
+export function getEnvVar<T extends ConvertiblePrimitive = string>(
+  name: string,
+  defaultValue?: T,
+): T {
   const value = process.env[name];
   if (value === undefined) {
-    throw new Error(`Missing environment variable: ${name}`);
+    if (defaultValue === undefined) {
+      throw new Error(`Environment variable ${name} not set.`);
+    }
+    return defaultValue;
   }
-  return value;
+
+  if (defaultValue !== undefined && typeof defaultValue === 'number') {
+    return parseFloat(value) as unknown as T;
+  }
+  if (defaultValue !== undefined && typeof defaultValue === 'boolean') {
+    return (value.toLowerCase() === 'true') as unknown as T;
+  }
+  return value as unknown as T;
 }
