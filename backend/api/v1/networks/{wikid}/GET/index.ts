@@ -10,8 +10,9 @@ const eventHandler: HttpEventHandler<{}> = async (event: HttpEvent) => {
   const wikid = event.getPathParameter('wikid')
   const depth = event.getQueryStringParameter<number>('depth')
 
+  const crawler = new Crawler()
+
   try {
-    const crawler = new Crawler()
     await crawler.crawl(wikid, depth)
 
     LoggerFactory.logger.info(`Finished crawling ${wikid} with depth ${depth}`)
@@ -23,7 +24,9 @@ const eventHandler: HttpEventHandler<{}> = async (event: HttpEvent) => {
     })
   }
 
-  return {}
+  return {
+    graph: crawler.graph,
+  }
 }
 
 export const handler = createHandlerContext(eventHandler)

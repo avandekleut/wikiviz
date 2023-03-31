@@ -3,7 +3,7 @@ import { Graph } from './graph'
 import { getPageData, PageData } from './pagedata'
 
 export class Crawler {
-  private readonly graph: Graph
+  public readonly graph: Graph
   constructor() {
     this.graph = new Graph()
   }
@@ -25,7 +25,7 @@ export class Crawler {
     }
   }
 
-  pageDataToNode(pageData: PageData): vis.Node {
+  private pageDataToNode(pageData: PageData): vis.Node {
     return {
       id: pageData.wikid,
       label: `
