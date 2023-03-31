@@ -1,7 +1,3 @@
-import { PythonFunction } from '@aws-cdk/aws-lambda-python-alpha';
-import { Duration } from 'aws-cdk-lib';
-import { Runtime } from 'aws-cdk-lib/aws-lambda';
-import { SqsEventSource } from 'aws-cdk-lib/aws-lambda-event-sources';
 import { Bucket } from 'aws-cdk-lib/aws-s3';
 import { Queue } from 'aws-cdk-lib/aws-sqs';
 import { Construct } from 'constructs';
@@ -18,17 +14,17 @@ export class ScrapyHandler extends Construct {
     super(scope, id);
     const projectRoot = path.join(__dirname, '..', '..');
 
-    const scrapyHandler = new PythonFunction(scope, id + 'Function', {
-      entry: path.join(projectRoot, 'backend', 'scrapy'), // location of poetry.lock
-      runtime: Runtime.PYTHON_3_8,
-      index: 'wikiviz/process.py',
-      timeout: Duration.seconds(30),
-      memorySize: 1024,
-      environment: {
-        DATA_BUCKET: props.dataBucket.bucketName,
-      },
-    });
-    props.dataBucket.grantWrite(scrapyHandler);
+    // const scrapyHandler = new PythonFunction(scope, id + 'Function', {
+    //   entry: path.join(projectRoot, 'backend', 'scrapy'), // location of poetry.lock
+    //   runtime: Runtime.PYTHON_3_8,
+    //   index: 'wikiviz/process.py',
+    //   timeout: Duration.seconds(30),
+    //   memorySize: 1024,
+    //   environment: {
+    //     DATA_BUCKET: props.dataBucket.bucketName,
+    //   },
+    // });
+    // props.dataBucket.grantWrite(scrapyHandler);
 
     this.queue = new Queue(this, 'ScrapyQueue', {
       deadLetterQueue: {
@@ -36,6 +32,6 @@ export class ScrapyHandler extends Construct {
         maxReceiveCount: 1,
       },
     });
-    scrapyHandler.addEventSource(new SqsEventSource(this.queue));
+    // scrapyHandler.addEventSource(new SqsEventSource(this.queue));
   }
 }
