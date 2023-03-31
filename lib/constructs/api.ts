@@ -1,11 +1,9 @@
 import { HttpApi } from '@aws-cdk/aws-apigatewayv2-alpha';
 import { HttpLambdaIntegration } from '@aws-cdk/aws-apigatewayv2-integrations-alpha';
 import { CfnOutput, Duration } from 'aws-cdk-lib';
-import { Runtime } from 'aws-cdk-lib/aws-lambda';
 import { Construct } from 'constructs';
-import * as path from "path";
-import { NodeRouteHandler, NodeRouteHandlerProps } from './node-route-handler';
-import { PythonRouteHandler, PythonRouteHandlerProps } from './python-route-handler';
+import { RouteHandler, RouteHandlerProps } from './node-route-handler';
+
 import { ScrapyHandler, ScrapyHandlerProps } from './scrapy-handler';
 
 export type WikiVizApiProps = ScrapyHandlerProps;
@@ -22,7 +20,7 @@ export class WikiVizApi extends Construct {
       apiName: 'WikiVizApi',
     });
 
-    const getNetwork = this.addNodeRoute({
+    const getNetwork = this.addRoute({
       route: 'GET /api/v1/networks/{wikid}',
       environment: {
         QUEUE_URL: scrapyHandler.queue.queueUrl,
@@ -30,37 +28,24 @@ export class WikiVizApi extends Construct {
     });
     scrapyHandler.queue.grantSendMessages(getNetwork);
 
-    const getNetworkPython = this.addPythonRoute({
+    const getNetworkV2 = this.addRoute({
       route: 'GET /api/v2/networks/{wikid}',
-      entry: path.join(__dirname, '..', '..', 'backend', 'scrapy'),
-      runtime: Runtime.PYTHON_3_8,
       timeout: Duration.seconds(29),
       memorySize: 1024,
       environment: {
         DATA_BUCKET: props.dataBucket.bucketName,
       },
     });
-    props.dataBucket.grantReadWrite(getNetworkPython)
+    props.dataBucket.grantReadWrite(getNetworkV2);
 
     new CfnOutput(this, 'ApiUrl', {
       value: this.api.url!,
     });
   }
 
-  private addNodeRoute(props: NodeRouteHandlerProps): NodeRouteHandler {
+  private addRoute(props: RouteHandlerProps): RouteHandler {
     const id = this.safeCfnLogicalId(props.route); // convert route to ID
-    const routeHandler = new NodeRouteHandler(this, id, props)
-    this.api.addRoutes({
-      methods: [routeHandler.method],
-      path: routeHandler.path,
-      integration: new HttpLambdaIntegration(id + 'Integration', routeHandler),
-    });
-    return routeHandler;
-  }
-
-  private addPythonRoute(props: PythonRouteHandlerProps): PythonRouteHandler {
-    const id = this.safeCfnLogicalId(props.route); // convert route to ID
-    const routeHandler = new PythonRouteHandler(this, id, props)
+    const routeHandler = new RouteHandler(this, id, props);
     this.api.addRoutes({
       methods: [routeHandler.method],
       path: routeHandler.path,

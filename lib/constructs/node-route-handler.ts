@@ -5,19 +5,20 @@ import {
 } from 'aws-cdk-lib/aws-lambda-nodejs';
 import { Construct } from 'constructs';
 import * as path_ from 'path';
-import { Optional } from './python-route-handler';
+
+export type Optional<T, K extends keyof T> = Pick<Partial<T>, K> & Omit<T, K>;
 
 export type Route = `${HttpMethod} /${string}`;
 
-export type NodeRouteHandlerProps = {
+export type RouteHandlerProps = {
   route: Route;
 } & Optional<NodejsFunctionProps, 'entry'>;
 
-export class NodeRouteHandler extends NodejsFunction {
+export class RouteHandler extends NodejsFunction {
   public readonly method: HttpMethod;
   public readonly path: string;
 
-  constructor(scope: Construct, id: string, props: NodeRouteHandlerProps) {
+  constructor(scope: Construct, id: string, props: RouteHandlerProps) {
     const projectRoot = path_.join(__dirname, '..', '..');
     const apiEntry = path_.join(projectRoot, 'backend');
 
