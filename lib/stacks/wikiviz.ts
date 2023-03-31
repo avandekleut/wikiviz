@@ -13,9 +13,7 @@ export class WikiVizStack extends cdk.Stack {
       blockPublicAccess: BlockPublicAccess.BLOCK_ALL,
     });
 
-    const api = new WikiVizApi(this, 'WikiVizApi', {
-      dataBucket,
-    });
+    const api = new WikiVizApi(this, 'WikiVizApi');
 
     new WikiVizDistribution(this, 'WikiVizDistribution', {
       dataBucket: dataBucket,

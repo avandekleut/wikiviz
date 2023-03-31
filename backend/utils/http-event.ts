@@ -1,24 +1,34 @@
-import { APIGatewayProxyEventV2 } from 'aws-lambda';
-import { HttpError } from './http-error';
+import { APIGatewayProxyEventV2 } from 'aws-lambda'
+import { ConvertiblePrimitive, get } from './get-with-default'
+import { HttpError } from './http-error'
 
-export type StringRecord = Record<string, string | undefined>;
+export type StringRecord = Record<string, string | undefined>
 
 export interface HttpEvent {
-  get body(): string;
+  get body(): string
 
-  get headers(): StringRecord;
+  get headers(): StringRecord
 
-  getHeader(name: string, default_?: string): string;
+  getHeader<T extends ConvertiblePrimitive = string>(
+    name: string,
+    defaultValue?: T,
+  ): T
 
-  get queryStringParameters(): StringRecord;
+  get queryStringParameters(): StringRecord
 
-  getQueryStringParameter(name: string, default_?: string): string;
+  getQueryStringParameter<T extends ConvertiblePrimitive = string>(
+    name: string,
+    defaultValue?: T,
+  ): T
 
-  get pathParameters(): StringRecord;
+  get pathParameters(): StringRecord
 
-  getPathParameter(name: string, default_?: string): string;
+  getPathParameter<T extends ConvertiblePrimitive = string>(
+    name: string,
+    defaultValue?: T,
+  ): T
 
-  get cookies(): Array<string>;
+  get cookies(): Array<string>
 }
 
 /**
@@ -28,75 +38,64 @@ export interface HttpEvent {
 export class ApiGatewayHttpEvent implements HttpEvent {
   constructor(private readonly event: APIGatewayProxyEventV2) {}
   get pathParameters(): StringRecord {
-    const pathParameters = this.event.pathParameters;
+    const pathParameters = this.event.pathParameters
     if (pathParameters === undefined) {
-      throw new HttpError(400, `Missing path parameters`);
+      throw new HttpError(400, `Missing path parameters`)
     }
-    return pathParameters;
+    return pathParameters
   }
-  getPathParameter(name: string, default_: string): string {
-    const pathParameter = this.pathParameters[name];
-    if (pathParameter === undefined) {
-      if (default_) {
-        return default_;
-      }
-      throw new HttpError(400, `Missing path parameter: ${name}`);
-    }
-    return pathParameter;
+  getPathParameter<T extends ConvertiblePrimitive>(
+    name: string,
+    defaultValue?: T,
+  ): T {
+    const pathParameter = this.pathParameters[name]
+    return get<T>(pathParameter, defaultValue)
   }
 
-  getHeader(name: string, default_: string): string {
-    const header = this.headers[name];
-    if (header === undefined) {
-      if (default_) {
-        return default_;
-      }
-      throw new HttpError(400, `Missing header: ${name}`);
-    }
-    return header;
+  getHeader<T extends ConvertiblePrimitive>(name: string, defaultValue?: T): T {
+    const header = this.headers[name]
+    return get<T>(header, defaultValue)
   }
-  getQueryStringParameter(name: string, default_: string): string {
-    const queryStringParameter = this.queryStringParameters[name];
-    if (queryStringParameter === undefined) {
-      if (default_) {
-        return default_;
-      }
-      throw new HttpError(400, `Missing query string parameter: ${name}`);
-    }
-    return queryStringParameter;
+
+  getQueryStringParameter<T extends ConvertiblePrimitive>(
+    name: string,
+    defaultValue?: T,
+  ): T {
+    const queryStringParameter = this.queryStringParameters[name]
+    return get<T>(queryStringParameter, defaultValue)
   }
 
   get cookies(): Array<string> {
     if (this.event.cookies === undefined) {
-      throw new HttpError(400, `Missing request cookies.`);
+      throw new HttpError(400, `Missing request cookies.`)
     }
-    return this.event.cookies;
+    return this.event.cookies
   }
 
   get body(): string {
     if (this.event.body === undefined) {
-      throw new HttpError(400, `Missing request body.`);
+      throw new HttpError(400, `Missing request body.`)
     }
-    return this.event.body;
+    return this.event.body
   }
 
   get headers() {
-    const headers = this.event.headers;
+    const headers = this.event.headers
     if (headers === undefined) {
-      throw new HttpError(400, `Missing request headers.`);
+      throw new HttpError(400, `Missing request headers.`)
     }
-    return headers;
+    return headers
   }
 
   get queryStringParameters(): StringRecord {
-    const queryStringParameters = this.event.queryStringParameters;
+    const queryStringParameters = this.event.queryStringParameters
     if (queryStringParameters === undefined) {
-      throw new HttpError(400, `Missing query string parameters.`);
+      throw new HttpError(400, `Missing query string parameters.`)
     }
-    return queryStringParameters;
+    return queryStringParameters
   }
 }
 
 export function getHttpEvent(event: any): HttpEvent {
-  return new ApiGatewayHttpEvent(event);
+  return new ApiGatewayHttpEvent(event)
 }

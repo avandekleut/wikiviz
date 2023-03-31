@@ -4,17 +4,11 @@ import { CfnOutput, Duration } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import { RouteHandler, RouteHandlerProps } from './node-route-handler';
 
-import { ScrapyHandler, ScrapyHandlerProps } from './scrapy-handler';
-
-export type WikiVizApiProps = ScrapyHandlerProps;
-
 export class WikiVizApi extends Construct {
   private readonly api: HttpApi;
 
-  constructor(scope: Construct, id: string, props: WikiVizApiProps) {
+  constructor(scope: Construct, id: string) {
     super(scope, id);
-
-    const scrapyHandler = new ScrapyHandler(this, 'ScrapyHandler', props);
 
     this.api = new HttpApi(this, 'Api', {
       apiName: 'WikiVizApi',
@@ -22,21 +16,10 @@ export class WikiVizApi extends Construct {
 
     const getNetwork = this.addRoute({
       route: 'GET /api/v1/networks/{wikid}',
-      environment: {
-        QUEUE_URL: scrapyHandler.queue.queueUrl,
-      },
-    });
-    scrapyHandler.queue.grantSendMessages(getNetwork);
-
-    const getNetworkV2 = this.addRoute({
-      route: 'GET /api/v2/networks/{wikid}',
       timeout: Duration.seconds(29),
       memorySize: 1024,
-      environment: {
-        DATA_BUCKET: props.dataBucket.bucketName,
-      },
+      environment: {},
     });
-    props.dataBucket.grantReadWrite(getNetworkV2);
 
     new CfnOutput(this, 'ApiUrl', {
       value: this.api.url!,

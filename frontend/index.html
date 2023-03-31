@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Vis.js Add Nodes and Edges Example</title>
+  <script src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+  <style type="text/css">
+    #mygraph {
+      width: 600px;
+      height: 400px;
+      border: 1px solid lightgray;
+    }
+  </style>
+</head>
+<body>
+  <div id="mygraph"></div>
+  <button onclick="addNode()">Add Node</button>
+  <button onclick="addEdge()">Add Edge</button>
+  <script type="text/javascript">
+    const nodes = new vis.DataSet([
+      {id: 1, label: "Node 1"},
+      {id: 2, label: "Node 2"},
+      {id: 3, label: "Node 3"}
+    ]);
+
+    const edges = new vis.DataSet([
+      {from: 1, to: 2},
+      {from: 2, to: 3}
+    ]);
+
+    const container = document.getElementById("mygraph");
+    const data = {nodes: nodes, edges: edges};
+    const options = {};
+    const network = new vis.Network(container, data, options);
+
+    function addNode() {
+      const newId = nodes.length + 1;
+      nodes.add({id: newId, label: "Node " + newId});
+    }
+
+    function addEdge() {
+      const lastNodeId = nodes.length;
+      edges.add({from: lastNodeId - 1, to: lastNodeId});
+    }
+  </script>
+</body>
+</html>
