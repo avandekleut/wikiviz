@@ -33,9 +33,9 @@ export const useWebSocket = (url: string) => {
     }
   }, [url])
 
-  const send = (message: string) => {
+  const send = (action: string, message: string) => {
     if (socket) {
-      socket.send(message)
+      socket.send(JSON.stringify({ action: action, data: message }))
     } else {
       console.error('WebSocket not connected')
     }

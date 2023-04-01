@@ -21,20 +21,14 @@ export class WebSocketApiStack extends cdk.Stack {
       },
     })
 
-    const lambda = new NodejsFunction(this, 'WebSocketLambda', {
-      entry: path.join(
-        __dirname,
-        '..',
-        '..',
-        'backend/api/v2/networks/{wikid}/GET/index.ts',
-      ),
-      handler: 'handler',
-      bundling: {
-        // specify your bundling options here
-      },
+    const projectRoot = path.join(__dirname, '..', '..')
+    const websocketEntry = path.join(projectRoot, 'backend', 'websocket')
+
+    const sendMessageLambda = new NodejsFunction(this, 'SendMessageLambda', {
+      entry: path.join(websocketEntry, 'sendmessage', 'index.ts'),
     })
 
-    table.grantFullAccess(lambda)
+    table.grantFullAccess(sendMessageLambda)
 
     const webSocketApi = new apigwv2.WebSocketApi(this, 'WebSocketApi', {})
 
@@ -44,25 +38,43 @@ export class WebSocketApiStack extends cdk.Stack {
       autoDeploy: true,
     })
 
-    webSocketApi.addRoute('sendmessage', {
-      integration: new WebSocketLambdaIntegration(
-        'SendMessageIntegration',
-        lambda,
-      ),
-    })
-
     const connectionsArns = this.formatArn({
       service: 'execute-api',
       resourceName: `${stage.stageName}/POST/*`,
       resource: webSocketApi.apiId,
     })
 
-    lambda.addToRolePolicy(
+    sendMessageLambda.addToRolePolicy(
       new PolicyStatement({
         actions: ['execute-api:ManageConnections'],
         resources: [connectionsArns],
       }),
     )
+
+    webSocketApi.addRoute('sendmessage', {
+      integration: new WebSocketLambdaIntegration(
+        'SendMessageIntegration',
+        sendMessageLambda,
+      ),
+    })
+
+    webSocketApi.addRoute('$connect', {
+      integration: new WebSocketLambdaIntegration(
+        'ConnectIntegration',
+        new NodejsFunction(this, 'ConnectLambda', {
+          entry: path.join(websocketEntry, 'connect', 'index.ts'),
+        }),
+      ),
+    })
+
+    webSocketApi.addRoute('$disconnect', {
+      integration: new WebSocketLambdaIntegration(
+        'DisconnectIntegration',
+        new NodejsFunction(this, 'DisconnectLambda', {
+          entry: path.join(websocketEntry, 'disconnect', 'index.ts'),
+        }),
+      ),
+    })
 
     new CfnOutput(this, 'WebSocketApiUrl', {
       value: webSocketApi.apiEndpoint,

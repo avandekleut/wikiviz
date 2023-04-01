@@ -4,11 +4,11 @@ import { useWebSocket } from '../hooks/useWebsocket';
 
 export const WebsocketDebugger = () => {
   const [inputValue, setInputValue] = useState('');
-  const { messages, send } = useWebSocket('wss://your-websocket-url');
+  const { messages, send } = useWebSocket('wss://flvn62nuq8.execute-api.us-east-1.amazonaws.com/dev');
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    send(inputValue);
+    send("sendmessage", inputValue);
     setInputValue('');
   };
 
