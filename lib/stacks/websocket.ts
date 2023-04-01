@@ -7,6 +7,7 @@ import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs'
 import { Construct } from 'constructs'
 
 import { CfnOutput } from 'aws-cdk-lib'
+import { PolicyStatement } from 'aws-cdk-lib/aws-iam'
 import * as path from 'path'
 
 export class WebSocketApiStack extends cdk.Stack {
@@ -35,9 +36,9 @@ export class WebSocketApiStack extends cdk.Stack {
 
     table.grantFullAccess(lambda)
 
-    const webSocketApi = new apigwv2.WebSocketApi(this, 'mywsapi')
+    const webSocketApi = new apigwv2.WebSocketApi(this, 'WebSocketApi', {})
 
-    new apigwv2.WebSocketStage(this, 'mystage', {
+    const stage = new apigwv2.WebSocketStage(this, 'Stage', {
       webSocketApi,
       stageName: 'dev',
       autoDeploy: true,
@@ -49,6 +50,19 @@ export class WebSocketApiStack extends cdk.Stack {
         lambda,
       ),
     })
+
+    const connectionsArns = this.formatArn({
+      service: 'execute-api',
+      resourceName: `${stage.stageName}/POST/*`,
+      resource: webSocketApi.apiId,
+    })
+
+    lambda.addToRolePolicy(
+      new PolicyStatement({
+        actions: ['execute-api:ManageConnections'],
+        resources: [connectionsArns],
+      }),
+    )
 
     new CfnOutput(this, 'WebSocketApiUrl', {
       value: webSocketApi.apiEndpoint,
