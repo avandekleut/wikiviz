@@ -21,13 +21,13 @@ export async function wikipediaSummaryAndLinks(
 
   const summary = $('div.mw-parser-output p').first().text().trim()
 
-  const wikiLinks = $('div.mw-parser-output a[href^="/wiki/"]')
+  const childArticles = $('div.mw-parser-output a[href^="/wiki/"]')
     .toArray()
     .map((elem) => $(elem).attr('href'))
     .filter((href): href is string => href !== undefined)
     .filter((href) => !href.includes(':')) // talk pages, categories
     .map((href) => new URL(href, 'https://en.wikipedia.org').pathname) // remove anchors, etc
-    .map((href) => href.replace('/wiki/', ''))
+    .map((href) => href.replace('/wiki/', '')) // get title from url path /wiki/<title>
 
-  return { wikid: title, summary, children: wikiLinks }
+  return { wikid: title, summary, children: childArticles }
 }

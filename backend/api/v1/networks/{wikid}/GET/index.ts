@@ -1,4 +1,5 @@
-import { Crawler } from '../../../../../utils/crawler'
+import { Crawler, CrawlerCallback } from '../../../../../utils/crawler'
+import { Graph } from '../../../../../utils/graph'
 import {
   createHandlerContext,
   HttpEventHandler,
@@ -10,10 +11,23 @@ const eventHandler: HttpEventHandler<{}> = async (event: HttpEvent) => {
   const wikid = event.getPathParameter('wikid')
   const depth = event.getQueryStringParameter<number>('depth')
 
+  const graph = new Graph()
   const crawler = new Crawler()
 
   try {
-    await crawler.crawl(wikid, depth)
+    const callback: CrawlerCallback = (pageData) => {
+      graph.nodes.add(graph.pageDataToNode(pageData))
+
+      for (const child of pageData.children) {
+        graph.edges.add({
+          from: wikid,
+          to: child,
+          id: `${wikid} -> ${child}`,
+        })
+      }
+    }
+
+    await crawler.crawl(wikid, { callback, depth })
 
     LoggerFactory.logger.info(`Finished crawling ${wikid} with depth ${depth}`)
   } catch (err) {
@@ -25,7 +39,7 @@ const eventHandler: HttpEventHandler<{}> = async (event: HttpEvent) => {
   }
 
   return {
-    graph: crawler.graph,
+    graph,
   }
 }
 
