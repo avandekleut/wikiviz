@@ -3,7 +3,7 @@ import wiki from 'wikijs'
 export interface PageData {
   wikid: string
   summary: string
-  mainImage: string
+  mainImage?: string
   links: string[]
 }
 
