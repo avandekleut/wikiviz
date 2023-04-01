@@ -17,12 +17,13 @@ export const handler: APIGatewayProxyWebsocketHandlerV2 = async (
   })
 
   try {
-    // Send multiple messages back to the client
-    for (let i = 1; i <= 10; i++) {
-      // Construct the message payload
+    const callback = async (iter: number) => {
       const payload = {
-        message: `Message ${i}`,
+        message: `Message ${iter}`,
       }
+
+      // Sleep for a short time to simulate processing
+      await new Promise((resolve) => setTimeout(resolve, 1000))
 
       // Send the message to the client
       await apiGatewayManagementApi
@@ -31,9 +32,11 @@ export const handler: APIGatewayProxyWebsocketHandlerV2 = async (
           Data: JSON.stringify(payload),
         })
         .promise()
+    }
 
-      // Sleep for a short time to simulate processing
-      await new Promise((resolve) => setTimeout(resolve, 1000))
+    // Send multiple messages back to the client
+    for (let i = 1; i <= 10; i++) {
+      await callback(i)
     }
 
     // Return a successful response to the client
