@@ -9,7 +9,8 @@ import { LoggerFactory } from '../../../../../utils/logger'
 
 const eventHandler: HttpEventHandler<{}> = async (event: HttpEvent) => {
   const wikid = event.getPathParameter('wikid')
-  const depth = event.getQueryStringParameter<number>('depth')
+  const depth = event.getQueryStringParameter('depth', 2)
+  const branchingFactor = event.getQueryStringParameter('branching_factor', 4)
 
   const graph = new Graph()
   const crawler = new Crawler()
@@ -27,7 +28,7 @@ const eventHandler: HttpEventHandler<{}> = async (event: HttpEvent) => {
       }
     }
 
-    await crawler.crawl(wikid, { callback, depth })
+    await crawler.crawl(wikid, { callback, depth, branchingFactor })
 
     LoggerFactory.logger.info(`Finished crawling ${wikid} with depth ${depth}`)
   } catch (err) {

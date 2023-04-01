@@ -2,9 +2,8 @@
   "name": "cdk",
   "version": "0.1.0",
   "bin": {
-    "cdk": "bin/app.js"
+    "cdk": "bin/app.ts"
   },
-  "type": "module",
   "scripts": {
     "build": "tsc",
     "watch": "tsc -w",
