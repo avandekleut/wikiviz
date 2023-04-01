@@ -4,6 +4,7 @@
   "bin": {
     "cdk": "bin/app.js"
   },
+  "type": "module",
   "scripts": {
     "build": "tsc",
     "watch": "tsc -w",
@@ -15,6 +16,7 @@
     "@types/aws-lambda": "^8.10.112",
     "@types/jest": "^27.5.2",
     "@types/node": "10.17.27",
+    "@types/node-fetch": "^2.6.3",
     "@types/prettier": "2.6.0",
     "@types/vis": "^4.21.24",
     "@types/ws": "^8.5.4",
@@ -36,8 +38,10 @@
     "@aws-sdk/client-sqs": "^3.292.0",
     "aws-cdk-lib": "^2.69.0",
     "aws-sdk": "^2.1347.0",
+    "cheerio": "^1.0.0-rc.12",
     "constructs": "^10.0.0",
     "module": "^1.2.5",
+    "node-fetch": "^2.6.6",
     "pino": "^8.11.0",
     "source-map-support": "^0.5.21",
     "vis": "^4.21.0-EOL",
