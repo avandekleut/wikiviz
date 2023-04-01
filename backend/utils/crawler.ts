@@ -1,15 +1,13 @@
 import * as vis from 'vis'
 import { Graph } from './graph'
-import { getPageData, PageData } from './pagedata'
+import { PageData } from './pagedata'
 import { wikipediaSummaryAndLinks } from './wiki'
 
 export type CrawlerCallback = (graph: Graph) => void | Promise<void>
 
-type CrawlerStrategy = 'wikijs' | 'cheerio'
-
 export class Crawler {
   public readonly graph: Graph
-  constructor(private readonly strategy: CrawlerStrategy = 'cheerio') {
+  constructor() {
     this.graph = new Graph()
   }
 
@@ -23,16 +21,8 @@ export class Crawler {
       return
     }
 
-    console.time('pageData')
-    const pageData =
-      this.strategy === 'wikijs'
-        ? await getPageData(wikid)
-        : await wikipediaSummaryAndLinks({
-            title: wikid,
-            numLinks: branchingFactor,
-          })
+    const pageData = await wikipediaSummaryAndLinks(wikid)
     console.log(pageData)
-    console.timeEnd('pageData')
 
     this.graph.nodes.add(this.pageDataToNode(pageData))
 
@@ -40,11 +30,15 @@ export class Crawler {
       callback(this.graph)
     }
 
-    const links = pageData.links
-    for (const link of links.slice(0, branchingFactor)) {
-      this.graph.edges.add({ from: wikid, to: link, id: `${wikid} -> ${link}` })
+    const children = pageData.children
+    for (const child of children.slice(0, branchingFactor)) {
+      this.graph.edges.add({
+        from: wikid,
+        to: child,
+        id: `${wikid} -> ${child}`,
+      })
 
-      await this.crawl(link, depth - 1, branchingFactor, callback)
+      await this.crawl(child, depth - 1, branchingFactor, callback)
     }
   }
 
