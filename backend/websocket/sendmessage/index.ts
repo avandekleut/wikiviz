@@ -1,11 +1,16 @@
 import { APIGatewayProxyWebsocketHandlerV2 } from 'aws-lambda'
 import { ApiGatewayManagementApi } from 'aws-sdk'
+import { Crawler, CrawlerCallback } from '../../utils/crawl'
+import { get } from '../../utils/get-with-default'
+import { LoggerFactory } from '../../utils/logger'
 import { CORS_HEADERS } from '../cors'
 
 export const handler: APIGatewayProxyWebsocketHandlerV2 = async (
   event,
   context,
 ) => {
+  LoggerFactory.logger.debug({ event, context })
+
   // Extract the WebSocket connection ID from the event
   const endpoint =
     event.requestContext.domainName + '/' + event.requestContext.stage
@@ -17,24 +22,24 @@ export const handler: APIGatewayProxyWebsocketHandlerV2 = async (
   })
 
   try {
-    // Send multiple messages back to the client
-    for (let i = 1; i <= 10; i++) {
-      // Construct the message payload
-      const payload = {
-        message: `Message ${i}`,
-      }
+    const body = JSON.parse(event.body ?? '{}')
+    const wikid = body['wikid']
+    const depth = get(body['depth'], 3)
 
-      // Send the message to the client
+    const crawler = new Crawler()
+
+    const callback: CrawlerCallback = async (graph) => {
       await apiGatewayManagementApi
         .postToConnection({
           ConnectionId: connectionId,
-          Data: JSON.stringify(payload),
+          Data: JSON.stringify(graph),
         })
         .promise()
-
-      // Sleep for a short time to simulate processing
-      await new Promise((resolve) => setTimeout(resolve, 1000))
     }
+
+    await crawler.crawl(wikid, depth, callback)
+
+    LoggerFactory.logger.info(`Finished crawling ${wikid} with depth ${depth}`)
 
     // Return a successful response to the client
     return {
