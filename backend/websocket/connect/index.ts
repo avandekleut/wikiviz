@@ -2,6 +2,7 @@ import {
   APIGatewayProxyResultV2,
   APIGatewayProxyWebsocketEventV2,
 } from 'aws-lambda'
+import { CORS_HEADERS } from '../cors'
 
 export async function handler(
   event: APIGatewayProxyWebsocketEventV2,
@@ -12,5 +13,6 @@ export async function handler(
   return {
     statusCode: 200,
     body: 'Connected',
+    headers: CORS_HEADERS,
   }
 }

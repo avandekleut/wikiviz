@@ -1,5 +1,6 @@
 import { APIGatewayProxyWebsocketHandlerV2 } from 'aws-lambda'
 import { ApiGatewayManagementApi } from 'aws-sdk'
+import { CORS_HEADERS } from '../cors'
 
 export const handler: APIGatewayProxyWebsocketHandlerV2 = async (
   event,
@@ -39,6 +40,7 @@ export const handler: APIGatewayProxyWebsocketHandlerV2 = async (
     return {
       statusCode: 200,
       body: 'Messages sent successfully.',
+      headers: CORS_HEADERS,
     }
   } catch (error) {
     console.error(`Failed to send messages to client: ${error}`)
@@ -47,6 +49,7 @@ export const handler: APIGatewayProxyWebsocketHandlerV2 = async (
     return {
       statusCode: 500,
       body: 'Failed to send messages to client.',
+      headers: CORS_HEADERS,
     }
   }
 }
