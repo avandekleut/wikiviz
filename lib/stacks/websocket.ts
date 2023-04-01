@@ -6,7 +6,7 @@ import { AttributeType, Table } from 'aws-cdk-lib/aws-dynamodb'
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs'
 import { Construct } from 'constructs'
 
-import { CfnOutput } from 'aws-cdk-lib'
+import { CfnOutput, Duration } from 'aws-cdk-lib'
 import { PolicyStatement } from 'aws-cdk-lib/aws-iam'
 import * as path from 'path'
 
@@ -26,6 +26,7 @@ export class WebSocketApiStack extends cdk.Stack {
 
     const sendMessageLambda = new NodejsFunction(this, 'SendMessageLambda', {
       entry: path.join(websocketEntry, 'sendmessage', 'index.ts'),
+      timeout: Duration.seconds(30),
     })
 
     table.grantFullAccess(sendMessageLambda)
