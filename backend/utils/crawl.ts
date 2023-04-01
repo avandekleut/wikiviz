@@ -2,19 +2,13 @@ import * as vis from 'vis'
 import { Graph } from './graph'
 import { getPageData, PageData } from './pagedata'
 
-export type CrawlerCallback = (graph: Graph) => void | Promise<void>
-
 export class Crawler {
   public readonly graph: Graph
   constructor() {
     this.graph = new Graph()
   }
 
-  async crawl(
-    wikid: string,
-    depth: number,
-    callback?: CrawlerCallback,
-  ): Promise<void> {
+  async crawl(wikid: string, depth: number): Promise<void> {
     if (depth === 0) {
       return
     }
@@ -23,10 +17,6 @@ export class Crawler {
     console.log(`Page data for "${wikid}":`, pageData)
 
     this.graph.nodes.add(this.pageDataToNode(pageData))
-
-    if (callback) {
-      await callback(this.graph)
-    }
 
     const links = pageData.links
     for (const link of links) {
