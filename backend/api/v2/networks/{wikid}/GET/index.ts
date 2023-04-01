@@ -6,7 +6,6 @@ export const handler: APIGatewayProxyWebsocketHandlerV2 = async (
   context,
 ) => {
   // Extract the WebSocket connection ID from the event
-
   const endpoint =
     event.requestContext.domainName + '/' + event.requestContext.stage
   const connectionId = event.requestContext.connectionId
@@ -28,7 +27,7 @@ export const handler: APIGatewayProxyWebsocketHandlerV2 = async (
       await apiGatewayManagementApi
         .postToConnection({
           ConnectionId: connectionId,
-          Data: JSON.stringify({ message: 'Hello, client!' }),
+          Data: JSON.stringify(payload),
         })
         .promise()
 
