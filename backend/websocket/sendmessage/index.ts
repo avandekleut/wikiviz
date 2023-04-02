@@ -1,7 +1,6 @@
 import { APIGatewayProxyWebsocketHandlerV2 } from 'aws-lambda'
 import { ApiGatewayManagementApi } from 'aws-sdk'
 import { Crawler, CrawlerCallback } from '../../utils/crawler'
-import { Graph } from '../../utils/graph'
 import { HttpError } from '../../utils/http-error'
 import { LoggerFactory } from '../../utils/logger'
 import { CORS_HEADERS } from '../cors'
@@ -51,13 +50,11 @@ export const handler: APIGatewayProxyWebsocketHandlerV2 = async (
     throw new HttpError(400, `Body missing required property: wikid.`)
   }
 
-  const graph = new Graph()
+  // const graph = new Graph()
   const crawler = new Crawler()
 
   try {
     const callback: CrawlerCallback = async (pageData) => {
-      graph.nodes.add(graph.pageDataToNode(pageData))
-
       await apiGatewayManagementApi
         .postToConnection({
           ConnectionId: connectionId,
@@ -65,13 +62,15 @@ export const handler: APIGatewayProxyWebsocketHandlerV2 = async (
         })
         .promise()
 
-      for (const child of pageData.children) {
-        graph.edges.add({
-          from: wikid,
-          to: child,
-          id: `${wikid} -> ${child}`,
-        })
-      }
+      // graph.nodes.add(graph.pageDataToNode(pageData))
+
+      // for (const child of pageData.children) {
+      //   graph.edges.add({
+      //     from: wikid,
+      //     to: child,
+      //     id: `${wikid} -> ${child}`,
+      //   })
+      // }
     }
 
     await crawler.crawl(wikid, { callback, depth, branchingFactor })
