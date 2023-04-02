@@ -26,7 +26,7 @@ export class WebSocketApiStack extends cdk.Stack {
 
     const sendMessageLambda = new NodejsFunction(this, 'SendMessageLambda', {
       entry: path.join(websocketEntry, 'sendmessage', 'index.ts'),
-      timeout: Duration.seconds(30),
+      timeout: Duration.seconds(10),
     })
 
     table.grantFullAccess(sendMessageLambda)
