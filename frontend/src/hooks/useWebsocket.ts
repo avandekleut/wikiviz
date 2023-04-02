@@ -1,7 +1,11 @@
 import { useEffect, useState } from 'react'
 
+type UseWebSocketProps = {
+  url: string
+}
+
 // TODO: Create a graph hook and make the events of the websocket params of the prop
-export const useWebSocket = (url: string) => {
+export const useWebSocket = ({ url }: UseWebSocketProps) => {
   const [socket, setSocket] = useState<WebSocket | null>(null)
   const [messages, setMessages] = useState<string[]>([])
 
