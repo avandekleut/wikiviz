@@ -1,5 +1,5 @@
 import * as vis from 'vis'
-import { PageData } from './pagedata'
+import { PageData } from '../../../backend'
 
 export class Graph {
   constructor(

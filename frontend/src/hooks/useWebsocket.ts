@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 
+// TODO: Create a graph hook and make the events of the websocket params of the prop
 export const useWebSocket = (url: string) => {
   const [socket, setSocket] = useState<WebSocket | null>(null)
   const [messages, setMessages] = useState<string[]>([])
@@ -13,6 +14,7 @@ export const useWebSocket = (url: string) => {
 
     ws.onmessage = (event) => {
       console.log('Received message:', event.data, new Date().valueOf())
+
       setMessages((prevMessages) => [...prevMessages, event.data])
     }
 
