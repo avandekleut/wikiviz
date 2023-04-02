@@ -15,7 +15,6 @@ export interface UseWebSocketProps {
 
 export const useWebSocket = ({ url, handlers }: UseWebSocketProps) => {
   const [socket, setSocket] = useState<WebSocket | null>(null)
-  const [messages, setMessages] = useState<string[]>([])
 
   useEffect(() => {
     const ws = new WebSocket(url)
@@ -27,11 +26,6 @@ export const useWebSocket = ({ url, handlers }: UseWebSocketProps) => {
 
     ws.onmessage = (event) => {
       console.log('Received message:', event.data, new Date().valueOf())
-
-      setMessages((prevMessages) => [
-        ...prevMessages,
-        JSON.stringify(JSON.parse(event.data), undefined, 2),
-      ])
       handlers?.onMessage?.(event)
     }
 
@@ -66,5 +60,5 @@ export const useWebSocket = ({ url, handlers }: UseWebSocketProps) => {
     }
   }
 
-  return { messages, send }
+  return { send }
 }
