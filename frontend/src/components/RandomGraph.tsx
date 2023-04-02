@@ -1,7 +1,6 @@
 import React from 'react'
 import { useVisNetwork } from '../hooks/useVisNetwork'
 
-
 const Graph: React.FC = () => {
   const { containerRef, nodesRef, edgesRef } = useVisNetwork({
     nodes: [],

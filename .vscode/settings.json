@@ -4,6 +4,7 @@
     // put this in your settings object
     "editor.codeActionsOnSave": {
         "source.organizeImports": true,
+        "source.fixAll.eslint": true
     },
     "[python]": {
         "editor.formatOnType": true
@@ -12,6 +13,17 @@
         "cdk.out"
     ],
     "python.formatting.provider": "black",
-    "emmet.showAbbreviationSuggestions": false
-
+    "emmet.showAbbreviationSuggestions": false,
+    "[typescriptreact]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "editor.formatOnSave": true
+    },
+    "[javascriptreact]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "editor.formatOnSave": true
+    },
+    "[json]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "editor.formatOnSave": true
+    },
 }
