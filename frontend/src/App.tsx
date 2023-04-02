@@ -1,14 +1,14 @@
-import './App.css';
-import RandomGraph from './components/RandomGraph';
+import './App.css'
+import WebsocketGraph from './components/WebsocketGraph'
 
 function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <RandomGraph/>
+        <WebsocketGraph />
       </header>
     </div>
-  );
+  )
 }
 
-export default App;
+export default App
