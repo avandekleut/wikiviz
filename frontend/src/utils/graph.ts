@@ -7,7 +7,7 @@ export class Graph {
     readonly edges = new vis.DataSet<vis.Edge>(),
   ) {}
 
-  pageDataToNode(pageData: PageData): vis.Node {
+  static pageDataToNode(pageData: PageData): vis.Node {
     return {
       id: pageData.wikid,
       label: `

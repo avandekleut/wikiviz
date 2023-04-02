@@ -11,5 +11,7 @@
     "python.analysis.exclude": [
         "cdk.out"
     ],
-    "python.formatting.provider": "black"
+    "python.formatting.provider": "black",
+    "emmet.showAbbreviationSuggestions": false
+
 }

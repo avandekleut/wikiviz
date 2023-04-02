@@ -1,19 +1,18 @@
 import { useEffect, useState } from 'react'
 import { CrawlMessage } from '../../../backend'
 
-interface WebSocketHandlers {
+export interface WebSocketHandlers {
   onOpen?: () => void
   onClose?: () => void
   onError?: (event: Event) => void
   onMessage?: (event: MessageEvent) => void
 }
 
-interface UseWebSocketProps {
+export interface UseWebSocketProps {
   url: string
   handlers?: WebSocketHandlers
 }
 
-// TODO: Create a graph hook and make the events of the websocket params of the prop
 export const useWebSocket = ({ url, handlers }: UseWebSocketProps) => {
   const [socket, setSocket] = useState<WebSocket | null>(null)
   const [messages, setMessages] = useState<string[]>([])
@@ -56,7 +55,7 @@ export const useWebSocket = ({ url, handlers }: UseWebSocketProps) => {
         ws.close()
       }
     }
-  }, [url])
+  }, [url, handlers])
 
   const send = (message: CrawlMessage) => {
     if (socket) {
