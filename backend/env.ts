@@ -1,0 +1,4 @@
+export const config = {
+  CRAWL_DEFAULT_DEPTH: 3,
+  CRAWL_DEFAULT_BRANCHING_FACTOR: 4,
+}

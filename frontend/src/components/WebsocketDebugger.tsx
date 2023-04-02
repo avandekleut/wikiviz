@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { config } from '../env';
 import { useWebSocket } from '../hooks/useWebsocket';
 
 
@@ -8,7 +9,12 @@ export const WebsocketDebugger = () => {
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    console.log("sendmessage", inputValue)
+
+    console.log("sendmessage", {
+      wikid: inputValue,
+      branchingFactor: config.CRAWL_DEFAULT_BRANCHING_FACTOR,
+      depth: config.CRAWL_DEFAULT_DEPTH
+    })
     send("sendmessage", inputValue);
     setInputValue('');
   };

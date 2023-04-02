@@ -1,3 +1,4 @@
+import { config } from '../env'
 import { Crawler } from './crawler'
 
 jest.setTimeout(30_000)
@@ -7,8 +8,8 @@ describe('crawler', () => {
     const crawler = new Crawler()
     console.log('starting crawler')
     await crawler.crawl('Functor', {
-      depth: 2,
-      branchingFactor: 4,
+      depth: config.CRAWL_DEFAULT_DEPTH,
+      branchingFactor: config.CRAWL_DEFAULT_BRANCHING_FACTOR,
       callback: (graph) => console.log(graph),
     })
     console.log('crawler done')
