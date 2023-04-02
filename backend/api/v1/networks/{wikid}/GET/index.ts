@@ -1,5 +1,4 @@
 import { Crawler, CrawlerCallback } from '../../../../../utils/crawler'
-import { Graph } from '../../../../../utils/graph'
 import {
   createHandlerContext,
   HttpEventHandler,
@@ -12,15 +11,15 @@ const eventHandler: HttpEventHandler<{}> = async (event: HttpEvent) => {
   const depth = event.getQueryStringParameter('depth', 2)
   const branchingFactor = event.getQueryStringParameter('branching_factor', 4)
 
-  const graph = new Graph()
+  const graph: { nodes: any[]; edges: any[] } = { nodes: [], edges: [] }
   const crawler = new Crawler()
 
   try {
     const callback: CrawlerCallback = (pageData) => {
-      graph.nodes.add(graph.pageDataToNode(pageData))
+      graph.nodes.push(pageData)
 
       for (const child of pageData.children) {
-        graph.edges.add({
+        graph.edges.push({
           from: wikid,
           to: child,
           id: `${wikid} -> ${child}`,
