@@ -13,15 +13,12 @@ export type CrawlParams = {
   branchingFactor: number
 }
 
-// export type CrawlRequest = OptionalProperties<
-//   CrawlParams,
-//   'depth' | 'branchingFactor'
-// >
-
-type WebSocketMessage<T = string> = {
+export type WebSocketMessage<T> = {
   action: 'sendmessage' // TODO: pull this out into a type or const
-  data: T
+  data: T // must validate all properties
 }
+
+export type CrawlMessage = WebSocketMessage<CrawlParams>
 
 export const handler: APIGatewayProxyWebsocketHandlerV2 = async (
   event,
@@ -38,16 +35,19 @@ export const handler: APIGatewayProxyWebsocketHandlerV2 = async (
     endpoint: endpoint,
   })
 
+  // TODO: Extract schema validation
   if (event.body === undefined) {
-    throw new HttpError(400, `Missing body.`)
+    throw new HttpError(400, `missing: body.`)
   }
-  const { data }: WebSocketMessage<Partial<CrawlParams>> = JSON.parse(
-    event.body,
-  )
+  const { data }: Partial<CrawlMessage> = JSON.parse(event.body)
+
+  if (data === undefined) {
+    throw new HttpError(400, `body missing required property: data`)
+  }
 
   const { wikid, depth, branchingFactor } = data
   if (wikid === undefined) {
-    throw new HttpError(400, `Body missing required property: wikid.`)
+    throw new HttpError(400, `data missing required property: wikid`)
   }
 
   // const graph = new Graph()

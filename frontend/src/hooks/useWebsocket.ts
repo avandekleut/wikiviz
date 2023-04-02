@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { CrawlMessage } from '../../../backend'
 
 type UseWebSocketProps = {
   url: string
@@ -8,6 +9,8 @@ type UseWebSocketProps = {
 export const useWebSocket = ({ url }: UseWebSocketProps) => {
   const [socket, setSocket] = useState<WebSocket | null>(null)
   const [messages, setMessages] = useState<string[]>([])
+
+  console.log('rendering websocket', { socket })
 
   useEffect(() => {
     const ws = new WebSocket(url)
@@ -43,9 +46,9 @@ export const useWebSocket = ({ url }: UseWebSocketProps) => {
     }
   }, [url])
 
-  const send = (action: string, message: unknown) => {
+  const send = (message: CrawlMessage) => {
     if (socket) {
-      socket.send(JSON.stringify({ action: action, data: message }))
+      socket.send(JSON.stringify(message))
     } else {
       console.error('WebSocket not connected')
     }

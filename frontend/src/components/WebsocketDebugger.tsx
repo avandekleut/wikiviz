@@ -16,11 +16,11 @@ export const WebsocketDebugger = () => {
       depth: config.CRAWL_DEFAULT_DEPTH
     })
     
-    send("sendmessage", {
+    send({action: "sendmessage", data: {
       wikid: inputValue,
       branchingFactor: config.CRAWL_DEFAULT_BRANCHING_FACTOR,
       depth: config.CRAWL_DEFAULT_DEPTH
-    });
+    }});
     
     setInputValue('');
   };
