@@ -27,19 +27,19 @@ export const WebsocketDebugger = () => {
 
   return (
     <div>
-      <ul>
-        {messages.map((message, index) => (
-          <li key={index}>{message}</li>
-        ))}
-      </ul>
       <form onSubmit={handleSubmit}>
         <input
           type="text"
           value={inputValue}
           onChange={(event) => setInputValue(event.target.value)}
-        />
+          />
         <button type="submit">Send</button>
       </form>
+          <ul>
+            {messages.reverse().map((message, index) => (
+              <li key={index}>{message}</li>
+            ))}
+          </ul>
     </div>
   );
 };
