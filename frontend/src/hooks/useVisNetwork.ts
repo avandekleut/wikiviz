@@ -5,8 +5,7 @@ type Props = {
   nodes: Node[]
   edges: Edge[]
 }
-
-const useVisNetwork = ({ nodes, edges }: Props) => {
+export const useVisNetwork = ({ nodes, edges }: Props) => {
   const containerRef = useRef<HTMLDivElement>(null)
   const networkRef = useRef<Network>()
   const nodesRef = useRef<DataSet<Node>>(new DataSet<Node>())
@@ -23,17 +22,12 @@ const useVisNetwork = ({ nodes, edges }: Props) => {
       nodesRef.current.add(nodes)
       edgesRef.current.add(edges)
     }
+    return () => {
+      if (networkRef.current) {
+        networkRef.current.destroy()
+      }
+    }
   }, [containerRef, nodes, edges])
 
-  const addNode = (node: Node) => {
-    nodesRef.current.add(node)
-  }
-
-  const addEdge = (edge: Edge) => {
-    edgesRef.current.add(edge)
-  }
-
-  return { containerRef, addNode, addEdge, nodesRef, edgesRef }
+  return { containerRef, networkRef, nodesRef, edgesRef }
 }
-
-export default useVisNetwork
