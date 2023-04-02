@@ -29,8 +29,7 @@ const Graph: React.FC = () => {
   return (
     <div>
       <div ref={containerRef} style={{ width: '800px', height: '600px' }} />
-
-      <div style={{ marginTop: '16px' }}>
+      <div>
         <button onClick={handleAddNode}>Add Node</button>
         <button onClick={handleAddEdge}>Add Edge</button>
       </div>
