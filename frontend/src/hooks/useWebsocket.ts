@@ -53,7 +53,7 @@ export const useWebSocket = ({ url, handlers }: UseWebSocketProps) => {
   }, [url, handlers])
 
   const send = (message: CrawlMessage) => {
-    if (socket) {
+    if (socket && socket.readyState === WebSocket.OPEN) {
       socket.send(JSON.stringify(message))
     } else {
       console.error('WebSocket not connected')

@@ -14,7 +14,23 @@ const Graph: React.FC = () => {
 
   const onMessage = useCallback<NonNullable<WebSocketHandlers['onMessage']>>(
     (event) => {
-      const { wikid, children }: PageData = JSON.parse(event.data)
+      try {
+        const data = JSON.parse(event.data)
+      } catch (err) {
+        console.warn(`Could not parse event.data: ${event.data}`)
+      }
+
+      const { wikid, children }: Partial<PageData> = JSON.parse(event.data)
+      if (wikid === undefined) {
+        console.warn(`wikid undefined`)
+        return
+      }
+
+      if (children === undefined) {
+        console.warn(`children undefined`)
+        return
+      }
+
       console.log('onMessage', { wikid, nodesRef })
       try {
         nodesRef.current.add({ id: wikid, label: wikid })
