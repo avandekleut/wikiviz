@@ -25,6 +25,7 @@ export const handler: APIGatewayProxyWebsocketHandlerV2 = async (
   event,
   context,
 ) => {
+  LoggerFactory.logger.debug({ event, context })
   // Extract the WebSocket connection ID from the event
   const endpoint =
     event.requestContext.domainName + '/' + event.requestContext.stage
@@ -38,7 +39,10 @@ export const handler: APIGatewayProxyWebsocketHandlerV2 = async (
   if (event.body === undefined) {
     throw new HttpError(400, `Missing body.`)
   }
-  const data: CrawlParams = JSON.parse(event.body)
+  const data: Partial<CrawlParams> = JSON.parse(event.body)
+  if (data['wikid'] === undefined) {
+    throw new HttpError(400, `Body missing required property: wikid.`)
+  }
   const wikid = data['wikid']
   const depth = data['depth']
   const branchingFactor = data['branchingFactor']

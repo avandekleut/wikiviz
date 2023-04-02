@@ -8,6 +8,7 @@ export const WebsocketDebugger = () => {
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    console.log("sendmessage", inputValue)
     send("sendmessage", inputValue);
     setInputValue('');
   };
