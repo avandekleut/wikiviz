@@ -21,7 +21,10 @@ const Graph: React.FC = () => {
       } catch (err) {
         console.warn(err)
       }
-      for (const child of children) {
+      for (const child of children.slice(
+        0,
+        config.CRAWL_DEFAULT_BRANCHING_FACTOR,
+      )) {
         try {
           nodesRef.current.add({ id: child, label: child })
         } catch (err) {
