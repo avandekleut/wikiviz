@@ -7,7 +7,7 @@ import { useWebSocket, WebSocketHandlers } from '../hooks/useWebsocket'
 const Graph: React.FC = () => {
   const [inputValue, setInputValue] = useState('')
 
-  const { containerRef, networkRef, nodesRef, edgesRef } = useVisNetwork({
+  const { containerRef, nodesRef, edgesRef } = useVisNetwork({
     nodes: [],
     edges: [],
   })
@@ -15,7 +15,7 @@ const Graph: React.FC = () => {
   const onMessage = useCallback<NonNullable<WebSocketHandlers['onMessage']>>(
     (event) => {
       const { wikid, children }: PageData = JSON.parse(event.data)
-      console.log('onMessage', { wikid, nodesRef, networkRef })
+      console.log('onMessage', { wikid, nodesRef })
       try {
         nodesRef.current.add({ id: wikid, label: wikid })
       } catch (err) {
@@ -37,10 +37,8 @@ const Graph: React.FC = () => {
           console.warn(err)
         }
       }
-      // networkRef.current?.fit()
-      // networkRef.current?.redraw()
     },
-    [networkRef, nodesRef],
+    [nodesRef, edgesRef],
   )
 
   const handlers = useMemo<WebSocketHandlers>(() => {
@@ -77,7 +75,6 @@ const Graph: React.FC = () => {
 
   return (
     <div>
-      <div ref={containerRef} style={{ width: '800px', height: '600px' }} />
       <form onSubmit={handleSubmit}>
         <input
           type="text"
@@ -86,11 +83,7 @@ const Graph: React.FC = () => {
         />
         <button type="submit">Send</button>
       </form>
-      {/* <ul>
-        {messages.reverse().map((message, index) => (
-          <li key={index}>{message}</li>
-        ))}
-      </ul> */}
+      <div ref={containerRef} style={{ width: '800px', height: '600px' }} />
     </div>
   )
 }
