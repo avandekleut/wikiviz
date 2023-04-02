@@ -37,7 +37,7 @@ export const useWebSocket = (url: string) => {
     }
   }, [url])
 
-  const send = (action: string, message: string) => {
+  const send = (action: string, message: unknown) => {
     if (socket) {
       socket.send(JSON.stringify({ action: action, data: message }))
     } else {

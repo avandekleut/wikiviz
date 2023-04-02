@@ -6,20 +6,23 @@ import { HttpError } from '../../utils/http-error'
 import { LoggerFactory } from '../../utils/logger'
 import { CORS_HEADERS } from '../cors'
 
-type OptionalProperties<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>
+// type OptionalProperties<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>
 
-export type CrawlRequest = {
+export type CrawlParams = {
   wikid: string
   depth: number
   branchingFactor: number
 }
 
-export type CrawlParams = OptionalProperties<
-  CrawlRequest,
-  'depth' | 'branchingFactor'
->
+// export type CrawlRequest = OptionalProperties<
+//   CrawlParams,
+//   'depth' | 'branchingFactor'
+// >
 
-type Result = OptionalProperties<CrawlRequest, 'depth' | 'branchingFactor'>
+type WebSocketMessage<T = string> = {
+  action: 'sendmessage' // TODO: pull this out into a type or const
+  data: T
+}
 
 export const handler: APIGatewayProxyWebsocketHandlerV2 = async (
   event,
@@ -39,13 +42,14 @@ export const handler: APIGatewayProxyWebsocketHandlerV2 = async (
   if (event.body === undefined) {
     throw new HttpError(400, `Missing body.`)
   }
-  const data: Partial<CrawlParams> = JSON.parse(event.body)
-  if (data['wikid'] === undefined) {
+  const { data }: WebSocketMessage<Partial<CrawlParams>> = JSON.parse(
+    event.body,
+  )
+
+  const { wikid, depth, branchingFactor } = data
+  if (wikid === undefined) {
     throw new HttpError(400, `Body missing required property: wikid.`)
   }
-  const wikid = data['wikid']
-  const depth = data['depth']
-  const branchingFactor = data['branchingFactor']
 
   const graph = new Graph()
   const crawler = new Crawler()
