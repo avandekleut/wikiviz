@@ -1,4 +1,5 @@
-import React, { useState } from 'react'
+import React from 'react'
+import { CrawlParameters } from '../hooks/useCrawlParameters'
 
 interface SliderProps {
   label: string
@@ -27,18 +28,12 @@ function Slider({ label, value, min, max, step, onChange }: SliderProps) {
   )
 }
 
-function App() {
-  const [depth, setDepth] = useState<number>(1)
-  const [breadth, setBreadth] = useState<number>(1)
-
-  const handleDepthChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setDepth(parseInt(event.target.value))
-  }
-
-  const handleBreadthChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setBreadth(parseInt(event.target.value))
-  }
-
+function App({
+  depth,
+  breadth,
+  handleDepthChange,
+  handleBreadthChange,
+}: CrawlParameters) {
   return (
     <div>
       <Slider

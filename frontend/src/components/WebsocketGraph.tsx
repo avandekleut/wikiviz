@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo, useState } from 'react'
 import { Node } from 'vis'
 import { PageData } from '../../../backend'
-import { config } from '../env'
+import { CrawlParameters } from '../hooks/useCrawlParameters'
 import { useVisNetwork } from '../hooks/useVisNetwork'
 import { useWebSocket, WebSocketHandlers } from '../hooks/useWebsocket'
 
@@ -18,7 +18,8 @@ const decodeWikipediaTitle = (path: string): string => {
 function createVisNode(wikid: string): Node {
   return {
     id: wikid,
-    label: decodeWikipediaTitle(wikid),
+    // label: decodeWikipediaTitle(wikid),
+    label: wikid,
     shape: 'dot',
     font: {
       color: 'white',
@@ -28,7 +29,12 @@ function createVisNode(wikid: string): Node {
   }
 }
 
-const Graph: React.FC = () => {
+export interface GraphProps {
+  breadth: CrawlParameters['breadth']
+  depth: CrawlParameters['depth']
+}
+
+function Graph({ breadth, depth }: GraphProps) {
   const [inputValue, setInputValue] = useState('')
 
   const { containerRef, nodesRef, edgesRef, networkRef } = useVisNetwork({
@@ -63,10 +69,11 @@ const Graph: React.FC = () => {
       } catch (err) {
         console.warn(err)
       }
-      for (const child of children.slice(
-        0,
-        config.CRAWL_DEFAULT_BRANCHING_FACTOR,
-      )) {
+
+      // IMPORTANT: only add first `breadth` children to graph since more can be returned/
+      // TODO: Fix this behaviour server-side by cacheing all children but only returning
+      // those that were requested.
+      for (const child of children.slice(0, breadth)) {
         try {
           nodesRef.current.add(createVisNode(child))
           edgesRef.current.add({
@@ -98,16 +105,16 @@ const Graph: React.FC = () => {
 
     console.log('sendmessage', {
       wikid: inputValue,
-      branchingFactor: config.CRAWL_DEFAULT_BRANCHING_FACTOR,
-      depth: config.CRAWL_DEFAULT_DEPTH,
+      branchingFactor: breadth,
+      depth: depth,
     })
 
     send({
       action: 'sendmessage',
       data: {
         wikid: inputValue,
-        branchingFactor: config.CRAWL_DEFAULT_BRANCHING_FACTOR,
-        depth: config.CRAWL_DEFAULT_DEPTH,
+        branchingFactor: breadth,
+        depth: depth,
       },
     })
 

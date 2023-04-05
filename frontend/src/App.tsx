@@ -1,11 +1,11 @@
 import './App.css'
-import WebsocketGraph from './components/WebsocketGraph'
+import { SearchAndNetwork } from './pages/SearchAndNetwork'
 
 function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <WebsocketGraph />
+        <SearchAndNetwork />
       </header>
     </div>
   )
