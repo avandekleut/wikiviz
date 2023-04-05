@@ -36,16 +36,16 @@ export class Crawler {
         console.log({ wikid, msg: 'cache miss' })
         pageData = await getWikipediaSummaryAndLinks(wikid)
         visitedWikids[wikid] = pageData
+      }
 
-        if (callback) {
-          callback(pageData)
-        }
+      if (callback) {
+        callback(pageData)
+      }
 
-        if (depth > 0) {
-          const children = pageData.children.slice(0, branchingFactor)
-          for (const child of children) {
-            queue.push({ wikid: child, depth: depth - 1 })
-          }
+      if (depth > 0) {
+        const children = pageData.children.slice(0, branchingFactor)
+        for (const child of children) {
+          queue.push({ wikid: child, depth: depth - 1 })
         }
       }
     }
