@@ -50,7 +50,6 @@ export const handler: APIGatewayProxyWebsocketHandlerV2 = async (
     throw new HttpError(400, `data missing required property: wikid`)
   }
 
-  // const graph = new Graph()
   const crawler = new Crawler()
 
   try {
@@ -61,16 +60,6 @@ export const handler: APIGatewayProxyWebsocketHandlerV2 = async (
           Data: JSON.stringify(pageData),
         })
         .promise()
-
-      // graph.nodes.add(graph.pageDataToNode(pageData))
-
-      // for (const child of pageData.children) {
-      //   graph.edges.add({
-      //     from: wikid,
-      //     to: child,
-      //     id: `${wikid} -> ${child}`,
-      //   })
-      // }
     }
 
     await crawler.crawl(wikid, { callback, depth, branchingFactor })
