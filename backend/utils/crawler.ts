@@ -20,37 +20,34 @@ export class Crawler {
       callback = (data) => console.log(data),
     }: CrawlerParams = {},
   ): Promise<void> {
-    if (depth === 0) {
-      return
-    }
+    const queue: { wikid: string; depth: number }[] = []
 
-    let pageData: PageData
+    queue.push({ wikid, depth })
 
-    if (visitedWikids[wikid]) {
-      // fetch pageData from in-memory cache
-      console.log({ wikid, msg: 'cache hit' })
-      pageData = visitedWikids[wikid]
-      return
-    } else {
-      // fetch pageData fresh from wikipedia
-      console.log({ wikid, msg: 'cache hit' })
-      pageData = await getWikipediaSummaryAndLinks(wikid)
-    }
+    while (queue.length > 0) {
+      const { wikid, depth } = queue.shift()!
 
-    // run callback only for first visit
-    if (callback) {
-      callback(pageData)
-    }
+      let pageData: PageData
 
-    visitedWikids[wikid] = pageData
+      if (visitedWikids[wikid]) {
+        console.log({ wikid, msg: 'cache hit' })
+        pageData = visitedWikids[wikid]
+      } else {
+        console.log({ wikid, msg: 'cache miss' })
+        pageData = await getWikipediaSummaryAndLinks(wikid)
+        visitedWikids[wikid] = pageData
 
-    const children = pageData.children
-    for (const child of children.slice(0, branchingFactor)) {
-      await this.crawl(child, {
-        depth: depth - 1,
-        branchingFactor,
-        callback,
-      })
+        if (callback) {
+          callback(pageData)
+        }
+
+        if (depth > 0) {
+          const children = pageData.children.slice(0, branchingFactor)
+          for (const child of children) {
+            queue.push({ wikid: child, depth: depth - 1 })
+          }
+        }
+      }
     }
   }
 }
