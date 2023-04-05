@@ -34,12 +34,18 @@ export class Crawler {
         pageData = visitedWikids[wikid]
       } else {
         console.log({ wikid, msg: 'cache miss' })
-        pageData = await getWikipediaSummaryAndLinks(wikid)
-        visitedWikids[wikid] = pageData
+        try {
+          pageData = await getWikipediaSummaryAndLinks(wikid)
+          visitedWikids[wikid] = pageData
+        } catch (err) {
+          console.warn({ err, msg: 'could not fetch data from wikipedia' })
+          continue
+        }
       }
 
       if (callback) {
-        callback(pageData)
+        await callback(pageData)
+        console.log({ wikid, msg: 'callback executed' })
       }
 
       if (depth > 0) {
