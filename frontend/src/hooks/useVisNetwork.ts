@@ -14,11 +14,63 @@ export const useVisNetwork = ({ nodes, edges }: Props) => {
 
   useEffect(() => {
     if (containerRef.current && !networkRef.current) {
-      const options = {}
+      const options = {
+        configure: {
+          enabled: false,
+        },
+        edges: {
+          color: {
+            inherit: true,
+          },
+          smooth: {
+            enabled: true,
+            type: 'dynamic',
+          },
+        },
+        interaction: {
+          dragNodes: true,
+          hideEdgesOnDrag: false,
+          hideNodesOnDrag: false,
+        },
+        physics: {
+          enabled: true,
+          stabilization: {
+            enabled: true,
+            fit: true,
+            iterations: 1000,
+            onlyDynamicEdges: false,
+            updateInterval: 50,
+          },
+        },
+      }
       networkRef.current = new Network(
         containerRef.current,
         { nodes: nodesRef.current, edges: edgesRef.current },
-        options,
+        {
+          configure: {
+            enabled: false,
+          },
+          edges: {
+            color: {
+              inherit: true,
+            },
+          },
+          interaction: {
+            dragNodes: true,
+            hideEdgesOnDrag: false,
+            hideNodesOnDrag: false,
+          },
+          physics: {
+            enabled: true,
+            stabilization: {
+              enabled: true,
+              fit: true,
+              iterations: 1000,
+              onlyDynamicEdges: false,
+              updateInterval: 50,
+            },
+          },
+        },
       )
     }
 
