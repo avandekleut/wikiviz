@@ -1,4 +1,5 @@
 import React, { useCallback, useMemo, useState } from 'react'
+import { Node } from 'vis'
 import { PageData } from '../../../backend'
 import { config } from '../env'
 import { useVisNetwork } from '../hooks/useVisNetwork'
@@ -12,6 +13,14 @@ const decodeWikipediaTitle = (path: string): string => {
   const decodedTitle = decodeURIComponent(titleWithSpaces)
 
   return decodedTitle
+}
+
+function createVisNode(wikid: string): Node {
+  return {
+    id: wikid,
+    title: decodeWikipediaTitle(wikid),
+    // shape: 'dot',
+  }
 }
 
 const Graph: React.FC = () => {
@@ -44,7 +53,7 @@ const Graph: React.FC = () => {
       console.log('onMessage', { wikid, nodesRef })
 
       try {
-        nodesRef.current.add({ id: wikid, label: decodeWikipediaTitle(wikid) })
+        nodesRef.current.add(createVisNode(wikid))
       } catch (err) {
         console.warn(err)
       }
@@ -53,14 +62,7 @@ const Graph: React.FC = () => {
         config.CRAWL_DEFAULT_BRANCHING_FACTOR,
       )) {
         try {
-          nodesRef.current.add({
-            id: child,
-            label: decodeWikipediaTitle(child),
-          })
-        } catch (err) {
-          console.warn(err)
-        }
-        try {
+          nodesRef.current.add(createVisNode(child))
           edgesRef.current.add({
             from: wikid,
             to: child,
