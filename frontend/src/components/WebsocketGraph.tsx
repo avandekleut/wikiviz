@@ -18,15 +18,20 @@ const decodeWikipediaTitle = (path: string): string => {
 function createVisNode(wikid: string): Node {
   return {
     id: wikid,
-    title: decodeWikipediaTitle(wikid),
-    // shape: 'dot',
+    label: decodeWikipediaTitle(wikid),
+    shape: 'dot',
+    font: {
+      color: 'white',
+      strokeColor: 'white',
+    },
+    size: 6,
   }
 }
 
 const Graph: React.FC = () => {
   const [inputValue, setInputValue] = useState('')
 
-  const { containerRef, nodesRef, edgesRef } = useVisNetwork({
+  const { containerRef, nodesRef, edgesRef, networkRef } = useVisNetwork({
     nodes: [],
     edges: [],
   })
@@ -54,6 +59,7 @@ const Graph: React.FC = () => {
 
       try {
         nodesRef.current.add(createVisNode(wikid))
+        networkRef.current?.fit()
       } catch (err) {
         console.warn(err)
       }
