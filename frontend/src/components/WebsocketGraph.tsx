@@ -4,6 +4,16 @@ import { config } from '../env'
 import { useVisNetwork } from '../hooks/useVisNetwork'
 import { useWebSocket, WebSocketHandlers } from '../hooks/useWebsocket'
 
+const decodeWikipediaTitle = (path: string): string => {
+  // Replace underscores with spaces
+  const titleWithSpaces = path.replace(/_/g, ' ')
+
+  // URL-decode the title
+  const decodedTitle = decodeURIComponent(titleWithSpaces)
+
+  return decodedTitle
+}
+
 const Graph: React.FC = () => {
   const [inputValue, setInputValue] = useState('')
 
@@ -32,8 +42,9 @@ const Graph: React.FC = () => {
       }
 
       console.log('onMessage', { wikid, nodesRef })
+
       try {
-        nodesRef.current.add({ id: wikid, label: wikid })
+        nodesRef.current.add({ id: wikid, label: decodeWikipediaTitle(wikid) })
       } catch (err) {
         console.warn(err)
       }
@@ -42,7 +53,10 @@ const Graph: React.FC = () => {
         config.CRAWL_DEFAULT_BRANCHING_FACTOR,
       )) {
         try {
-          nodesRef.current.add({ id: child, label: child })
+          nodesRef.current.add({
+            id: child,
+            label: decodeWikipediaTitle(child),
+          })
         } catch (err) {
           console.warn(err)
         }
