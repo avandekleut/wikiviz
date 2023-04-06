@@ -1,15 +1,24 @@
+import { useState } from 'react'
 import Slider from '../components/Slider'
 import WebsocketGraph from '../components/WebsocketGraph'
-import WikipediaSearch from '../components/WIkipediaSearch'
+import WikipediaSearch from '../components/WikipediaSearch'
 import { useCrawlParameters } from '../hooks/useCrawlParameters'
 
 export function SearchAndNetwork() {
   const { depth, breadth, handleDepthChange, handleBreadthChange } =
     useCrawlParameters()
 
+  const [wikid, setWikid] = useState('')
+
   return (
     <>
-      <WikipediaSearch />
+      <WikipediaSearch
+        minimumSearchLength={3}
+        onResultSelect={(title) => {
+          console.log(`Selected ${title}`)
+          setWikid(title)
+        }}
+      />
       <Slider
         depth={depth}
         breadth={breadth}
