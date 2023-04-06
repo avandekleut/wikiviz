@@ -68,19 +68,25 @@ async function eventHandler(event: HttpEvent) {
     return cachedResults
   }
 
-  let searchResponse = await search(searchTerm)
+  const searchResponse = await search(searchTerm)
   LoggerFactory.logger.debug({ searchResponse })
 
-  // handle suggestions
-  if (searchResponse.query.searchInfo?.totalhits === 0) {
-    const suggestion =
-      searchResponse.query.searchInfo.suggestion ||
-      searchResponse.query.searchInfo.suggestionsnippet
-    if (suggestion) {
-      LoggerFactory.logger.debug({ msg: 'following suggestion', suggestion })
-      searchResponse = await search(suggestion)
-      LoggerFactory.logger.debug({ msg: 'followed response', searchResponse })
-    }
+  const suggestion =
+    searchResponse.query.searchInfo?.suggestion ||
+    searchResponse.query.searchInfo?.suggestionsnippet
+  if (suggestion) {
+    LoggerFactory.logger.debug({ msg: 'following suggestion', suggestion })
+    const suggestedSearchResponse = await search(suggestion)
+    searchResponse.query.search = [
+      ...searchResponse.query.search,
+      ...suggestedSearchResponse.query.search,
+    ]
+
+    LoggerFactory.logger.debug({
+      msg: 'followed response',
+      suggestedSearchResponse,
+      searchResponse,
+    })
   }
 
   const searchResults: SearchApiResponse = {
