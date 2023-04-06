@@ -59,7 +59,7 @@ export function createHandlerContext<T extends JsonObject>(
               'Cache-Control': `public, max-age=${cacheDurationSeconds}`,
               ETag: crypto
                 .createHash('sha256')
-                .update(JSON.stringify(httpEvent))
+                .update(JSON.stringify(result))
                 .digest('hex'),
             }
           : ({} as Record<string, string>)
