@@ -12,21 +12,27 @@ function WikipediaSearch(props: Props): JSX.Element {
   const [searchResults, setSearchResults] = useState<string[]>([])
 
   useEffect(() => {
-    if (searchTerm.length < props.minimumSearchLength) {
-      setSearchResults([])
-      return
+    async function fetchData() {
+      if (searchTerm.length < props.minimumSearchLength) {
+        setSearchResults([])
+        return
+      }
+
+      const url =
+        config.API_BASEURL +
+        `/api/v1/search?term=${encodeURIComponent(searchTerm)}`
+
+      try {
+        const response = await fetch(url)
+        const data = (await response.json()) as SearchApiResponse
+        console.log(data)
+        setSearchResults(data.results.map((result) => result.title))
+      } catch (error) {
+        console.log(error)
+      }
     }
 
-    const url =
-      config.API_BASEURL +
-      `/api/v1/search?term=${encodeURIComponent(searchTerm)}`
-
-    fetch(url)
-      .then((response) => response.json() as Promise<SearchApiResponse>)
-      .then((data) => {
-        setSearchResults(data.map((result) => result.title))
-      })
-      .catch((error) => console.log(error))
+    fetchData()
   }, [searchTerm, props.minimumSearchLength])
 
   function handleSearchTermChange(event: React.ChangeEvent<HTMLInputElement>) {
