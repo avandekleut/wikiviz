@@ -24,7 +24,7 @@ export type SearchApiResponse = SearchResult[]
 // Create a cache with a TTL of 1 hour
 const cache = new NodeCache({ stdTTL: 3600 })
 
-async function searchHandler(
+export async function handler(
   event: APIGatewayProxyEvent,
 ): Promise<APIGatewayProxyResult> {
   const searchTerm = event.queryStringParameters?.term
@@ -63,5 +63,3 @@ async function searchHandler(
     body: JSON.stringify(searchResults),
   }
 }
-
-export { searchHandler }
