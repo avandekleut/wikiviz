@@ -3,24 +3,26 @@ import { WikipediaSearchApiResponse } from '../../../backend/api/v1/search/GET'
 import { config } from '../env'
 
 interface Props {
+  value: string
+  onChange?: React.ChangeEventHandler<HTMLInputElement> | undefined
   onResultSelect: (title: string) => void
   minimumSearchLength: number
 }
 
 function WikipediaSearch(props: Props): JSX.Element {
-  const [searchTerm, setSearchTerm] = useState<string>('')
+  // const [searchTerm, setSearchTerm] = useState<string>('')
   const [searchResults, setSearchResults] = useState<string[]>([])
 
   useEffect(() => {
     async function fetchData() {
-      if (searchTerm.length < props.minimumSearchLength) {
+      if (props.value.length < props.minimumSearchLength) {
         setSearchResults([])
         return
       }
 
       const url =
         config.API_BASEURL +
-        `/api/v1/search?term=${encodeURIComponent(searchTerm)}`
+        `/api/v1/search?term=${encodeURIComponent(props.value)}`
 
       try {
         const response = await fetch(url)
@@ -34,19 +36,15 @@ function WikipediaSearch(props: Props): JSX.Element {
     }
 
     fetchData()
-  }, [searchTerm, props.minimumSearchLength])
-
-  function handleSearchTermChange(event: React.ChangeEvent<HTMLInputElement>) {
-    setSearchTerm(event.target.value)
-  }
+  }, [props.value, props.minimumSearchLength])
 
   function handleResultClick(title: string) {
     props.onResultSelect(title)
   }
 
   return (
-    <div>
-      <input type="text" value={searchTerm} onChange={handleSearchTermChange} />
+    <>
+      <input type="text" value={props.value} onChange={props.onChange} />
       <ul>
         {searchResults.map((result) => (
           <li key={result} onClick={() => handleResultClick(result)}>
@@ -54,7 +52,7 @@ function WikipediaSearch(props: Props): JSX.Element {
           </li>
         ))}
       </ul>
-    </div>
+    </>
   )
 }
 

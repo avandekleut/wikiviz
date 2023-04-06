@@ -4,7 +4,31 @@ import { PageData } from '../../../backend'
 import { CrawlParameters } from '../hooks/useCrawlParameters'
 import { useVisNetwork } from '../hooks/useVisNetwork'
 import { useWebSocket, WebSocketHandlers } from '../hooks/useWebsocket'
+import WikipediaSearch from './WikipediaSearch'
 
+function sendSearchRequest(
+  inputValue: string,
+  breadth: number,
+  depth: number,
+  send: (
+    message: import('/Users/admin/github/wikiviz/backend/index').CrawlMessage,
+  ) => void,
+) {
+  console.log('sendmessage', {
+    wikid: inputValue,
+    branchingFactor: breadth,
+    depth: depth,
+  })
+
+  send({
+    action: 'sendmessage',
+    data: {
+      wikid: inputValue,
+      branchingFactor: breadth,
+      depth: depth,
+    },
+  })
+}
 const decodeWikipediaTitle = (path: string): string => {
   // Replace underscores with spaces
   const titleWithSpaces = path.replace(/_/g, ' ')
@@ -36,6 +60,7 @@ export interface GraphProps {
 
 function Graph({ breadth, depth }: GraphProps) {
   const [inputValue, setInputValue] = useState('')
+  const [wikid, setWikid] = useState('')
 
   const { containerRef, nodesRef, edgesRef, networkRef } = useVisNetwork({
     nodes: [],
@@ -107,20 +132,7 @@ function Graph({ breadth, depth }: GraphProps) {
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
 
-    console.log('sendmessage', {
-      wikid: inputValue,
-      branchingFactor: breadth,
-      depth: depth,
-    })
-
-    send({
-      action: 'sendmessage',
-      data: {
-        wikid: inputValue,
-        branchingFactor: breadth,
-        depth: depth,
-      },
-    })
+    sendSearchRequest(inputValue, breadth, depth, send)
 
     setInputValue('')
   }
@@ -128,10 +140,15 @@ function Graph({ breadth, depth }: GraphProps) {
   return (
     <div>
       <form onSubmit={handleSubmit}>
-        <input
-          type="text"
+        <WikipediaSearch
           value={inputValue}
           onChange={(event) => setInputValue(event.target.value)}
+          minimumSearchLength={3}
+          onResultSelect={(title) => {
+            console.log(`Selected ${title}`)
+            setInputValue(title)
+            sendSearchRequest(title, breadth, depth, send)
+          }}
         />
         <button type="submit">Send</button>
       </form>
