@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { SearchApiResponse } from '../../../backend/api/v1/search/GET'
+import { WikipediaSearchApiResponse } from '../../../backend/api/v1/search/GET'
 import { config } from '../env'
 
 interface Props {
@@ -24,9 +24,9 @@ function WikipediaSearch(props: Props): JSX.Element {
 
       try {
         const response = await fetch(url)
-        const data = (await response.json()) as SearchApiResponse
+        const data = (await response.json()) as WikipediaSearchApiResponse
         console.log(data)
-        setSearchResults(data.results.map((result) => result.title))
+        setSearchResults(data.pages.map((page) => page.title))
       } catch (error) {
         console.log(error)
         setSearchResults([])

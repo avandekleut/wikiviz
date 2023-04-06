@@ -24,7 +24,7 @@ type WikipediaSearchPreview = {
   }
 }
 
-type WikipediaSearchApiResponse = {
+export type WikipediaSearchApiResponse = {
   pages: WikipediaSearchPreview[]
 }
 
