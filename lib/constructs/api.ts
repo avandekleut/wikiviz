@@ -21,6 +21,13 @@ export class WikiVizApi extends Construct {
       environment: {},
     })
 
+    const search = this.addRoute({
+      route: 'GET /api/v1/search',
+      timeout: Duration.seconds(1),
+      memorySize: 128,
+      environment: {},
+    })
+
     new CfnOutput(this, 'ApiUrl', {
       value: this.api.url!,
     })

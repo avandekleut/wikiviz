@@ -1,5 +1,6 @@
 import Slider from '../components/Slider'
 import WebsocketGraph from '../components/WebsocketGraph'
+import WikipediaSearch from '../components/WIkipediaSearch'
 import { useCrawlParameters } from '../hooks/useCrawlParameters'
 
 export function SearchAndNetwork() {
@@ -8,6 +9,7 @@ export function SearchAndNetwork() {
 
   return (
     <>
+      <WikipediaSearch />
       <Slider
         depth={depth}
         breadth={breadth}
