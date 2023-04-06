@@ -1,8 +1,8 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda'
-import * as NodeCache from 'node-cache'
+import NodeCache from 'node-cache'
 import fetch from 'node-fetch'
 
-interface WikipediaSearchResponse {
+export interface WikipediaSearchResponse {
   query: {
     search: {
       ns: number
@@ -14,6 +14,12 @@ interface WikipediaSearchResponse {
     }[]
   }
 }
+
+export type SearchResult = Pick<
+  WikipediaSearchResponse['query']['search'][number],
+  'title' | 'snippet'
+>
+export type SearchApiResponse = SearchResult[]
 
 // Create a cache with a TTL of 1 hour
 const cache = new NodeCache({ stdTTL: 3600 })
@@ -44,7 +50,7 @@ async function searchHandler(
   const response = await fetch(url)
   const data: WikipediaSearchResponse = await response.json()
 
-  const searchResults = data.query.search.map((result) => ({
+  const searchResults: SearchApiResponse = data.query.search.map((result) => ({
     title: result.title,
     snippet: result.snippet,
   }))
