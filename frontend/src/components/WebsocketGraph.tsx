@@ -76,13 +76,17 @@ function Graph({ breadth, depth }: GraphProps) {
       for (const child of children.slice(0, breadth)) {
         try {
           nodesRef.current.add(createVisNode(child))
+        } catch (err) {
+          console.warn(err)
+        }
+        try {
           edgesRef.current.add({
             from: wikid,
             to: child,
             id: `${wikid} -> ${child}`,
           })
-        } catch (err) {
-          console.warn(err)
+        } catch (error) {
+          console.warn(error)
         }
       }
     },
