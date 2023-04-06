@@ -12,9 +12,29 @@ type WikipediaSearchResult = {
   timestamp: string
 }
 
+type SearchInfo = {
+  totalhits: number
+  suggestion: string
+  suggestionsnippet: string
+}
+
+const result: WikipediaSearchResponse = {
+  batchcomplete: '',
+  query: {
+    searchInfo: {
+      totalhits: 0,
+      suggestion: 'yucca',
+      suggestionsnippet: 'yucca',
+    },
+    search: [],
+  },
+}
+
 interface WikipediaSearchResponse {
+  batchcomplete?: string
   query: {
     search: WikipediaSearchResult[]
+    searchInfo?: SearchInfo
   }
 }
 
@@ -28,7 +48,7 @@ export type SearchApiResponse = {
 const cache = new NodeCache({ stdTTL: 3600 })
 
 function getSearchUrlInTitle(searchTerm: string) {
-  return `https://en.wikipedia.org/w/api.php?action=query&format=json&list=search&srsearch=${encodeURIComponent(
+  return `https://en.wikipedia.org/w/api.php?action=query&format=json&list=search&srsearch=intitle:${encodeURIComponent(
     searchTerm,
   )}`
 }
@@ -43,6 +63,13 @@ function getSearchUrl(searchTerm: string) {
   return getSearchUrlInTitle(searchTerm)
 }
 
+async function search(searchTerm: string): Promise<WikipediaSearchResponse> {
+  const url = getSearchUrl(searchTerm)
+  const response = await fetch(url)
+  let data: WikipediaSearchResponse = await response.json()
+  return data
+}
+
 async function eventHandler(event: HttpEvent) {
   const searchTerm = event.getQueryStringParameter('term')
 
@@ -52,13 +79,20 @@ async function eventHandler(event: HttpEvent) {
     return cachedResults
   }
 
-  const url = getSearchUrl(searchTerm)
+  let searchResponse = await search(searchTerm)
 
-  const response = await fetch(url)
-  const data: WikipediaSearchResponse = await response.json()
+  // handle suggestions
+  if (searchResponse.query.searchInfo?.totalhits === 0) {
+    const suggestion =
+      searchResponse.query.searchInfo.suggestion ||
+      searchResponse.query.searchInfo.suggestionsnippet
+    if (suggestion) {
+      searchResponse = await search(suggestion)
+    }
+  }
 
   const searchResults: SearchApiResponse = {
-    results: data.query.search.map((result) => ({
+    results: searchResponse.query.search.map((result) => ({
       title: result.title,
       snippet: result.snippet,
     })),
