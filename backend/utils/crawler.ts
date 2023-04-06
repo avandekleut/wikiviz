@@ -24,7 +24,10 @@ export class Crawler {
     } else {
       console.log({ wikid, msg: 'cache miss' })
       try {
-        pageData = await getWikipediaSummaryAndLinks(wikid)
+        const wikipediaSummaryAndLinks = await getWikipediaSummaryAndLinks(
+          wikid,
+        )
+        pageData = { ...wikipediaSummaryAndLinks, crawlInfo: { depth } }
         visitedWikids[wikid] = pageData
       } catch (err) {
         console.warn({ err, msg: 'could not fetch data from wikipedia' })
