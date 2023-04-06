@@ -1,3 +1,4 @@
+import { LoggerFactory } from './logger'
 import { PageData } from './pagedata'
 import { wikipediaSummaryAndLinks as getWikipediaSummaryAndLinks } from './wiki'
 
@@ -19,10 +20,10 @@ export class Crawler {
     let pageData: PageData
 
     if (visitedWikids[wikid]) {
-      console.log({ wikid, msg: 'cache hit' })
+      LoggerFactory.logger.debug({ wikid, msg: 'cache hit' })
       pageData = visitedWikids[wikid]
     } else {
-      console.log({ wikid, msg: 'cache miss' })
+      LoggerFactory.logger.debug({ wikid, msg: 'cache miss' })
       try {
         pageData = await getWikipediaSummaryAndLinks(wikid)
         visitedWikids[wikid] = pageData
@@ -34,7 +35,7 @@ export class Crawler {
 
     if (callback) {
       await callback(pageData)
-      console.log({ wikid, msg: 'callback executed' })
+      LoggerFactory.logger.debug({ wikid, msg: 'callback executed' })
     }
 
     if (depth > 0) {

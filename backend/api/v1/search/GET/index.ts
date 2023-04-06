@@ -2,6 +2,7 @@ import NodeCache from 'node-cache'
 import fetch from 'node-fetch'
 import { createHandlerContext } from '../../../../utils/handler-context'
 import { HttpEvent } from '../../../../utils/http-event'
+import { LoggerFactory } from '../../../../utils/logger'
 
 type WikipediaSearchResult = {
   ns: number
@@ -63,12 +64,12 @@ async function eventHandler(event: HttpEvent) {
 
   const cachedResults = cache.get(searchTerm)
   if (cachedResults) {
-    console.log({ msg: 'cache hit', results: cachedResults })
+    LoggerFactory.logger.debug({ msg: 'cache hit', results: cachedResults })
     return cachedResults
   }
 
   let searchResponse = await search(searchTerm)
-  console.log({ searchResponse })
+  LoggerFactory.logger.debug({ searchResponse })
 
   // handle suggestions
   if (searchResponse.query.searchInfo?.totalhits === 0) {
@@ -76,9 +77,9 @@ async function eventHandler(event: HttpEvent) {
       searchResponse.query.searchInfo.suggestion ||
       searchResponse.query.searchInfo.suggestionsnippet
     if (suggestion) {
-      console.log({ msg: 'following suggestion', suggestion })
+      LoggerFactory.logger.debug({ msg: 'following suggestion', suggestion })
       searchResponse = await search(suggestion)
-      console.log({ msg: 'followed response', searchResponse })
+      LoggerFactory.logger.debug({ msg: 'followed response', searchResponse })
     }
   }
 
@@ -92,7 +93,7 @@ async function eventHandler(event: HttpEvent) {
   // Store the search results in the cache for 1 hour
   cache.set(searchTerm, searchResults)
 
-  console.log({ msg: 'cache miss', results: searchResults })
+  LoggerFactory.logger.debug({ msg: 'cache miss', results: searchResults })
   return searchResults
 }
 
