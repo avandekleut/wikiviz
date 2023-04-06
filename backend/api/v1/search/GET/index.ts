@@ -18,18 +18,6 @@ type SearchInfo = {
   suggestionsnippet: string
 }
 
-const result: WikipediaSearchResponse = {
-  batchcomplete: '',
-  query: {
-    searchInfo: {
-      totalhits: 0,
-      suggestion: 'yucca',
-      suggestionsnippet: 'yucca',
-    },
-    search: [],
-  },
-}
-
 interface WikipediaSearchResponse {
   batchcomplete?: string
   query: {
@@ -80,6 +68,7 @@ async function eventHandler(event: HttpEvent) {
   }
 
   let searchResponse = await search(searchTerm)
+  console.log({ searchResponse })
 
   // handle suggestions
   if (searchResponse.query.searchInfo?.totalhits === 0) {
@@ -87,7 +76,9 @@ async function eventHandler(event: HttpEvent) {
       searchResponse.query.searchInfo.suggestion ||
       searchResponse.query.searchInfo.suggestionsnippet
     if (suggestion) {
+      console.log({ msg: 'following suggestion', suggestion })
       searchResponse = await search(suggestion)
+      console.log({ msg: 'followed response', searchResponse })
     }
   }
 

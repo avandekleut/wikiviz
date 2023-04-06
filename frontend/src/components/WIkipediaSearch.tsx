@@ -29,6 +29,7 @@ function WikipediaSearch(props: Props): JSX.Element {
         setSearchResults(data.results.map((result) => result.title))
       } catch (error) {
         console.log(error)
+        setSearchResults([])
       }
     }
 
