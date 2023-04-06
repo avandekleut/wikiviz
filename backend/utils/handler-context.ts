@@ -4,6 +4,7 @@ import { getHttpEvent, HttpEvent } from './http-event'
 import { JsonObject } from './json-types'
 
 import * as crypto from 'crypto'
+import { LoggerFactory } from './logger'
 
 export type APIGatewayProxyStructuredResultV2Headers =
   | {
@@ -74,6 +75,7 @@ export function createHandlerContext<T extends JsonObject>(
         },
       }
     } catch (err) {
+      LoggerFactory.logger.error({ err })
       if (err instanceof HttpError) {
         return {
           statusCode: err.status,
