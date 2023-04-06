@@ -40,7 +40,7 @@ export function createHandlerContext<T extends JsonObject>(
     successStatusCode = 200,
     headers = {},
     contentType = 'application/json',
-    cacheDurationSeconds,
+    cacheDurationSeconds = 0,
   }: HandlerContext = {}, // default argument = {} to make it "optional"
 ) {
   const contentTypeHeader: Record<string, ContentType> = {
