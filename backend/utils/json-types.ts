@@ -4,7 +4,7 @@
 
 export interface JsonArray extends Array<JsonValue> {}
 
-export type JsonObject = { [key in string]?: JsonValue };
+export type JsonObject = { [key in string]?: JsonValue }
 
 export type JsonValue =
   | boolean
@@ -12,4 +12,4 @@ export type JsonValue =
   | string
   | null
   | JsonArray
-  | JsonObject;
+  | JsonObject
