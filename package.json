@@ -39,6 +39,7 @@
     "cheerio": "^1.0.0-rc.12",
     "constructs": "^10.0.0",
     "module": "^1.2.5",
+    "node-cache": "^5.1.2",
     "node-fetch": "^2.6.6",
     "pino": "^8.11.0",
     "source-map-support": "^0.5.21",
