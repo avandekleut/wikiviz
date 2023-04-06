@@ -27,6 +27,22 @@ export type SearchApiResponse = {
 // Create a cache with a TTL of 1 hour
 const cache = new NodeCache({ stdTTL: 3600 })
 
+function getSearchUrlInTitle(searchTerm: string) {
+  return `https://en.wikipedia.org/w/api.php?action=query&format=json&list=search&srsearch=${encodeURIComponent(
+    searchTerm,
+  )}`
+}
+
+function getSearchUrlDefault(searchTerm: string) {
+  return `https://en.wikipedia.org/w/api.php?action=query&format=json&list=search&srsearch=${encodeURIComponent(
+    searchTerm,
+  )}`
+}
+
+function getSearchUrl(searchTerm: string) {
+  return getSearchUrlInTitle(searchTerm)
+}
+
 async function eventHandler(event: HttpEvent) {
   const searchTerm = event.getQueryStringParameter('term')
 
@@ -36,9 +52,7 @@ async function eventHandler(event: HttpEvent) {
     return cachedResults
   }
 
-  const url = `https://en.wikipedia.org/w/api.php?action=query&format=json&list=search&srsearch=${encodeURIComponent(
-    searchTerm,
-  )}`
+  const url = getSearchUrl(searchTerm)
 
   const response = await fetch(url)
   const data: WikipediaSearchResponse = await response.json()
