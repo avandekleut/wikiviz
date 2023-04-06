@@ -1,8 +1,8 @@
-import { Duration, RemovalPolicy } from 'aws-cdk-lib';
+import { Duration, RemovalPolicy } from 'aws-cdk-lib'
 import {
   CertificateValidation,
   DnsValidatedCertificate,
-} from 'aws-cdk-lib/aws-certificatemanager';
+} from 'aws-cdk-lib/aws-certificatemanager'
 import {
   AllowedMethods,
   CachePolicy,
@@ -14,93 +14,89 @@ import {
   OriginAccessIdentity,
   OriginRequestPolicy,
   ViewerProtocolPolicy,
-} from 'aws-cdk-lib/aws-cloudfront';
-import { S3Origin } from 'aws-cdk-lib/aws-cloudfront-origins';
+} from 'aws-cdk-lib/aws-cloudfront'
+import { S3Origin } from 'aws-cdk-lib/aws-cloudfront-origins'
 import {
   ARecord,
   HostedZone,
   IHostedZone,
   RecordTarget,
-} from 'aws-cdk-lib/aws-route53';
-import { CloudFrontTarget } from 'aws-cdk-lib/aws-route53-targets';
-import {
-  BlockPublicAccess,
-  Bucket,
-  BucketEncryption,
-} from 'aws-cdk-lib/aws-s3';
+} from 'aws-cdk-lib/aws-route53'
+import { CloudFrontTarget } from 'aws-cdk-lib/aws-route53-targets'
+import { BlockPublicAccess, Bucket, BucketEncryption } from 'aws-cdk-lib/aws-s3'
 import {
   BucketDeployment,
   BucketDeploymentProps,
   Source,
-} from 'aws-cdk-lib/aws-s3-deployment';
-import { StringParameter } from 'aws-cdk-lib/aws-ssm';
-import { execSync } from 'child_process';
-import { Construct } from 'constructs';
-import * as path from 'path';
+} from 'aws-cdk-lib/aws-s3-deployment'
+import { StringParameter } from 'aws-cdk-lib/aws-ssm'
+import { execSync } from 'child_process'
+import { Construct } from 'constructs'
+import * as path from 'path'
 
 export interface StaticSiteProps {
-  subdomain: string;
+  subdomain: string
   bundling: {
-    command: string;
-    entry: string;
-    outputDirs: Array<string>;
-  };
-  config?: Record<string, string>;
+    command: string
+    entry: string
+    outputDirs: Array<string>
+  }
+  config?: Record<string, string>
 }
 
 type CreateBucketDeploymentParams = {
-  bucket: Bucket;
-  distribution: Distribution;
-};
+  bucket: Bucket
+  distribution: Distribution
+}
 
 export class StaticSite extends Construct {
-  private readonly props: StaticSiteProps;
+  private readonly props: StaticSiteProps
 
   constructor(scope: Construct, id: string, props: StaticSiteProps) {
-    super(scope, id);
-    this.props = props;
+    super(scope, id)
+    this.props = props
 
-    this.executeBuildCommand(props);
+    this.executeBuildCommand(props)
 
-    const { bucket, originAccessIdentity } = this.createBucket();
+    const { bucket, originAccessIdentity } = this.createBucket()
 
     const { domainName, certificate, hostedZone } =
-      this.createVerifiedCustomDomain();
+      this.createVerifiedCustomDomain()
 
     const distribution = this.createCustomDomainDistribution({
       domainName,
       certificate,
       bucket,
       originAccessIdentity,
-    });
+    })
 
-    this.createAliasRecord({ hostedZone, distribution });
+    this.createAliasRecord({ hostedZone, distribution })
 
-    this.createBucketDeployment({ bucket, distribution });
+    this.createBucketDeployment({ bucket, distribution })
   }
 
   private executeBuildCommand(props: StaticSiteProps) {
-    const { command, entry } = props.bundling;
+    const { command, entry } = props.bundling
 
     execSync(command, {
       cwd: entry,
       stdio: 'inherit',
-    });
+    })
   }
 
   private createBucketDeployment({
     bucket,
     distribution,
   }: CreateBucketDeploymentParams) {
-    const cacheEnabled = true;
+    const cacheEnabled = true
     const bucketDeploymentProps = cacheEnabled
       ? this.getBucketDeploymentWithCacheInvalidationProps({
           bucket,
           distribution,
         })
-      : this.getBucketDeploymentProps({ bucket, distribution });
+      : this.getBucketDeploymentProps({ bucket, distribution })
 
-    new BucketDeployment(this, 'Deployment', bucketDeploymentProps);
+    new BucketDeployment(this, 'Deployment', bucketDeploymentProps)
   }
 
   private getBucketDeploymentWithCacheInvalidationProps({
@@ -114,7 +110,7 @@ export class StaticSite extends Construct {
       }),
       distribution: distribution,
       distributionPaths: ['/*'],
-    };
+    }
   }
 
   private getBucketDeploymentProps({
@@ -122,51 +118,51 @@ export class StaticSite extends Construct {
   }: CreateBucketDeploymentParams): BucketDeploymentProps {
     const staticSiteSources = this.props.bundling.outputDirs.map((source) =>
       Source.asset(source),
-    );
+    )
 
-    const sources = [...staticSiteSources];
+    const sources = [...staticSiteSources]
 
     if (this.props.config) {
-      const configSource = this.getConfigSource();
-      sources.push(configSource);
+      const configSource = this.getConfigSource()
+      sources.push(configSource)
     }
 
     return {
       sources,
       destinationBucket: bucket,
-    };
+    }
   }
 
   private getConfigSource() {
-    const { config } = this.props;
-    const parameterConfig: Record<string, string> = {};
+    const { config } = this.props
+    const parameterConfig: Record<string, string> = {}
     for (const key in config) {
       // Workaround for cross-stack refs: Replace tokens with parameter.stringValue
       // see https://github.com/aws/aws-cdk/issues/19257#issuecomment-1102807097
       parameterConfig[key] = new StringParameter(this, key + 'Parameter', {
         stringValue: config[key],
-      }).stringValue;
+      }).stringValue
     }
 
-    const configSource = Source.jsonData('config/config.json', parameterConfig);
-    return configSource;
+    const configSource = Source.jsonData('config/config.json', parameterConfig)
+    return configSource
   }
 
   private createAliasRecord({
     hostedZone,
     distribution,
   }: {
-    hostedZone: IHostedZone;
-    distribution: Distribution;
+    hostedZone: IHostedZone
+    distribution: Distribution
   }) {
-    const namespace = 'TEMP'; // TODO: Replace this
-    const { subdomain } = this.props;
-    const recordName = namespace ? `${subdomain}.${namespace}` : subdomain;
+    const namespace = 'TEMP' // TODO: Replace this
+    const { subdomain } = this.props
+    const recordName = namespace ? `${subdomain}.${namespace}` : subdomain
     new ARecord(this, 'ARecord', {
       recordName: recordName,
       zone: hostedZone,
       target: RecordTarget.fromAlias(new CloudFrontTarget(distribution)),
-    });
+    })
   }
 
   private createCustomDomainDistribution({
@@ -175,12 +171,12 @@ export class StaticSite extends Construct {
     bucket,
     originAccessIdentity,
   }: {
-    domainName: string;
-    certificate: DnsValidatedCertificate;
-    bucket: Bucket;
-    originAccessIdentity: OriginAccessIdentity;
+    domainName: string
+    certificate: DnsValidatedCertificate
+    bucket: Bucket
+    originAccessIdentity: OriginAccessIdentity
   }) {
-    const cloudfrontCachePolicy = CachePolicy.CACHING_OPTIMIZED;
+    const cloudfrontCachePolicy = CachePolicy.CACHING_OPTIMIZED
 
     const addSecurityHeadersLambda = new Function(
       this,
@@ -190,14 +186,14 @@ export class StaticSite extends Construct {
           filePath: path.join(__dirname, 'cloudfront-functions', 'index.js'),
         }),
       },
-    );
+    )
 
     const spaRedirectToIndex: ErrorResponse = {
       httpStatus: 404,
       responseHttpStatus: 200,
       responsePagePath: '/index.html',
       ttl: Duration.seconds(0),
-    };
+    }
 
     const distribution = new Distribution(this, 'Distribution', {
       domainNames: [domainName],
@@ -219,31 +215,31 @@ export class StaticSite extends Construct {
         cachePolicy: cloudfrontCachePolicy,
         originRequestPolicy: OriginRequestPolicy.USER_AGENT_REFERER_HEADERS,
       },
-    });
-    return distribution;
+    })
+    return distribution
   }
 
   private createVerifiedCustomDomain() {
-    const { subdomain } = this.props;
+    const { subdomain } = this.props
     const { hostedZoneName, hostedZoneId } = {
       hostedZoneId: 'TEMP',
       hostedZoneName: 'TEMP',
-    }; // TODO: Replace this
-    const { namespaceDomainName } = { namespaceDomainName: 'TEMP' }; // TODO: Replace this
+    } // TODO: Replace this
+    const { namespaceDomainName } = { namespaceDomainName: 'TEMP' } // TODO: Replace this
 
     const hostedZone = HostedZone.fromHostedZoneAttributes(this, 'HostedZone', {
       zoneName: hostedZoneName,
       hostedZoneId: hostedZoneId,
-    });
+    })
 
-    const domainName = `${subdomain}.${namespaceDomainName}`;
+    const domainName = `${subdomain}.${namespaceDomainName}`
 
     const certificate = new DnsValidatedCertificate(this, 'Certificate', {
       hostedZone: hostedZone,
       domainName: domainName,
       validation: CertificateValidation.fromDns(hostedZone),
-    });
-    return { domainName, certificate, hostedZone };
+    })
+    return { domainName, certificate, hostedZone }
   }
 
   private createBucket() {
@@ -253,13 +249,13 @@ export class StaticSite extends Construct {
       autoDeleteObjects: true,
       removalPolicy: RemovalPolicy.DESTROY,
       blockPublicAccess: BlockPublicAccess.BLOCK_ALL,
-    });
+    })
 
     const originAccessIdentity = new OriginAccessIdentity(
       this,
       'OriginAccessIdentity',
-    );
-    bucket.grantRead(originAccessIdentity);
-    return { bucket, originAccessIdentity };
+    )
+    bucket.grantRead(originAccessIdentity)
+    return { bucket, originAccessIdentity }
   }
 }
