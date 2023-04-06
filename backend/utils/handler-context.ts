@@ -51,15 +51,18 @@ export function createHandlerContext<T extends JsonObject>(
     try {
       const httpEvent = getHttpEvent(event)
 
-      const cacheHeaders = cacheDurationSeconds && {
-        'Cache-Control': `public, max-age=${cacheDurationSeconds}`,
-        ETag: crypto
-          .createHash('sha256')
-          .update(JSON.stringify(httpEvent))
-          .digest('hex'),
-      }
-
       const result = await eventHandler(httpEvent)
+
+      const cacheHeaders =
+        cacheDurationSeconds !== undefined
+          ? {
+              'Cache-Control': `public, max-age=${cacheDurationSeconds}`,
+              ETag: crypto
+                .createHash('sha256')
+                .update(JSON.stringify(httpEvent))
+                .digest('hex'),
+            }
+          : ({} as Record<string, string>)
 
       return {
         statusCode: successStatusCode,
@@ -67,6 +70,7 @@ export function createHandlerContext<T extends JsonObject>(
         headers: {
           ...headers,
           ...contentTypeHeader,
+          ...cacheHeaders,
         },
       }
     } catch (err) {
@@ -83,5 +87,6 @@ export function createHandlerContext<T extends JsonObject>(
       throw err
     }
   }
+
   return handler
 }
