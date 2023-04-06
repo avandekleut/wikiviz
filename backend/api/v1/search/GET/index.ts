@@ -1,65 +1,50 @@
 import NodeCache from 'node-cache'
 import fetch from 'node-fetch'
-import { createHandlerContext } from '../../../../utils/handler-context'
+import {
+  createHandlerContext,
+  HttpEventHandler,
+} from '../../../../utils/handler-context'
 import { HttpEvent } from '../../../../utils/http-event'
 import { LoggerFactory } from '../../../../utils/logger'
 
-type WikipediaSearchResult = {
-  ns: number
+type WikipediaSearchPreview = {
+  id: number
+  key: string
   title: string
-  snippet: string
-  size: number
-  wordcount: number
-  timestamp: string
-}
-
-type SearchInfo = {
-  totalhits: number
-  suggestion: string
-  suggestionsnippet: string
-}
-
-interface WikipediaSearchResponse {
-  batchcomplete?: string
-  query: {
-    search: WikipediaSearchResult[]
-    searchInfo?: SearchInfo
+  excerpt: string
+  matched_title: null | string
+  description: null | string
+  thumbnail: null | {
+    mimetype: string
+    size: null | number
+    width: number
+    height: number
+    duration: null | number
+    url: string
   }
 }
 
-export type SearchResult = Pick<WikipediaSearchResult, 'title' | 'snippet'>
-
-export type SearchApiResponse = {
-  results: SearchResult[]
+type WikipediaSearchApiResponse = {
+  pages: WikipediaSearchPreview[]
 }
 
 // Create a cache with a TTL of 1 hour
 const cache = new NodeCache({ stdTTL: 3600 })
 
-function getSearchUrlInTitle(searchTerm: string) {
-  return `https://en.wikipedia.org/w/api.php?action=query&format=json&list=search&srsearch=intitle:${encodeURIComponent(
+function getSearchUrl(searchTerm: string, limit = 10) {
+  return `https://en.wikipedia.org/w/rest.php/v1/search/title?q=${encodeURIComponent(
     searchTerm,
-  )}`
+  )}&limit=${limit}`
 }
 
-function getSearchUrlDefault(searchTerm: string) {
-  return `https://en.wikipedia.org/w/api.php?action=query&format=json&list=search&srsearch=${encodeURIComponent(
-    searchTerm,
-  )}`
-}
-
-function getSearchUrl(searchTerm: string) {
-  return getSearchUrlInTitle(searchTerm)
-}
-
-async function search(searchTerm: string): Promise<WikipediaSearchResponse> {
+async function search(searchTerm: string): Promise<WikipediaSearchApiResponse> {
   const url = getSearchUrl(searchTerm)
   const response = await fetch(url)
-  let data: WikipediaSearchResponse = await response.json()
+  let data: WikipediaSearchApiResponse = await response.json()
   return data
 }
 
-async function eventHandler(event: HttpEvent) {
+const eventHandler: HttpEventHandler<{}> = async (event: HttpEvent) => {
   const searchTerm = event.getQueryStringParameter('term')
 
   const cachedResults = cache.get(searchTerm)
@@ -71,36 +56,11 @@ async function eventHandler(event: HttpEvent) {
   const searchResponse = await search(searchTerm)
   LoggerFactory.logger.debug({ searchResponse })
 
-  const suggestion =
-    searchResponse.query.searchInfo?.suggestion ||
-    searchResponse.query.searchInfo?.suggestionsnippet
-  if (suggestion) {
-    LoggerFactory.logger.debug({ msg: 'following suggestion', suggestion })
-    const suggestedSearchResponse = await search(suggestion)
-    searchResponse.query.search = [
-      ...searchResponse.query.search,
-      ...suggestedSearchResponse.query.search,
-    ]
-
-    LoggerFactory.logger.debug({
-      msg: 'followed response',
-      suggestedSearchResponse,
-      searchResponse,
-    })
-  }
-
-  const searchResults: SearchApiResponse = {
-    results: searchResponse.query.search.map((result) => ({
-      title: result.title,
-      snippet: result.snippet,
-    })),
-  }
-
   // Store the search results in the cache for 1 hour
-  cache.set(searchTerm, searchResults)
+  cache.set(searchTerm, searchResponse)
 
-  LoggerFactory.logger.debug({ msg: 'cache miss', results: searchResults })
-  return searchResults
+  LoggerFactory.logger.debug({ msg: 'cache miss', searchResponse })
+  return searchResponse
 }
 
 export const handler = createHandlerContext(eventHandler)
