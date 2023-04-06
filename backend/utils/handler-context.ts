@@ -1,25 +1,28 @@
-import { APIGatewayProxyHandlerV2 } from 'aws-lambda';
-import { HttpError } from './http-error';
-import { getHttpEvent, HttpEvent } from './http-event';
-import { JsonObject } from './json-types';
+import { APIGatewayProxyHandlerV2 } from 'aws-lambda'
+import { HttpError } from './http-error'
+import { getHttpEvent, HttpEvent } from './http-event'
+import { JsonObject } from './json-types'
+
+import * as crypto from 'crypto'
 
 export type APIGatewayProxyStructuredResultV2Headers =
   | {
-      [header: string]: string | number | boolean;
+      [header: string]: string | number | boolean
     }
-  | undefined;
+  | undefined
 
-export type ContentType = 'application/json';
+export type ContentType = 'application/json'
 
 export type HttpEventHandler<T extends JsonObject> = (
   event: HttpEvent,
-) => Promise<T>;
+) => Promise<T>
 
 type HandlerContext = {
-  successStatusCode?: number;
-  headers?: APIGatewayProxyStructuredResultV2Headers;
-  contentType?: ContentType;
-};
+  successStatusCode?: number
+  headers?: APIGatewayProxyStructuredResultV2Headers
+  contentType?: ContentType
+  cacheDurationSeconds?: number
+}
 
 /**
  * Convenience wrapper for error handling. This logic is shared by all API Gateway
@@ -37,16 +40,26 @@ export function createHandlerContext<T extends JsonObject>(
     successStatusCode = 200,
     headers = {},
     contentType = 'application/json',
+    cacheDurationSeconds,
   }: HandlerContext = {}, // default argument = {} to make it "optional"
 ) {
   const contentTypeHeader: Record<string, ContentType> = {
     'content-type': contentType,
-  };
+  }
 
   const handler: APIGatewayProxyHandlerV2 = async (event, context) => {
     try {
-      const httpEvent = getHttpEvent(event);
-      const result = await eventHandler(httpEvent);
+      const httpEvent = getHttpEvent(event)
+
+      const cacheHeaders = cacheDurationSeconds && {
+        'Cache-Control': `public, max-age=${cacheDurationSeconds}`,
+        ETag: crypto
+          .createHash('sha256')
+          .update(JSON.stringify(httpEvent))
+          .digest('hex'),
+      }
+
+      const result = await eventHandler(httpEvent)
 
       return {
         statusCode: successStatusCode,
@@ -55,7 +68,7 @@ export function createHandlerContext<T extends JsonObject>(
           ...headers,
           ...contentTypeHeader,
         },
-      };
+      }
     } catch (err) {
       if (err instanceof HttpError) {
         return {
@@ -64,11 +77,11 @@ export function createHandlerContext<T extends JsonObject>(
           headers: {
             'content-type': 'application/json',
           },
-        };
+        }
       }
 
-      throw err;
+      throw err
     }
-  };
-  return handler;
+  }
+  return handler
 }
