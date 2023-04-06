@@ -1,46 +1,39 @@
-import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda'
 import NodeCache from 'node-cache'
 import fetch from 'node-fetch'
+import { createHandlerContext } from '../../../../utils/handler-context'
+import { HttpEvent } from '../../../../utils/http-event'
 
-export interface WikipediaSearchResponse {
+type WikipediaSearchResult = {
+  ns: number
+  title: string
+  snippet: string
+  size: number
+  wordcount: number
+  timestamp: string
+}
+
+interface WikipediaSearchResponse {
   query: {
-    search: {
-      ns: number
-      title: string
-      snippet: string
-      size: number
-      wordcount: number
-      timestamp: string
-    }[]
+    search: WikipediaSearchResult[]
   }
 }
 
-export type SearchResult = Pick<
-  WikipediaSearchResponse['query']['search'][number],
-  'title' | 'snippet'
->
-export type SearchApiResponse = SearchResult[]
+export type SearchResult = Pick<WikipediaSearchResult, 'title' | 'snippet'>
+
+export type SearchApiResponse = {
+  results: SearchResult[]
+}
 
 // Create a cache with a TTL of 1 hour
 const cache = new NodeCache({ stdTTL: 3600 })
 
-export async function handler(
-  event: APIGatewayProxyEvent,
-): Promise<APIGatewayProxyResult> {
-  const searchTerm = event.queryStringParameters?.term
-  if (!searchTerm) {
-    return {
-      statusCode: 400,
-      body: JSON.stringify({ message: 'Search term is missing' }),
-    }
-  }
+async function eventHandler(event: HttpEvent) {
+  const searchTerm = event.getQueryStringParameter('term')
 
   const cachedResults = cache.get(searchTerm)
   if (cachedResults) {
-    return {
-      statusCode: 200,
-      body: JSON.stringify(cachedResults),
-    }
+    console.log({ msg: 'cache hit', results: cachedResults })
+    return cachedResults
   }
 
   const url = `https://en.wikipedia.org/w/api.php?action=query&format=json&list=search&srsearch=${encodeURIComponent(
@@ -50,16 +43,18 @@ export async function handler(
   const response = await fetch(url)
   const data: WikipediaSearchResponse = await response.json()
 
-  const searchResults: SearchApiResponse = data.query.search.map((result) => ({
-    title: result.title,
-    snippet: result.snippet,
-  }))
+  const searchResults: SearchApiResponse = {
+    results: data.query.search.map((result) => ({
+      title: result.title,
+      snippet: result.snippet,
+    })),
+  }
 
   // Store the search results in the cache for 1 hour
   cache.set(searchTerm, searchResults)
 
-  return {
-    statusCode: 200,
-    body: JSON.stringify(searchResults),
-  }
+  console.log({ msg: 'cache miss', results: searchResults })
+  return searchResults
 }
+
+export const handler = createHandlerContext(eventHandler)
