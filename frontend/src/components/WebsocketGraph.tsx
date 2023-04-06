@@ -15,13 +15,12 @@ const decodeWikipediaTitle = (path: string): string => {
   return decodedTitle
 }
 
-function createVisNode({ wikid, crawlInfo }: Partial<PageData>): Node {
+function createVisNode(wikid: string): Node {
   return {
     id: wikid,
     // label: decodeWikipediaTitle(wikid),
     label: wikid,
     shape: 'dot',
-    group: crawlInfo?.depth.toString(),
     font: {
       color: 'white',
       strokeColor: 'white',
@@ -51,8 +50,7 @@ function Graph({ breadth, depth }: GraphProps) {
         console.warn(`Could not parse event.data: ${event.data}`)
       }
 
-      const pageData: Partial<PageData> = JSON.parse(event.data)
-      const { wikid, children } = pageData
+      const { wikid, children }: Partial<PageData> = JSON.parse(event.data)
       if (wikid === undefined) {
         console.warn(`wikid undefined`)
         return
@@ -66,11 +64,9 @@ function Graph({ breadth, depth }: GraphProps) {
       console.log('onMessage', { wikid, nodesRef })
 
       try {
-        nodesRef.current.add(createVisNode(pageData))
+        nodesRef.current.add(createVisNode(wikid))
         networkRef.current?.fit()
       } catch (err) {
-        // node already exists and was added from the children array but now we have all of the pageData
-        nodesRef.current.update(createVisNode(pageData))
         console.warn(err)
       }
 
@@ -79,7 +75,7 @@ function Graph({ breadth, depth }: GraphProps) {
       // those that were requested.
       for (const child of children.slice(0, breadth)) {
         try {
-          // nodesRef.current.add(createVisNode({ wikid: child }))
+          nodesRef.current.add(createVisNode(child))
         } catch (err) {
           console.warn(err)
         }

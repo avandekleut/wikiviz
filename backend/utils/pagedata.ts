@@ -3,7 +3,4 @@ export interface PageData {
   summary: string
   mainImage?: string
   children: string[]
-  crawlInfo?: {
-    depth: number
-  }
 }
