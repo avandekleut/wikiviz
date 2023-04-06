@@ -3,7 +3,7 @@
     "editor.formatOnSave": true,
     // put this in your settings object
     "editor.codeActionsOnSave": {
-        "source.organizeImports": true,
+        // "source.organizeImports": true,
         "source.fixAll.eslint": true
     },
     "[python]": {
