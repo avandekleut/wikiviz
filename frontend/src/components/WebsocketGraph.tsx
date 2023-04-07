@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo, useState } from 'react'
 import { Node } from 'vis'
-import { PageData } from '../../../backend'
+import { CrawlMessage, PageData } from '../../../backend'
 import { CrawlParameters } from '../hooks/useCrawlParameters'
 import { useVisNetwork } from '../hooks/useVisNetwork'
 import { useWebSocket, WebSocketHandlers } from '../hooks/useWebsocket'
@@ -10,9 +10,7 @@ function sendSearchRequest(
   inputValue: string,
   breadth: number,
   depth: number,
-  send: (
-    message: import('/Users/admin/github/wikiviz/backend/index').CrawlMessage,
-  ) => void,
+  send: (message: CrawlMessage) => void,
 ) {
   console.log('sendmessage', {
     wikid: inputValue,
