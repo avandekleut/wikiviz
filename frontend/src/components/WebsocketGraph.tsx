@@ -148,7 +148,7 @@ function Graph({ breadth, depth }: GraphProps) {
             sendSearchRequest(title, breadth, depth, send)
           }}
         />
-        <button type="submit">Send</button>
+        <button type="submit">Crawl</button>
       </form>
       <div ref={containerRef} style={{ width: '800px', height: '600px' }} />
     </div>

@@ -1,3 +1,10 @@
+import {
+  Container,
+  List,
+  ListItemButton,
+  ListItemText,
+  TextField,
+} from '@mui/material'
 import { useEffect, useState } from 'react'
 import { WikipediaSearchApiResponse } from '../../../backend/api/v1/search/GET'
 import { config } from '../env'
@@ -42,16 +49,25 @@ function WikipediaSearch(props: Props): JSX.Element {
   }
 
   return (
-    <>
-      <input type="text" value={props.value} onChange={props.onChange} />
-      <ul>
+    <Container maxWidth="sm" sx={{ my: 4, mb: 2 }}>
+      <TextField
+        label="Search"
+        variant="outlined"
+        value={props.value}
+        onChange={props.onChange}
+        sx={{ width: '100%' }}
+      />
+      <List>
         {searchResults.map((result) => (
-          <li key={result} onClick={() => handleResultClick(result)}>
-            {result}
-          </li>
+          <ListItemButton
+            key={result}
+            onClick={() => handleResultClick(result)}
+          >
+            <ListItemText primary={result} />
+          </ListItemButton>
         ))}
-      </ul>
-    </>
+      </List>
+    </Container>
   )
 }
 
