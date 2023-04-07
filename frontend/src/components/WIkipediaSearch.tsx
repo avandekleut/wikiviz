@@ -10,7 +10,6 @@ interface Props {
 }
 
 function WikipediaSearch(props: Props): JSX.Element {
-  // const [searchTerm, setSearchTerm] = useState<string>('')
   const [searchResults, setSearchResults] = useState<string[]>([])
 
   useEffect(() => {
