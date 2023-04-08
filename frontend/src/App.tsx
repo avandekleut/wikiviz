@@ -1,4 +1,3 @@
-import './App.css'
 import Background from './components/Background'
 import WebsocketGraph from './components/WebsocketGraph'
 import ThemeProviderWrapper from './providers/ThemeProviderWrapper'
