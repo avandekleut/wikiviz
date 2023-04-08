@@ -7,7 +7,7 @@ import {
   ListItemText,
   TextField,
 } from '@mui/material'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { WikipediaSearchApiResponse } from '../../../backend/api/v1/search/GET'
 import { config } from '../env'
 
@@ -21,7 +21,12 @@ interface Props {
   minimumSearchLength: number
 }
 
+interface Cache<T> {
+  [key: string]: T
+}
+
 function WikipediaSearch(props: Props): JSX.Element {
+  const searchResultsCache = useRef<Cache<WikipediaSearchApiResponse>>({})
   const [searchResults, setSearchResults] = useState<string[]>([])
   const [searchResultsOpen, setSearchResultsOpen] = useState(false)
 
@@ -32,14 +37,22 @@ function WikipediaSearch(props: Props): JSX.Element {
         return
       }
 
+      const cachedData = searchResultsCache.current[props.value]
+      if (cachedData) {
+        console.debug(`Resolved ${props.value} from cache`)
+        console.debug({ cachedData })
+        setSearchResults(cachedData.pages.map((page) => page.title))
+        return Promise.resolve(cachedData)
+      }
+
       const url =
-        config.API_BASEURL +
+        config.WEBSOCKET_API_BASEURL +
         `/api/v1/search?term=${encodeURIComponent(props.value)}`
 
       try {
         const response = await fetch(url)
         const data = (await response.json()) as WikipediaSearchApiResponse
-        console.log(data)
+        searchResultsCache.current[props.value] = data
         setSearchResults(data.pages.map((page) => page.title))
       } catch (error) {
         console.log(error)
