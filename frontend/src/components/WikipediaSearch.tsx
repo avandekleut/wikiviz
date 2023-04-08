@@ -30,6 +30,7 @@ interface Cache<T> {
 
 function WikipediaSearch(props: Props): JSX.Element {
   const searchResultsCache = useRef<Cache<WikipediaSearchApiResponse>>({})
+
   const [searchResults, setSearchResults] =
     useState<WikipediaSearchApiResponse>()
   const [searchResultsOpen, setSearchResultsOpen] = useState(false)
@@ -86,7 +87,13 @@ function WikipediaSearch(props: Props): JSX.Element {
   const handleKeyDown = (event: React.KeyboardEvent) => {
     if (event.key === 'Enter') {
       props.handleSubmit()
+      setSearchResultsOpen(false)
     }
+  }
+
+  const handleCrawlClick = () => {
+    props.handleSubmit()
+    setSearchResultsOpen(false)
   }
 
   return (
@@ -105,9 +112,7 @@ function WikipediaSearch(props: Props): JSX.Element {
         <Button
           variant="contained"
           color="primary"
-          onClick={() => {
-            props.handleSubmit()
-          }}
+          onClick={handleCrawlClick}
           fullWidth
         >
           Crawl
