@@ -5,7 +5,7 @@ import { useVisNetwork } from '../hooks/useVisNetwork'
 import { useWebSocket, WebSocketHandlers } from '../hooks/useWebsocket'
 import FullWidth from '../utils/FullWidth'
 
-import { Container, Grid, Slider, Typography } from '@mui/material'
+import { Card, Container, Grid, Slider, Typography } from '@mui/material'
 import { config } from '../env'
 import WikipediaSearch from './WikipediaSearch'
 
@@ -177,17 +177,19 @@ function WebsocketGraph() {
   return (
     <FullWidth>
       <Container maxWidth="sm" sx={{ mt: 4, width: '100%' }}>
-        <WikipediaSearch
-          value={inputValue}
-          onChange={(event) => setInputValue(event.target.value)}
-          minimumSearchLength={3}
-          onButtonPress={() => {
-            sendSearchRequest(inputValue, breadth, depth, send)
-            setInputValue('')
-          }}
-          onResultSelect={handleResultSelect}
-        />
-        {sliders}
+        <Card sx={{ padding: 2 }}>
+          <WikipediaSearch
+            value={inputValue}
+            onChange={(event) => setInputValue(event.target.value)}
+            minimumSearchLength={3}
+            onButtonPress={() => {
+              sendSearchRequest(inputValue, breadth, depth, send)
+              setInputValue('')
+            }}
+            onResultSelect={handleResultSelect}
+          />
+          {sliders}
+        </Card>
       </Container>
       <div ref={containerRef} style={{ width: '100%', height: '100vh' }} />
     </FullWidth>
