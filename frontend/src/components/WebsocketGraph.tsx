@@ -30,7 +30,8 @@ function sendSearchRequest(
     },
   })
 }
-const decodeWikipediaTitle = (path: string): string => {
+
+function decodeWikipediaTitle(path: string): string {
   // Replace underscores with spaces
   const titleWithSpaces = path.replace(/_/g, ' ')
 
@@ -43,8 +44,7 @@ const decodeWikipediaTitle = (path: string): string => {
 function createVisNode(wikid: string): Node {
   return {
     id: wikid,
-    // label: decodeWikipediaTitle(wikid),
-    label: wikid,
+    label: decodeWikipediaTitle(wikid),
     shape: 'dot',
     font: {
       color: 'white',
@@ -86,7 +86,23 @@ function WebsocketGraph() {
       console.log('onMessage', { wikid, nodesRef })
 
       try {
-        nodesRef.current.add(createVisNode(wikid))
+        const pageNode = createVisNode(wikid)
+        nodesRef.current.update(pageNode)
+
+        // Update node sizes by number of neighbours
+        nodesRef.current.forEach((node) => {
+          if (node.id) {
+            const connectedTo = networkRef.current?.getConnectedNodes(
+              node.id,
+              'to',
+            )
+            const numConnectedTo = connectedTo?.length ?? 0
+
+            const size = numConnectedTo + config.GRAPH_BASE_NODE_SIZE
+            nodesRef.current.update({ ...node, size })
+          }
+        })
+
         networkRef.current?.fit()
       } catch (err) {
         console.warn(err)
@@ -97,7 +113,8 @@ function WebsocketGraph() {
       // those that were requested.
       for (const child of children.slice(0, breadth)) {
         try {
-          nodesRef.current.add(createVisNode(child))
+          const childPageNode = createVisNode(child)
+          nodesRef.current.update(childPageNode)
         } catch (err) {
           console.warn(err)
         }
