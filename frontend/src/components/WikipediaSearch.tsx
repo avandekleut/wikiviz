@@ -1,8 +1,11 @@
+import ArticleIcon from '@mui/icons-material/Article'
 import {
+  Avatar,
   Button,
   ClickAwayListener,
   Grid,
   List,
+  ListItemAvatar,
   ListItemButton,
   ListItemText,
   TextField,
@@ -27,13 +30,14 @@ interface Cache<T> {
 
 function WikipediaSearch(props: Props): JSX.Element {
   const searchResultsCache = useRef<Cache<WikipediaSearchApiResponse>>({})
-  const [searchResults, setSearchResults] = useState<string[]>([])
+  const [searchResults, setSearchResults] =
+    useState<WikipediaSearchApiResponse>()
   const [searchResultsOpen, setSearchResultsOpen] = useState(false)
 
   useEffect(() => {
     async function fetchData() {
       if (props.value.length < props.minimumSearchLength) {
-        setSearchResults([])
+        setSearchResults(undefined)
         return
       }
 
@@ -41,7 +45,7 @@ function WikipediaSearch(props: Props): JSX.Element {
       if (cachedData) {
         console.debug(`Resolved ${props.value} from cache`)
         console.debug({ cachedData })
-        setSearchResults(cachedData.pages.map((page) => page.title))
+        setSearchResults(cachedData)
         return Promise.resolve(cachedData)
       }
 
@@ -53,10 +57,10 @@ function WikipediaSearch(props: Props): JSX.Element {
         const response = await fetch(url)
         const data = (await response.json()) as WikipediaSearchApiResponse
         searchResultsCache.current[props.value] = data
-        setSearchResults(data.pages.map((page) => page.title))
+        setSearchResults(data)
       } catch (error) {
         console.log(error)
-        setSearchResults([])
+        setSearchResults(undefined)
       }
     }
 
@@ -106,22 +110,39 @@ function WikipediaSearch(props: Props): JSX.Element {
           }}
           fullWidth
         >
-          Submit
+          Crawl
         </Button>
       </Grid>
       <ClickAwayListener onClickAway={handleClickAway}>
         <Grid item xs={8}>
-          <List style={{ position: 'absolute', zIndex: 9999 }}>
+          <List
+            style={{
+              // position: 'absolute',
+              zIndex: 9999,
+              // width: '100%',
+            }}
+          >
             {searchResultsOpen &&
-              searchResults.map((result) => (
+              searchResults?.pages.map((page) => (
                 <ListItemButton
-                  key={result}
-                  onClick={() => handleResultClick(result)}
+                  key={page.id}
+                  onClick={() => handleResultClick(page.title)}
                   sx={{
                     position: 'relative',
+                    width: '100%',
+                    flexGrow: 1,
                   }}
                 >
-                  <ListItemText primary={result} />
+                  <ListItemAvatar>
+                    <Avatar
+                      alt={page.title}
+                      src={page.thumbnail?.url}
+                      variant="square"
+                    >
+                      <ArticleIcon />
+                    </Avatar>
+                  </ListItemAvatar>
+                  <ListItemText primary={page.title} />
                 </ListItemButton>
               ))}
           </List>
