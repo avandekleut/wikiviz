@@ -153,14 +153,25 @@ function WebsocketGraph() {
 
   // add double click handler
   useEffect(() => {
-    networkRef.current?.on('doubleClick', (event: ClickEvent) => {
+    const network = networkRef.current
+    if (!network) {
+      return
+    }
+
+    const handleClick = (event: ClickEvent) => {
       console.log({ event, msg: 'doubleClick' })
       const clickedNode = event.nodes?.[0]
       if (clickedNode) {
         console.log({ clickedNode })
         sendSearchRequest(clickedNode, breadth, depth, send)
       }
-    })
+    }
+
+    network.on('doubleClick', handleClick)
+
+    return () => {
+      network.off('doubleClick', handleClick)
+    }
   }, [networkRef, breadth, depth, send])
 
   const handleResultSelect = (title: string): void => {
