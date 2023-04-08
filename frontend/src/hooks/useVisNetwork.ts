@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react'
-import { DataSet, Edge, Network, Node } from 'vis'
+import { DataSet, Edge, Network, Node, Options } from 'vis'
 
 type Props = {
   nodes: Node[]
@@ -14,7 +14,7 @@ export const useVisNetwork = ({ nodes, edges }: Props) => {
 
   useEffect(() => {
     if (containerRef.current && !networkRef.current) {
-      const options = {
+      const options: Options = {
         configure: {
           enabled: false,
         },
@@ -22,10 +22,13 @@ export const useVisNetwork = ({ nodes, edges }: Props) => {
           color: {
             inherit: true,
           },
-          smooth: {
-            enabled: true,
-            type: 'dynamic',
+          arrows: {
+            to: {
+              enabled: true,
+              scaleFactor: 0.5, // controls the size of the arrowhead
+            },
           },
+          arrowStrikethrough: true,
         },
         interaction: {
           dragNodes: true,
@@ -46,31 +49,7 @@ export const useVisNetwork = ({ nodes, edges }: Props) => {
       networkRef.current = new Network(
         containerRef.current,
         { nodes: nodesRef.current, edges: edgesRef.current },
-        {
-          configure: {
-            enabled: false,
-          },
-          edges: {
-            color: {
-              inherit: true,
-            },
-          },
-          interaction: {
-            dragNodes: true,
-            hideEdgesOnDrag: false,
-            hideNodesOnDrag: false,
-          },
-          physics: {
-            enabled: true,
-            stabilization: {
-              enabled: true,
-              fit: true,
-              iterations: 1000,
-              onlyDynamicEdges: false,
-              updateInterval: 50,
-            },
-          },
-        },
+        options,
       )
     }
 
