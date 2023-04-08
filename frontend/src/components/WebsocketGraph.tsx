@@ -4,6 +4,7 @@ import { CrawlMessage, PageData } from '../../../backend'
 import { CrawlParameters } from '../hooks/useCrawlParameters'
 import { useVisNetwork } from '../hooks/useVisNetwork'
 import { useWebSocket, WebSocketHandlers } from '../hooks/useWebsocket'
+import FullWidth from '../utils/FullWidth'
 import WikipediaSearch from './WikipediaSearch'
 
 function sendSearchRequest(
@@ -136,22 +137,23 @@ function Graph({ breadth, depth }: GraphProps) {
   }
 
   return (
-    <div>
-      <form onSubmit={handleSubmit}>
-        <WikipediaSearch
-          value={inputValue}
-          onChange={(event) => setInputValue(event.target.value)}
-          minimumSearchLength={3}
-          onResultSelect={(title) => {
-            console.log(`Selected ${title}`)
-            setInputValue(title)
-            sendSearchRequest(title, breadth, depth, send)
-          }}
-        />
-        <button type="submit">Crawl</button>
-      </form>
+    <FullWidth>
+      <WikipediaSearch
+        value={inputValue}
+        onChange={(event) => setInputValue(event.target.value)}
+        minimumSearchLength={3}
+        onButtonPress={() => {
+          sendSearchRequest(inputValue, breadth, depth, send)
+          setInputValue('')
+        }}
+        onResultSelect={(title) => {
+          console.log(`Selected ${title}`)
+          setInputValue(title)
+          sendSearchRequest(title, breadth, depth, send)
+        }}
+      />
       <div ref={containerRef} style={{ width: '800px', height: '600px' }} />
-    </div>
+    </FullWidth>
   )
 }
 

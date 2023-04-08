@@ -1,5 +1,7 @@
 import {
+  Button,
   Container,
+  Grid,
   List,
   ListItemButton,
   ListItemText,
@@ -11,8 +13,9 @@ import { config } from '../env'
 
 interface Props {
   value: string
-  onChange?: React.ChangeEventHandler<HTMLInputElement> | undefined
+  onChange: React.ChangeEventHandler<HTMLInputElement> | undefined
   onResultSelect: (title: string) => void
+  onButtonPress: () => void
   minimumSearchLength: number
 }
 
@@ -49,24 +52,42 @@ function WikipediaSearch(props: Props): JSX.Element {
   }
 
   return (
-    <Container maxWidth="sm" sx={{ my: 4, mb: 2 }}>
-      <TextField
-        label="Search"
-        variant="outlined"
-        value={props.value}
-        onChange={props.onChange}
-        sx={{ width: '100%' }}
-      />
-      <List>
-        {searchResults.map((result) => (
-          <ListItemButton
-            key={result}
-            onClick={() => handleResultClick(result)}
+    <Container maxWidth="sm" sx={{ mt: 4, width: '100%' }}>
+      <Grid container spacing={2} alignItems="center">
+        <Grid item xs={12} sm={10}>
+          <TextField
+            label="Search"
+            variant="outlined"
+            value={props.value}
+            onChange={props.onChange}
+            sx={{ width: '100%' }}
+          />
+        </Grid>
+        <Grid item xs={4} sm={2}>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => {
+              props.onButtonPress()
+            }}
+            fullWidth
           >
-            <ListItemText primary={result} />
-          </ListItemButton>
-        ))}
-      </List>
+            Submit
+          </Button>
+        </Grid>
+        <Grid item xs={12}>
+          <List>
+            {searchResults.map((result) => (
+              <ListItemButton
+                key={result}
+                onClick={() => handleResultClick(result)}
+              >
+                <ListItemText primary={result} />
+              </ListItemButton>
+            ))}
+          </List>
+        </Grid>
+      </Grid>
     </Container>
   )
 }
