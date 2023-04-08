@@ -1,4 +1,5 @@
-import { useCallback, useMemo, useState } from 'react'
+import { alpha } from '@mui/material/styles'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Node } from 'vis'
 import { CrawlMessage, PageData } from '../../../backend'
 import { useVisNetwork } from '../hooks/useVisNetwork'
@@ -8,6 +9,13 @@ import FullWidth from '../utils/FullWidth'
 import { Card, Container, Grid, Slider, Typography } from '@mui/material'
 import { config } from '../env'
 import WikipediaSearch from './WikipediaSearch'
+
+type ClickEvent = {
+  event: MouseEvent
+  edges?: string[]
+  nodes?: string[]
+  pointer: { canvas: { x: number; y: number }; DOM: { x: number; y: number } }
+}
 
 function sendSearchRequest(
   inputValue: string,
@@ -87,6 +95,7 @@ function WebsocketGraph() {
 
       try {
         const pageNode = createVisNode(wikid)
+
         nodesRef.current.update(pageNode)
 
         // Update node sizes by number of neighbours
@@ -102,8 +111,6 @@ function WebsocketGraph() {
             nodesRef.current.update({ ...node, size })
           }
         })
-
-        networkRef.current?.fit()
       } catch (err) {
         console.warn(err)
       }
@@ -112,12 +119,12 @@ function WebsocketGraph() {
       // TODO: Fix this behaviour server-side by cacheing all children but only returning
       // those that were requested.
       for (const child of children.slice(0, breadth)) {
-        try {
-          const childPageNode = createVisNode(child)
-          nodesRef.current.update(childPageNode)
-        } catch (err) {
-          console.warn(err)
-        }
+        // try {
+        //   const childPageNode = createVisNode(child)
+        //   nodesRef.current.update(childPageNode)
+        // } catch (err) {
+        //   console.warn(err)
+        // }
         try {
           edgesRef.current.add({
             from: wikid,
@@ -142,6 +149,18 @@ function WebsocketGraph() {
     url: 'wss://flvn62nuq8.execute-api.us-east-1.amazonaws.com/dev',
     handlers,
   })
+
+  // add double click handler
+  useEffect(() => {
+    networkRef.current?.on('doubleClick', (event: ClickEvent) => {
+      console.log({ event, msg: 'doubleClick' })
+      const clickedNode = event.nodes?.[0]
+      if (clickedNode) {
+        console.log({ clickedNode })
+        sendSearchRequest(clickedNode, breadth, depth, send)
+      }
+    })
+  }, [networkRef, breadth, depth, send])
 
   const handleResultSelect = (title: string): void => {
     sendSearchRequest(title, breadth, depth, send)
@@ -198,7 +217,7 @@ function WebsocketGraph() {
   return (
     <FullWidth>
       <Container maxWidth="sm" sx={{ mt: 4, width: '100%' }}>
-        <Card sx={{ padding: 2 }}>
+        <Card sx={{ padding: 2, bgcolor: alpha('#000000', 0.9) }}>
           <WikipediaSearch
             value={inputValue}
             handleChange={(event) => setInputValue(event.target.value)}
@@ -209,7 +228,17 @@ function WebsocketGraph() {
           {sliders}
         </Card>
       </Container>
-      <div ref={containerRef} style={{ width: '100%', height: '100vh' }} />
+      <div
+        ref={containerRef}
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          zIndex: -999,
+        }}
+      />
     </FullWidth>
   )
 }

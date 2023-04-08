@@ -10,7 +10,7 @@ function App() {
         width: '100%',
         height: '100%',
         backgroundColor: (theme) => theme.palette.background.default,
-        zIndex: -1,
+        zIndex: -999,
       }}
     />
     // rest of your app code
