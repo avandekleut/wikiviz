@@ -83,8 +83,6 @@ function WebsocketGraph() {
         return
       }
 
-      console.log('onMessage', { wikid, nodesRef })
-
       try {
         nodesRef.current.add(createVisNode(wikid))
         networkRef.current?.fit()

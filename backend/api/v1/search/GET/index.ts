@@ -63,4 +63,6 @@ const eventHandler: HttpEventHandler<{}> = async (event: HttpEvent) => {
   return searchResponse
 }
 
-export const handler = createHandlerContext(eventHandler)
+export const handler = createHandlerContext(eventHandler, {
+  cacheDurationSeconds: 60 * 60,
+})
