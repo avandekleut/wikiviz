@@ -16,11 +16,11 @@ import { config } from '../env'
 
 interface Props {
   value: string
-  onChange:
+  handleChange:
     | React.ChangeEventHandler<HTMLTextAreaElement | HTMLInputElement>
     | undefined
-  onResultSelect: (title: string) => void
-  onButtonPress: () => void
+  handleResultSelect: (title: string) => void
+  handleSubmit: () => void
   minimumSearchLength: number
 }
 
@@ -68,14 +68,14 @@ function WikipediaSearch(props: Props): JSX.Element {
   }, [props.value, props.minimumSearchLength])
 
   function handleResultClick(title: string) {
-    props.onResultSelect(title)
+    props.handleResultSelect(title)
     setSearchResultsOpen(false)
   }
 
   const handleChange: React.ChangeEventHandler<
     HTMLTextAreaElement | HTMLInputElement
   > = (event) => {
-    props.onChange?.(event)
+    props.handleChange?.(event)
     setSearchResultsOpen(true)
   }
 
@@ -85,7 +85,7 @@ function WikipediaSearch(props: Props): JSX.Element {
 
   const handleKeyDown = (event: React.KeyboardEvent) => {
     if (event.key === 'Enter') {
-      props.onButtonPress()
+      props.handleSubmit()
     }
   }
 
@@ -106,7 +106,7 @@ function WikipediaSearch(props: Props): JSX.Element {
           variant="contained"
           color="primary"
           onClick={() => {
-            props.onButtonPress()
+            props.handleSubmit()
           }}
           fullWidth
         >

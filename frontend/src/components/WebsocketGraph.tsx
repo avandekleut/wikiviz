@@ -112,7 +112,7 @@ function WebsocketGraph() {
         }
       }
     },
-    [nodesRef, edgesRef],
+    [networkRef, nodesRef, edgesRef, breadth],
   )
 
   const handlers = useMemo<WebSocketHandlers>(() => {
@@ -127,8 +127,8 @@ function WebsocketGraph() {
   })
 
   const handleResultSelect = (title: string): void => {
-    setInputValue(title)
     sendSearchRequest(title, breadth, depth, send)
+    setInputValue(title)
   }
 
   const sliders = (
@@ -174,19 +174,20 @@ function WebsocketGraph() {
     </Grid>
   )
 
+  const handleSubmit = () => {
+    sendSearchRequest(inputValue, breadth, depth, send)
+    setInputValue('')
+  }
   return (
     <FullWidth>
       <Container maxWidth="sm" sx={{ mt: 4, width: '100%' }}>
         <Card sx={{ padding: 2 }}>
           <WikipediaSearch
             value={inputValue}
-            onChange={(event) => setInputValue(event.target.value)}
-            minimumSearchLength={3}
-            onButtonPress={() => {
-              sendSearchRequest(inputValue, breadth, depth, send)
-              setInputValue('')
-            }}
-            onResultSelect={handleResultSelect}
+            handleChange={(event) => setInputValue(event.target.value)}
+            minimumSearchLength={config.MINIMUM_SEARCH_LENGTH}
+            handleSubmit={handleSubmit}
+            handleResultSelect={handleResultSelect}
           />
           {sliders}
         </Card>
