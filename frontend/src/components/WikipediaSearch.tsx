@@ -54,7 +54,7 @@ function WikipediaSearch(props: Props): JSX.Element {
   return (
     <Container maxWidth="sm" sx={{ mt: 4, width: '100%' }}>
       <Grid container spacing={2} alignItems="center">
-        <Grid item xs={12} sm={10}>
+        <Grid item xs={10}>
           <TextField
             label="Search"
             variant="outlined"
@@ -63,7 +63,7 @@ function WikipediaSearch(props: Props): JSX.Element {
             sx={{ width: '100%' }}
           />
         </Grid>
-        <Grid item xs={4} sm={2}>
+        <Grid item xs={2}>
           <Button
             variant="contained"
             color="primary"
@@ -75,7 +75,7 @@ function WikipediaSearch(props: Props): JSX.Element {
             Submit
           </Button>
         </Grid>
-        <Grid item xs={12}>
+        <Grid item xs={8}>
           <List>
             {searchResults.map((result) => (
               <ListItemButton

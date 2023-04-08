@@ -152,7 +152,7 @@ function Graph({ breadth, depth }: GraphProps) {
           sendSearchRequest(title, breadth, depth, send)
         }}
       />
-      <div ref={containerRef} style={{ width: '800px', height: '600px' }} />
+      <div ref={containerRef} style={{ width: '100%', height: '100vh' }} />
     </FullWidth>
   )
 }
