@@ -4,22 +4,20 @@ import { config } from '../env'
 export interface CrawlParameters {
   depth: number
   breadth: number
-  handleDepthChange: (event: React.ChangeEvent<HTMLInputElement>) => void
-  handleBreadthChange: (event: React.ChangeEvent<HTMLInputElement>) => void
+  handleDepthChange: (value: number) => void
+  handleBreadthChange: (value: number) => void
 }
 
 export function useCrawlParameters(): CrawlParameters {
   const [depth, setDepth] = useState<number>(config.CRAWL_DEFAULT_DEPTH)
-  const [breadth, setBreadth] = useState<number>(
-    config.CRAWL_DEFAULT_BRANCHING_FACTOR,
-  )
+  const [breadth, setBreadth] = useState<number>(config.CRAWL_DEFAULT_BREADTH)
 
-  const handleDepthChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setDepth(parseInt(event.target.value))
+  const handleDepthChange = (value: number) => {
+    setDepth(value)
   }
 
-  const handleBreadthChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setBreadth(parseInt(event.target.value))
+  const handleBreadthChange = (value: number) => {
+    setBreadth(value)
   }
 
   return { depth, handleDepthChange, breadth, handleBreadthChange }

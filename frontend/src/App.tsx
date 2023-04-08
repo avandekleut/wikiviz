@@ -1,5 +1,5 @@
 import './App.css'
-import { SearchAndNetwork } from './pages/SearchAndNetwork'
+import WebsocketGraph from './components/WebsocketGraph'
 import ThemeProviderWrapper from './providers/ThemeProviderWrapper'
 
 function App() {
@@ -7,7 +7,7 @@ function App() {
     <div className="App">
       <header className="App-header">
         <ThemeProviderWrapper>
-          <SearchAndNetwork />
+          <WebsocketGraph />
         </ThemeProviderWrapper>
       </header>
     </div>

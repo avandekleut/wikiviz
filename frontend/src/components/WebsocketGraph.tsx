@@ -1,10 +1,12 @@
-import React, { useCallback, useMemo, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { Node } from 'vis'
 import { CrawlMessage, PageData } from '../../../backend'
-import { CrawlParameters } from '../hooks/useCrawlParameters'
 import { useVisNetwork } from '../hooks/useVisNetwork'
 import { useWebSocket, WebSocketHandlers } from '../hooks/useWebsocket'
 import FullWidth from '../utils/FullWidth'
+
+import { Container, Slider, Typography } from '@mui/material'
+import { config } from '../env'
 import WikipediaSearch from './WikipediaSearch'
 
 function sendSearchRequest(
@@ -52,14 +54,10 @@ function createVisNode(wikid: string): Node {
   }
 }
 
-export interface GraphProps {
-  breadth: CrawlParameters['breadth']
-  depth: CrawlParameters['depth']
-}
-
-function Graph({ breadth, depth }: GraphProps) {
+function WebsocketGraph() {
   const [inputValue, setInputValue] = useState('')
-  const [wikid, setWikid] = useState('')
+  const [depth, setDepth] = useState(config.CRAWL_DEFAULT_DEPTH)
+  const [breadth, setBreadth] = useState(config.CRAWL_DEFAULT_BREADTH)
 
   const { containerRef, nodesRef, edgesRef, networkRef } = useVisNetwork({
     nodes: [],
@@ -128,33 +126,58 @@ function Graph({ breadth, depth }: GraphProps) {
     handlers,
   })
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault()
-
-    sendSearchRequest(inputValue, breadth, depth, send)
-
-    setInputValue('')
+  const handleResultSelect = (title: string): void => {
+    setInputValue(title)
+    sendSearchRequest(title, breadth, depth, send)
   }
 
   return (
     <FullWidth>
-      <WikipediaSearch
-        value={inputValue}
-        onChange={(event) => setInputValue(event.target.value)}
-        minimumSearchLength={3}
-        onButtonPress={() => {
-          sendSearchRequest(inputValue, breadth, depth, send)
-          setInputValue('')
-        }}
-        onResultSelect={(title) => {
-          console.log(`Selected ${title}`)
-          setInputValue(title)
-          sendSearchRequest(title, breadth, depth, send)
-        }}
-      />
+      <Container maxWidth="sm" sx={{ mt: 4, width: '100%' }}>
+        <WikipediaSearch
+          value={inputValue}
+          onChange={(event) => setInputValue(event.target.value)}
+          minimumSearchLength={3}
+          onButtonPress={() => {
+            sendSearchRequest(inputValue, breadth, depth, send)
+            setInputValue('')
+          }}
+          onResultSelect={handleResultSelect}
+        />
+        <Typography id="depth-label">Breadth</Typography>
+        <Slider
+          value={depth}
+          onChange={(event, value) => {
+            if (typeof value === 'number') {
+              setDepth(value)
+            }
+          }}
+          aria-label="depth"
+          aria-labelledby="depth-label"
+          valueLabelDisplay="auto"
+          min={config.CRAWL_DEFAULT_DEPTH_RANGE[0]}
+          max={config.CRAWL_DEFAULT_DEPTH_RANGE[1]}
+          step={1}
+        />
+        <Typography id="breadth-label">Depth</Typography>
+        <Slider
+          value={breadth}
+          onChange={(event, value) => {
+            if (typeof value === 'number') {
+              setBreadth(value)
+            }
+          }}
+          arial-label="breadth"
+          aria-labelledby="breadth-label"
+          valueLabelDisplay="auto"
+          min={config.CRAWL_DEFAULT_BREADTH_RANGE[0]}
+          max={config.CRAWL_DEFAULT_BREADTH_RANGE[1]}
+          step={1}
+        />
+      </Container>
       <div ref={containerRef} style={{ width: '100%', height: '100vh' }} />
     </FullWidth>
   )
 }
 
-export default Graph
+export default WebsocketGraph
