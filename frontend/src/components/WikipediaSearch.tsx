@@ -66,6 +66,12 @@ function WikipediaSearch(props: Props): JSX.Element {
     setSearchResultsOpen(false)
   }
 
+  const handleKeyDown = (event: React.KeyboardEvent) => {
+    if (event.key === 'Enter') {
+      props.onButtonPress()
+    }
+  }
+
   return (
     <Grid container spacing={2} alignItems="center">
       <Grid item xs={10}>
@@ -74,6 +80,7 @@ function WikipediaSearch(props: Props): JSX.Element {
           variant="outlined"
           value={props.value}
           onChange={handleChange}
+          onKeyDown={handleKeyDown}
           sx={{ width: '100%' }}
         />
       </Grid>
@@ -89,22 +96,24 @@ function WikipediaSearch(props: Props): JSX.Element {
           Submit
         </Button>
       </Grid>
-      {searchResultsOpen && (
-        <ClickAwayListener onClickAway={handleClickAway}>
-          <Grid item xs={8}>
-            <List style={{ position: 'absolute', zIndex: 9999 }}>
-              {searchResults.map((result) => (
+      <ClickAwayListener onClickAway={handleClickAway}>
+        <Grid item xs={8}>
+          <List style={{ position: 'absolute', zIndex: 9999 }}>
+            {searchResultsOpen &&
+              searchResults.map((result) => (
                 <ListItemButton
                   key={result}
                   onClick={() => handleResultClick(result)}
+                  sx={{
+                    position: 'relative',
+                  }}
                 >
                   <ListItemText primary={result} />
                 </ListItemButton>
               ))}
-            </List>
-          </Grid>
-        </ClickAwayListener>
-      )}
+          </List>
+        </Grid>
+      </ClickAwayListener>
     </Grid>
   )
 }
