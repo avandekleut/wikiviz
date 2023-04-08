@@ -1,6 +1,7 @@
 import cheerio from 'cheerio'
-import fetch from 'node-fetch'
 import { URL } from 'url'
+import { fetchDataWithRetries } from './fetchWithBackoff'
+import { LoggerFactory } from './logger'
 import { PageData } from './pagedata'
 
 // TODO: remove this
@@ -10,12 +11,25 @@ const apiKey =
 export async function wikipediaSummaryAndLinks(
   title: string,
 ): Promise<PageData> {
-  console.log(`Fetching ${title}`)
+  LoggerFactory.logger.debug(`Fetching ${title}`)
 
   const url = `https://en.wikipedia.org/w/api.php?action=parse&page=${title}&prop=text&format=json&section=0&redirects=true&origin=*`
-  const response = await fetch(url)
 
-  const json = await response.json()
+  const response = await fetchDataWithRetries(url)
+
+  let json: any
+  try {
+    json = await response.json()
+  } catch (err) {
+    LoggerFactory.logger.error({
+      response,
+      err,
+      body: response.body,
+      status: response.status,
+      msg: `Failed to parse response`,
+    })
+    throw err
+  }
   const html = json.parse.text['*']
   const $ = cheerio.load(html)
 

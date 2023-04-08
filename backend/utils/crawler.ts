@@ -13,17 +13,21 @@ type CrawlerParams = {
 const visitedWikids: Record<string, PageData> = {}
 
 export class Crawler {
+  constructor(public numVisited = 0) {}
+
   async crawl(
     wikid: string,
     { depth, branchingFactor, callback }: CrawlerParams,
   ): Promise<void> {
     let pageData: PageData
 
+    const crawlData = { wikid, depth, branchingFactor }
+
     if (visitedWikids[wikid]) {
-      LoggerFactory.logger.debug({ wikid, msg: 'cache hit' })
+      LoggerFactory.logger.debug({ crawlData, msg: 'cache hit' })
       pageData = visitedWikids[wikid]
     } else {
-      LoggerFactory.logger.debug({ wikid, msg: 'cache miss' })
+      LoggerFactory.logger.debug({ crawlData, msg: 'cache miss' })
       try {
         pageData = await getWikipediaSummaryAndLinks(wikid)
         visitedWikids[wikid] = pageData
@@ -35,8 +39,10 @@ export class Crawler {
 
     if (callback) {
       await callback(pageData)
-      LoggerFactory.logger.debug({ wikid, msg: 'callback executed' })
+      LoggerFactory.logger.debug({ crawlData, msg: 'callback executed' })
     }
+
+    this.numVisited += 1
 
     if (depth > 0) {
       const children = pageData.children.slice(0, branchingFactor)
