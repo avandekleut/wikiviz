@@ -3,7 +3,6 @@ import { HttpError } from './http-error'
 import { getHttpEvent, HttpEvent } from './http-event'
 import { JsonObject } from './json-types'
 
-import * as crypto from 'crypto'
 import { LoggerFactory } from './logger'
 
 export type APIGatewayProxyStructuredResultV2Headers =
@@ -41,7 +40,6 @@ export function createHandlerContext<T extends JsonObject>(
     successStatusCode = 200,
     headers = {},
     contentType = 'application/json',
-    cacheDurationSeconds = 0,
   }: HandlerContext = {}, // default argument = {} to make it "optional"
 ) {
   const contentTypeHeader: Record<string, ContentType> = {
@@ -54,24 +52,12 @@ export function createHandlerContext<T extends JsonObject>(
 
       const result = await eventHandler(httpEvent)
 
-      const cacheHeaders =
-        cacheDurationSeconds !== undefined
-          ? {
-              'Cache-Control': `public, max-age=${cacheDurationSeconds}`,
-              ETag: crypto
-                .createHash('sha256')
-                .update(JSON.stringify(result))
-                .digest('hex'),
-            }
-          : ({} as Record<string, string>)
-
       return {
         statusCode: successStatusCode,
         body: JSON.stringify(result),
         headers: {
           ...headers,
           ...contentTypeHeader,
-          ...cacheHeaders,
         },
       }
     } catch (err) {
