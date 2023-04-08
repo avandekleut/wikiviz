@@ -1,7 +1,6 @@
 import {
   Button,
   ClickAwayListener,
-  Container,
   Grid,
   List,
   ListItemButton,
@@ -68,47 +67,45 @@ function WikipediaSearch(props: Props): JSX.Element {
   }
 
   return (
-    <Container maxWidth="sm" sx={{ mt: 4, width: '100%' }}>
-      <Grid container spacing={2} alignItems="center">
-        <Grid item xs={10}>
-          <TextField
-            label="Search"
-            variant="outlined"
-            value={props.value}
-            onChange={handleChange}
-            sx={{ width: '100%' }}
-          />
-        </Grid>
-        <Grid item xs={2}>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={() => {
-              props.onButtonPress()
-            }}
-            fullWidth
-          >
-            Submit
-          </Button>
-        </Grid>
-        {searchResultsOpen && (
-          <ClickAwayListener onClickAway={handleClickAway}>
-            <Grid item xs={8}>
-              <List style={{ position: 'absolute', zIndex: 9999 }}>
-                {searchResults.map((result) => (
-                  <ListItemButton
-                    key={result}
-                    onClick={() => handleResultClick(result)}
-                  >
-                    <ListItemText primary={result} />
-                  </ListItemButton>
-                ))}
-              </List>
-            </Grid>
-          </ClickAwayListener>
-        )}
+    <Grid container spacing={2} alignItems="center">
+      <Grid item xs={10}>
+        <TextField
+          label="Search"
+          variant="outlined"
+          value={props.value}
+          onChange={handleChange}
+          sx={{ width: '100%' }}
+        />
       </Grid>
-    </Container>
+      <Grid item xs={2}>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => {
+            props.onButtonPress()
+          }}
+          fullWidth
+        >
+          Submit
+        </Button>
+      </Grid>
+      {searchResultsOpen && (
+        <ClickAwayListener onClickAway={handleClickAway}>
+          <Grid item xs={8}>
+            <List style={{ position: 'absolute', zIndex: 9999 }}>
+              {searchResults.map((result) => (
+                <ListItemButton
+                  key={result}
+                  onClick={() => handleResultClick(result)}
+                >
+                  <ListItemText primary={result} />
+                </ListItemButton>
+              ))}
+            </List>
+          </Grid>
+        </ClickAwayListener>
+      )}
+    </Grid>
   )
 }
 

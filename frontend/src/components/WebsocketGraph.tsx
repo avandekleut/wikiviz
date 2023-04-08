@@ -5,7 +5,7 @@ import { useVisNetwork } from '../hooks/useVisNetwork'
 import { useWebSocket, WebSocketHandlers } from '../hooks/useWebsocket'
 import FullWidth from '../utils/FullWidth'
 
-import { Container, Slider, Typography } from '@mui/material'
+import { Container, Grid, Slider, Typography } from '@mui/material'
 import { config } from '../env'
 import WikipediaSearch from './WikipediaSearch'
 
@@ -131,20 +131,9 @@ function WebsocketGraph() {
     sendSearchRequest(title, breadth, depth, send)
   }
 
-  return (
-    <FullWidth>
-      <Container maxWidth="sm" sx={{ mt: 4, width: '100%' }}>
-        <WikipediaSearch
-          value={inputValue}
-          onChange={(event) => setInputValue(event.target.value)}
-          minimumSearchLength={3}
-          onButtonPress={() => {
-            sendSearchRequest(inputValue, breadth, depth, send)
-            setInputValue('')
-          }}
-          onResultSelect={handleResultSelect}
-        />
-        <Typography id="depth-label">Breadth</Typography>
+  const sliders = (
+    <Grid container spacing={2} alignItems="center">
+      <Grid item xs={10}>
         <Slider
           value={depth}
           onChange={(event, value) => {
@@ -159,7 +148,11 @@ function WebsocketGraph() {
           max={config.CRAWL_DEFAULT_DEPTH_RANGE[1]}
           step={1}
         />
-        <Typography id="breadth-label">Depth</Typography>
+      </Grid>
+      <Grid item xs={2}>
+        <Typography id="depth-label">Depth</Typography>
+      </Grid>
+      <Grid item xs={10}>
         <Slider
           value={breadth}
           onChange={(event, value) => {
@@ -167,13 +160,34 @@ function WebsocketGraph() {
               setBreadth(value)
             }
           }}
-          arial-label="breadth"
+          aria-label="breadth"
           aria-labelledby="breadth-label"
           valueLabelDisplay="auto"
           min={config.CRAWL_DEFAULT_BREADTH_RANGE[0]}
           max={config.CRAWL_DEFAULT_BREADTH_RANGE[1]}
           step={1}
         />
+      </Grid>
+      <Grid item xs={2}>
+        <Typography id="breadth-label">Breadth</Typography>
+      </Grid>
+    </Grid>
+  )
+
+  return (
+    <FullWidth>
+      <Container maxWidth="sm" sx={{ mt: 4, width: '100%' }}>
+        <WikipediaSearch
+          value={inputValue}
+          onChange={(event) => setInputValue(event.target.value)}
+          minimumSearchLength={3}
+          onButtonPress={() => {
+            sendSearchRequest(inputValue, breadth, depth, send)
+            setInputValue('')
+          }}
+          onResultSelect={handleResultSelect}
+        />
+        {sliders}
       </Container>
       <div ref={containerRef} style={{ width: '100%', height: '100vh' }} />
     </FullWidth>
