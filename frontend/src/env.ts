@@ -6,4 +6,5 @@ export const config = {
   WEBSOCKET_API_BASEURL:
     'https://cueseuvko4.execute-api.us-east-1.amazonaws.com',
   SEARCH_API_CACHE_TTL: 3600,
+  MINIMUM_SEARCH_LENGTH: 3,
 }
