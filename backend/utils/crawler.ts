@@ -39,7 +39,7 @@ export class Crawler {
 
     if (callback) {
       await callback(pageData)
-      LoggerFactory.logger.debug({ crawlData, msg: 'callback executed' })
+      LoggerFactory.logger.debug({ pageData, msg: 'callback executed' })
     }
 
     this.numVisited += 1

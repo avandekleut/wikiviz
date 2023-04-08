@@ -21,14 +21,18 @@ export class WikiVizApi extends Construct {
       route: 'GET /api/v1/networks/{wikid}',
       timeout: Duration.seconds(10),
       memorySize: 1024,
-      environment: {},
+      environment: {
+        LOG_LEVEL: 'info',
+      },
     })
 
     const search = this.addRoute({
       route: 'GET /api/v1/search',
       timeout: Duration.seconds(1),
       memorySize: 128,
-      environment: {},
+      environment: {
+        LOG_LEVEL: 'info',
+      },
     })
 
     new CfnOutput(this, 'ApiUrl', {
