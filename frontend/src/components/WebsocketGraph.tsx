@@ -103,7 +103,7 @@ function WebsocketGraph() {
           if (node.id) {
             const connectedTo = networkRef.current?.getConnectedNodes(
               node.id,
-              'to',
+              'from',
             )
             const numConnectedTo = connectedTo?.length ?? 0
 
@@ -119,6 +119,7 @@ function WebsocketGraph() {
       // TODO: Fix this behaviour server-side by cacheing all children but only returning
       // those that were requested.
       for (const child of children.slice(0, breadth)) {
+        // // Removed this code that added children that haven't been visited by the crawler
         // try {
         //   const childPageNode = createVisNode(child)
         //   nodesRef.current.update(childPageNode)
