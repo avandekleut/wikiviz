@@ -1,42 +1,14 @@
 import { APIGatewayProxyEventV2 } from 'aws-lambda'
-import { ConvertiblePrimitive, get } from './get-with-default'
-import { HttpError } from './http-error'
-
-export type StringRecord = Record<string, string | undefined>
-
-export interface HttpEvent {
-  get body(): string
-
-  get headers(): StringRecord
-
-  getHeader<T extends ConvertiblePrimitive = string>(
-    name: string,
-    defaultValue?: T,
-  ): T
-
-  get queryStringParameters(): StringRecord
-
-  getQueryStringParameter<T extends ConvertiblePrimitive = string>(
-    name: string,
-    defaultValue?: T,
-  ): T
-
-  get pathParameters(): StringRecord
-
-  getPathParameter<T extends ConvertiblePrimitive = string>(
-    name: string,
-    defaultValue?: T,
-  ): T
-
-  get cookies(): Array<string>
-}
-
+import { ConvertiblePrimitive, get } from '../get-with-default'
+import { HttpError } from '../http-error'
+import { HttpEvent, StringRecord } from './HttpEvent'
 /**
  * Provides clean access to base properties of APIGatewayProxyEventV2,
  * throwing `HttpError(400, message)` along the way if a property is inaccessible.
  */
 export class ApiGatewayHttpEvent implements HttpEvent {
   constructor(private readonly event: APIGatewayProxyEventV2) {}
+
   get pathParameters(): StringRecord {
     const pathParameters = this.event.pathParameters
     if (pathParameters === undefined) {
@@ -44,6 +16,7 @@ export class ApiGatewayHttpEvent implements HttpEvent {
     }
     return pathParameters
   }
+
   getPathParameter<T extends ConvertiblePrimitive>(
     name: string,
     defaultValue?: T,
@@ -94,8 +67,4 @@ export class ApiGatewayHttpEvent implements HttpEvent {
     }
     return queryStringParameters
   }
-}
-
-export function getHttpEvent(event: any): HttpEvent {
-  return new ApiGatewayHttpEvent(event)
 }

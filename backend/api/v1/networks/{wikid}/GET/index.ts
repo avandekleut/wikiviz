@@ -3,7 +3,7 @@ import {
   createHandlerContext,
   HttpEventHandler,
 } from '../../../../../utils/handler-context'
-import { HttpEvent } from '../../../../../utils/http-event'
+import { HttpEvent } from '../../../../../utils/http-event/HttpEvent'
 import { LoggerFactory } from '../../../../../utils/logger'
 
 const eventHandler: HttpEventHandler<{}> = async (event: HttpEvent) => {

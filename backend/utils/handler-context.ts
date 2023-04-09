@@ -1,6 +1,6 @@
 import { APIGatewayProxyHandlerV2 } from 'aws-lambda'
 import { HttpError } from './http-error'
-import { getHttpEvent, HttpEvent } from './http-event'
+import { getHttpEvent, HttpEvent } from './http-event/HttpEvent'
 import { JsonObject } from './json-types'
 
 import { LoggerFactory } from './logger'
