@@ -228,6 +228,8 @@ function WebsocketGraph() {
       const clickedNode = event.nodes?.[0]
       if (clickedNode) {
         console.log({ clickedNode })
+        setCrawlInProgress(true)
+        setCrawlProgress(0)
         sendCrawlRequest(clickedNode, breadth, depth, send)
       }
     }
@@ -246,6 +248,7 @@ function WebsocketGraph() {
     setInputValue(title)
     sendCrawlRequest(title, breadth, depth, send)
     setCrawlInProgress(true)
+    setCrawlProgress(0)
   }
 
   const handleSubmit = () => {
@@ -255,6 +258,7 @@ function WebsocketGraph() {
     setInputValue('')
     sendCrawlRequest(inputValue, breadth, depth, send)
     setCrawlInProgress(true)
+    setCrawlProgress(0)
   }
 
   const sliders = (
