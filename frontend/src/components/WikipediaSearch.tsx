@@ -21,6 +21,7 @@ interface Props {
     | undefined
   handleResultSelect: (title: string) => void
   handleSubmit: () => void
+  submitDisabled?: boolean
   minimumSearchLength: number
 }
 
@@ -114,6 +115,7 @@ function WikipediaSearch(props: Props): JSX.Element {
           color="primary"
           onClick={handleCrawlClick}
           fullWidth
+          disabled={props.submitDisabled ?? false}
         >
           Crawl
         </Button>

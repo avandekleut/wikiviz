@@ -18,44 +18,45 @@ type CrawlerParams = {
 const visitedWikids: Record<string, PageData> = {}
 
 export class Crawler {
-  constructor(public numVisited = 0) {}
-
   async crawl(
     wikid: string,
     { depth, branchingFactor, callback }: CrawlerParams,
   ): Promise<void> {
-    let pageData: PageData
+    const queue: { wikid: string; depth: number }[] = [{ wikid, depth }]
 
-    const crawlData = { wikid, depth, branchingFactor }
+    while (queue.length > 0) {
+      const { wikid, depth } = queue.shift()!
+      let pageData: PageData
 
-    if (visitedWikids[wikid]) {
-      LoggerFactory.logger.debug({ crawlData, msg: 'cache hit' })
-      pageData = visitedWikids[wikid]
-    } else {
-      LoggerFactory.logger.debug({ crawlData, msg: 'cache miss' })
-      try {
-        pageData = await getWikipediaSummaryAndLinks(wikid)
-        visitedWikids[wikid] = pageData
-      } catch (err) {
-        console.warn({ err, msg: 'could not fetch data from wikipedia' })
-        return
+      const crawlData = { wikid, depth, branchingFactor }
+
+      if (visitedWikids[wikid]) {
+        LoggerFactory.logger.debug({ crawlData, msg: 'cache hit' })
+        pageData = visitedWikids[wikid]
+      } else {
+        LoggerFactory.logger.debug({ crawlData, msg: 'cache miss' })
+        try {
+          pageData = await getWikipediaSummaryAndLinks(wikid)
+          visitedWikids[wikid] = pageData
+        } catch (err) {
+          console.warn({ err, msg: 'could not fetch data from wikipedia' })
+          continue
+        }
       }
-    }
 
-    if (callback) {
-      await callback({
-        type: 'data',
-        data: pageData,
-      })
-      LoggerFactory.logger.debug({ pageData, msg: 'callback executed' })
-    }
+      if (callback) {
+        await callback({
+          type: 'data',
+          data: pageData,
+        })
+        LoggerFactory.logger.debug({ pageData, msg: 'callback executed' })
+      }
 
-    this.numVisited += 1
-
-    if (depth > 0) {
-      const children = pageData.children.slice(0, branchingFactor)
-      for (const child of children) {
-        await this.crawl(child, { depth: depth - 1, branchingFactor, callback })
+      if (depth > 0) {
+        const children = pageData.children.slice(0, branchingFactor)
+        for (const child of children) {
+          queue.push({ wikid: child, depth: depth - 1 })
+        }
       }
     }
   }

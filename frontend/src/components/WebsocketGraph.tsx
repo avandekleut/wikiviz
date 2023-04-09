@@ -106,6 +106,13 @@ function WebsocketGraph() {
         console.warn(`Could not parse event.data: ${event.data}`)
       }
 
+      const handleClose = () => {
+        setCrawlProgress(maxNodes)
+        setTimeout(() => {
+          setCrawlInProgress(false)
+        }, 1000)
+      }
+
       const { type, data }: Partial<CrawlerEvent<PageData | undefined>> =
         JSON.parse(event.data)
 
@@ -113,6 +120,7 @@ function WebsocketGraph() {
 
       if (type === undefined) {
         console.warn(`type undefined`)
+        handleClose()
         return
       }
 
@@ -122,11 +130,7 @@ function WebsocketGraph() {
       }
 
       if (type === 'close') {
-        setCrawlProgress(maxNodes)
-        setTimeout(() => {
-          setCrawlInProgress(false)
-        }, 1000)
-
+        handleClose()
         return
       }
 
@@ -218,6 +222,9 @@ function WebsocketGraph() {
 
     const handleClick = (event: ClickEvent) => {
       console.log({ event, msg: 'doubleClick' })
+      if (crawlInProgress) {
+        return
+      }
       const clickedNode = event.nodes?.[0]
       if (clickedNode) {
         console.log({ clickedNode })
@@ -230,15 +237,21 @@ function WebsocketGraph() {
     return () => {
       network.off('doubleClick', handleClick)
     }
-  }, [networkRef, breadth, depth, send])
+  }, [networkRef, breadth, depth, send, crawlInProgress])
 
   const handleResultSelect = (title: string): void => {
+    if (crawlInProgress) {
+      return
+    }
     setInputValue(title)
     sendCrawlRequest(title, breadth, depth, send)
     setCrawlInProgress(true)
   }
 
   const handleSubmit = () => {
+    if (crawlInProgress) {
+      return
+    }
     setInputValue('')
     sendCrawlRequest(inputValue, breadth, depth, send)
     setCrawlInProgress(true)
@@ -297,6 +310,7 @@ function WebsocketGraph() {
             minimumSearchLength={config.MINIMUM_SEARCH_LENGTH}
             handleSubmit={handleSubmit}
             handleResultSelect={handleResultSelect}
+            submitDisabled={crawlInProgress}
           />
           {sliders}
         </Card>

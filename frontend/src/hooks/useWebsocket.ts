@@ -18,31 +18,8 @@ export const useWebSocket = ({ url, handlers }: UseWebSocketProps) => {
 
   useEffect(() => {
     const ws = new WebSocket(url)
-
-    ws.onopen = () => {
-      console.log('Connected to WebSocket', new Date().valueOf())
-      handlers?.onOpen?.()
-    }
-
-    ws.onmessage = (event) => {
-      console.log('Received message:', event.data, new Date().valueOf())
-      handlers?.onMessage?.(event)
-    }
-
-    ws.onerror = (event) => {
-      console.error('WebSocket error:', event, new Date().valueOf())
-      handlers?.onError?.(event)
-    }
-
-    ws.onclose = () => {
-      console.log('Disconnected from WebSocket', new Date().valueOf())
-      setSocket(null)
-      handlers?.onClose?.()
-    }
-
     setSocket(ws)
 
-    // Clean up the WebSocket connection when the component unmounts
     return () => {
       console.log('Cleaning up WebSocket connection', new Date().valueOf())
 
@@ -50,7 +27,34 @@ export const useWebSocket = ({ url, handlers }: UseWebSocketProps) => {
         ws.close()
       }
     }
-  }, [url, handlers])
+  }, [url])
+
+  useEffect(() => {
+    if (!socket) {
+      return
+    }
+
+    socket.onopen = () => {
+      console.log('Connected to WebSocket', new Date().valueOf())
+      handlers?.onOpen?.()
+    }
+
+    socket.onmessage = (event) => {
+      console.log('Received message:', event.data, new Date().valueOf())
+      handlers?.onMessage?.(event)
+    }
+
+    socket.onerror = (event) => {
+      console.error('WebSocket error:', event, new Date().valueOf())
+      handlers?.onError?.(event)
+    }
+
+    socket.onclose = () => {
+      console.log('Disconnected from WebSocket', new Date().valueOf())
+      setSocket(null)
+      handlers?.onClose?.()
+    }
+  }, [socket, handlers])
 
   const send = (message: CrawlMessage) => {
     if (socket && socket.readyState === WebSocket.OPEN) {
