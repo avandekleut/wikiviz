@@ -25,7 +25,7 @@ type ClickEvent = {
   pointer: { canvas: { x: number; y: number }; DOM: { x: number; y: number } }
 }
 
-function sendSearchRequest(
+function sendCrawlRequest(
   inputValue: string,
   breadth: number,
   depth: number,
@@ -195,7 +195,7 @@ function WebsocketGraph() {
         }
       }
     },
-    [networkRef, nodesRef, edgesRef, breadth],
+    [networkRef, nodesRef, edgesRef, breadth, maxNodes],
   )
 
   const handlers = useMemo<WebSocketHandlers>(() => {
@@ -221,7 +221,7 @@ function WebsocketGraph() {
       const clickedNode = event.nodes?.[0]
       if (clickedNode) {
         console.log({ clickedNode })
-        sendSearchRequest(clickedNode, breadth, depth, send)
+        sendCrawlRequest(clickedNode, breadth, depth, send)
       }
     }
 
@@ -234,13 +234,13 @@ function WebsocketGraph() {
 
   const handleResultSelect = (title: string): void => {
     setInputValue(title)
-    sendSearchRequest(title, breadth, depth, send)
+    sendCrawlRequest(title, breadth, depth, send)
     setCrawlInProgress(true)
   }
 
   const handleSubmit = () => {
     setInputValue('')
-    sendSearchRequest(inputValue, breadth, depth, send)
+    sendCrawlRequest(inputValue, breadth, depth, send)
     setCrawlInProgress(true)
   }
 
