@@ -4,12 +4,17 @@ import { LoggerFactory } from './logger'
 type FetchDataWithRetriesParams = {
   retries?: number
   retryDelay?: number
+  factor?: number
 }
 
 export async function fetchDataWithRetries(
   url: string,
   options: RequestInit | undefined = undefined,
-  { retries = 3, retryDelay = 1000 }: FetchDataWithRetriesParams = {},
+  {
+    retries = 3,
+    retryDelay = 200,
+    factor = 2,
+  }: FetchDataWithRetriesParams = {},
 ): Promise<Response> {
   const response = await fetch(url, options)
 
@@ -25,7 +30,8 @@ export async function fetchDataWithRetries(
 
     return fetchDataWithRetries(url, options, {
       retries: retries - 1,
-      retryDelay,
+      retryDelay: retryDelay * factor,
+      factor,
     })
   }
 
