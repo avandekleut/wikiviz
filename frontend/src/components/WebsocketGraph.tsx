@@ -7,6 +7,7 @@ import { useWebSocket, WebSocketHandlers } from '../hooks/useWebsocket'
 import FullWidth from '../utils/FullWidth'
 
 import { Card, Container, Grid, Slider, Typography } from '@mui/material'
+import { CrawlerEvent } from '../../../backend/utils/crawler-event'
 import { config } from '../env'
 import WikipediaSearch from './WikipediaSearch'
 
@@ -66,6 +67,8 @@ function WebsocketGraph() {
   const [inputValue, setInputValue] = useState('')
   const [depth, setDepth] = useState(config.CRAWL_DEFAULT_DEPTH)
   const [breadth, setBreadth] = useState(config.CRAWL_DEFAULT_BREADTH)
+  const [crawlInProgress, setCrawlInProgress] = useState(false)
+  const [crawlProgress, setCrawlProgress] = useState(0)
 
   const { containerRef, nodesRef, edgesRef, networkRef } = useVisNetwork({
     nodes: [],
@@ -80,7 +83,34 @@ function WebsocketGraph() {
         console.warn(`Could not parse event.data: ${event.data}`)
       }
 
-      const { wikid, children }: Partial<PageData> = JSON.parse(event.data)
+      const { type, data }: Partial<CrawlerEvent<PageData | undefined>> =
+        JSON.parse(event.data)
+
+      console.log({ type, data })
+
+      if (type === undefined) {
+        console.warn(`type undefined`)
+        return
+      }
+
+      if (data === undefined) {
+        console.warn(`data undefined`)
+        return
+      }
+
+      if (type === 'open') {
+        setCrawlInProgress(true)
+        setCrawlProgress(0)
+        return
+      }
+
+      if (type === 'close') {
+        setCrawlInProgress(false)
+        setCrawlProgress(100)
+        return
+      }
+      const { wikid, children } = data
+
       if (wikid === undefined) {
         console.warn(`wikid undefined`)
         return

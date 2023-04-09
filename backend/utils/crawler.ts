@@ -1,8 +1,13 @@
+import { CrawlerEvent, CrawlerEventData } from './crawler-event'
 import { LoggerFactory } from './logger'
 import { PageData } from './pagedata'
 import { wikipediaSummaryAndLinks as getWikipediaSummaryAndLinks } from './wiki'
 
-export type CrawlerCallback = (data: PageData) => void | Promise<void>
+export interface CrawlerEventPageData extends CrawlerEventData<PageData> {}
+
+export type CrawlerCallback = (
+  event: CrawlerEvent<PageData | undefined>,
+) => void | Promise<void>
 
 type CrawlerParams = {
   depth: number
@@ -38,7 +43,10 @@ export class Crawler {
     }
 
     if (callback) {
-      await callback(pageData)
+      await callback({
+        type: 'data',
+        data: pageData,
+      })
       LoggerFactory.logger.debug({ pageData, msg: 'callback executed' })
     }
 

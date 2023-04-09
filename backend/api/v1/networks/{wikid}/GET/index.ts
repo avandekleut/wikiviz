@@ -15,10 +15,10 @@ const eventHandler: HttpEventHandler<{}> = async (event: HttpEvent) => {
   const crawler = new Crawler()
 
   try {
-    const callback: CrawlerCallback = (pageData) => {
+    const callback: CrawlerCallback = ({ data: pageData }) => {
       graph.nodes.push(pageData)
 
-      for (const child of pageData.children) {
+      for (const child of pageData?.children ?? []) {
         graph.edges.push({
           from: wikid,
           to: child,

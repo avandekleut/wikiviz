@@ -1,6 +1,7 @@
 import { APIGatewayProxyWebsocketHandlerV2 } from 'aws-lambda'
 import { ApiGatewayManagementApi } from 'aws-sdk'
 import { Crawler, CrawlerCallback } from '../../utils/crawler'
+import { CrawlerEvent } from '../../utils/crawler-event'
 import { HttpError } from '../../utils/http-error'
 import { LoggerFactory } from '../../utils/logger'
 import { CORS_HEADERS } from '../cors'
@@ -53,16 +54,36 @@ export const handler: APIGatewayProxyWebsocketHandlerV2 = async (
   const crawler = new Crawler()
 
   try {
-    const callback: CrawlerCallback = async (pageData) => {
+    const callback: CrawlerCallback = async (event) => {
       await apiGatewayManagementApi
         .postToConnection({
           ConnectionId: connectionId,
-          Data: JSON.stringify(pageData),
+          Data: JSON.stringify(event),
         })
         .promise()
     }
 
+    const openEvent: CrawlerEvent = {
+      type: 'open',
+    }
+    await apiGatewayManagementApi
+      .postToConnection({
+        ConnectionId: connectionId,
+        Data: JSON.stringify(openEvent),
+      })
+      .promise()
+
     await crawler.crawl(wikid, { callback, depth, branchingFactor })
+
+    const closeEvent: CrawlerEvent = {
+      type: 'close',
+    }
+    await apiGatewayManagementApi
+      .postToConnection({
+        ConnectionId: connectionId,
+        Data: JSON.stringify(closeEvent),
+      })
+      .promise()
 
     LoggerFactory.logger.info(`Finished crawling ${wikid} with depth ${depth}`)
 
