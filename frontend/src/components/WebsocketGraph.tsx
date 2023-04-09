@@ -6,7 +6,14 @@ import { useVisNetwork } from '../hooks/useVisNetwork'
 import { useWebSocket, WebSocketHandlers } from '../hooks/useWebsocket'
 import FullWidth from '../utils/FullWidth'
 
-import { Card, Container, Grid, Slider, Typography } from '@mui/material'
+import {
+  Card,
+  Container,
+  Grid,
+  LinearProgress,
+  Slider,
+  Typography,
+} from '@mui/material'
 import { CrawlerEvent } from '../../../backend/utils/crawler-event'
 import { config } from '../env'
 import WikipediaSearch from './WikipediaSearch'
@@ -63,6 +70,20 @@ function createVisNode(wikid: string): Node {
   }
 }
 
+function computeMaxNumNodesDAG({
+  depth,
+  breadth,
+}: {
+  depth: number
+  breadth: number
+}) {
+  let result = 0
+  for (let d = 0; d <= depth; d++) {
+    result += breadth ** d
+  }
+  return result
+}
+
 function WebsocketGraph() {
   const [inputValue, setInputValue] = useState('')
   const [depth, setDepth] = useState(config.CRAWL_DEFAULT_DEPTH)
@@ -75,10 +96,12 @@ function WebsocketGraph() {
     edges: [],
   })
 
+  const maxNodes = computeMaxNumNodesDAG({ depth, breadth })
+
   const onMessage = useCallback<NonNullable<WebSocketHandlers['onMessage']>>(
     (event) => {
       try {
-        const data = JSON.parse(event.data)
+        JSON.parse(event.data)
       } catch (err) {
         console.warn(`Could not parse event.data: ${event.data}`)
       }
@@ -93,22 +116,25 @@ function WebsocketGraph() {
         return
       }
 
-      if (data === undefined) {
-        console.warn(`data undefined`)
-        return
-      }
-
       if (type === 'open') {
-        setCrawlInProgress(true)
         setCrawlProgress(0)
         return
       }
 
       if (type === 'close') {
-        setCrawlInProgress(false)
-        setCrawlProgress(100)
+        setCrawlProgress(maxNodes)
+        setTimeout(() => {
+          setCrawlInProgress(false)
+        }, 1000)
+
         return
       }
+
+      if (data === undefined) {
+        console.warn(`data undefined`)
+        return
+      }
+
       const { wikid, children } = data
 
       if (wikid === undefined) {
@@ -127,6 +153,8 @@ function WebsocketGraph() {
         const pageNode = createVisNode(wikid)
 
         nodesRef.current.update(pageNode)
+
+        setCrawlProgress((crawlProgress) => crawlProgress + 1)
 
         // Update node sizes by number of neighbours
         nodesRef.current.forEach((node) => {
@@ -205,8 +233,15 @@ function WebsocketGraph() {
   }, [networkRef, breadth, depth, send])
 
   const handleResultSelect = (title: string): void => {
-    sendSearchRequest(title, breadth, depth, send)
     setInputValue(title)
+    sendSearchRequest(title, breadth, depth, send)
+    setCrawlInProgress(true)
+  }
+
+  const handleSubmit = () => {
+    setInputValue('')
+    sendSearchRequest(inputValue, breadth, depth, send)
+    setCrawlInProgress(true)
   }
 
   const sliders = (
@@ -252,10 +287,6 @@ function WebsocketGraph() {
     </Grid>
   )
 
-  const handleSubmit = () => {
-    sendSearchRequest(inputValue, breadth, depth, send)
-    setInputValue('')
-  }
   return (
     <FullWidth>
       <Container maxWidth="sm" sx={{ mt: 4, width: '100%' }}>
@@ -268,6 +299,13 @@ function WebsocketGraph() {
             handleResultSelect={handleResultSelect}
           />
           {sliders}
+          <LinearProgress
+            variant={crawlProgress === 0 ? 'indeterminate' : 'determinate'}
+            value={(100 * crawlProgress) / maxNodes}
+            color="primary"
+            sx={{ position: 'relative', left: 0 }}
+            style={{ visibility: crawlInProgress ? 'visible' : 'hidden' }}
+          />
         </Card>
       </Container>
       <div
