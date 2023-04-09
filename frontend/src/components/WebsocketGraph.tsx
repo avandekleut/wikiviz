@@ -299,14 +299,14 @@ function WebsocketGraph() {
             handleResultSelect={handleResultSelect}
           />
           {sliders}
-          <LinearProgress
-            variant={crawlProgress === 0 ? 'indeterminate' : 'determinate'}
-            value={(100 * crawlProgress) / maxNodes}
-            color="primary"
-            sx={{ position: 'relative', left: 0 }}
-            style={{ visibility: crawlInProgress ? 'visible' : 'hidden' }}
-          />
         </Card>
+        <LinearProgress
+          variant={crawlProgress === 0 ? 'indeterminate' : 'determinate'}
+          value={(100 * crawlProgress) / maxNodes}
+          color="primary"
+          sx={{ position: 'relative', left: 0 }}
+          style={{ visibility: crawlInProgress ? 'visible' : 'hidden' }}
+        />
       </Container>
       <div
         ref={containerRef}
