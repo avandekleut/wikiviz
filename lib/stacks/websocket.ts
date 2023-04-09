@@ -2,7 +2,7 @@ import { WebSocketLambdaIntegration } from '@aws-cdk/aws-apigatewayv2-integratio
 import * as cdk from 'aws-cdk-lib'
 
 import * as apigwv2 from '@aws-cdk/aws-apigatewayv2-alpha'
-import { AttributeType, Table } from 'aws-cdk-lib/aws-dynamodb'
+import { AttributeType, BillingMode, Table } from 'aws-cdk-lib/aws-dynamodb'
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs'
 import { Construct } from 'constructs'
 
@@ -19,6 +19,7 @@ export class WebSocketApiStack extends cdk.Stack {
         name: 'pkey',
         type: AttributeType.STRING,
       },
+      billingMode: BillingMode.PAY_PER_REQUEST,
     })
 
     const projectRoot = path.join(__dirname, '..', '..')
