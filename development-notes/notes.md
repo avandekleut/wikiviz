@@ -1,17 +1,25 @@
-https://en.wikipedia.org/wiki/Salix_bebbiana
-https://www.npmjs.com/package/wikijs
-https://wikiviz.rainflame.com
-https://en.wikipedia.org/w/api.php?action=query&format=json&list=search&srsearch=sal
+## To do or try:
 
-https://stackoverflow.com/questions/72149484/is-there-a-way-to-save-the-rendered-node-locations-obtained-by-the-layout-algori
+### VisJS UX
 
-# TODO:
+#### lagginess at large graph sizes
 
-- clean up process.py into its own class
-- let scrapy logic be a subset of that
-- abstract serialization and loading of network class
-  - will need to do when checking S3 for results
-- look into modifying pyvis or VisJS code
+[] disable physics selectively
+[] hide oldest nodes as new ones are added
+[] batch update nodes and edges using `update` with an array on the vis `Datasets`
+[] timed event queue client-side to buffer adding nodes
+
+#### interaction
+
+[] show wiki title, summary, and image on hover or tap and hold
+[] button for clear and fit network
+
+#### Cacheing
+
+[x] client-side in-memory
+[x] lambda in-memory
+[] dynamodb cache
+[] localstorage cache
 
 ## Concerns:
 
