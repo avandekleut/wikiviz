@@ -1,4 +1,3 @@
-import ArticleIcon from '@mui/icons-material/Article'
 import {
   Avatar,
   Button,
@@ -141,13 +140,13 @@ function WikipediaSearch(props: Props): JSX.Element {
                   }}
                 >
                   <ListItemAvatar>
-                    <Avatar
-                      alt={page.title}
-                      src={page.thumbnail?.url}
-                      variant="square"
-                    >
-                      <ArticleIcon />
-                    </Avatar>
+                    {page.thumbnail?.url && (
+                      <Avatar
+                        alt={page.title}
+                        src={page.thumbnail.url}
+                        variant="square"
+                      ></Avatar>
+                    )}
                   </ListItemAvatar>
                   <ListItemText primary={page.title} />
                 </ListItemButton>
