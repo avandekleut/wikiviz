@@ -335,15 +335,17 @@ function WebsocketGraph() {
           sx={{ position: 'relative', left: 0 }}
           style={{ visibility: crawlInProgress ? 'visible' : 'hidden' }}
         />
-        <Grid container>
-          <Grid item xs={1}>
-            <ClearButton onClick={() => handleClear()}></ClearButton>
+        {nodesRef.current.length > 0 && (
+          <Grid container>
+            <Grid item xs={1}>
+              <ClearButton onClick={() => handleClear()}></ClearButton>
+            </Grid>
+            <Grid item xs={10}></Grid>
+            <Grid item xs={1}>
+              <FitButton onClick={() => handleFit()}></FitButton>
+            </Grid>
           </Grid>
-          <Grid item xs={10}></Grid>
-          <Grid item xs={1}>
-            <FitButton onClick={() => handleFit()}></FitButton>
-          </Grid>
-        </Grid>
+        )}
       </Container>
       <div
         ref={containerRef}
