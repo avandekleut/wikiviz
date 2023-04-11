@@ -16,6 +16,8 @@ import {
 } from '@mui/material'
 import { CrawlerEvent } from '../../../backend/utils/crawler-event'
 import { config } from '../env'
+import ClearButton from './ClearButton'
+import FitButton from './FitButton'
 import WikipediaSearch from './WikipediaSearch'
 
 type ClickEvent = {
@@ -261,6 +263,14 @@ function WebsocketGraph() {
     setCrawlProgress(0)
   }
 
+  const handleClear = () => {
+    console.log('Cleared')
+  }
+
+  const handleFit = () => {
+    networkRef.current?.fit()
+  }
+
   const sliders = (
     <Grid container spacing={2} alignItems="center">
       <Grid item xs={10}>
@@ -325,6 +335,15 @@ function WebsocketGraph() {
           sx={{ position: 'relative', left: 0 }}
           style={{ visibility: crawlInProgress ? 'visible' : 'hidden' }}
         />
+        <Grid container>
+          <Grid item xs={1}>
+            <ClearButton onClick={() => handleClear()}></ClearButton>
+          </Grid>
+          <Grid item xs={10}></Grid>
+          <Grid item xs={1}>
+            <FitButton onClick={() => handleFit()}></FitButton>
+          </Grid>
+        </Grid>
       </Container>
       <div
         ref={containerRef}
