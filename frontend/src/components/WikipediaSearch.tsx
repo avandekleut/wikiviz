@@ -35,6 +35,7 @@ function WikipediaSearch(props: Props): JSX.Element {
     useState<WikipediaSearchApiResponse>()
   const [searchResultsOpen, setSearchResultsOpen] = useState(false)
 
+  // handle search
   useEffect(() => {
     async function fetchData() {
       if (props.value.length < props.minimumSearchLength) {

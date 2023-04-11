@@ -16,6 +16,7 @@ import {
 } from '@mui/material'
 import { CrawlerEvent } from '../../../backend/utils/crawler-event'
 import { config } from '../env'
+import useQueue from '../hooks/useQueue'
 import ClearButton from './ClearButton'
 import FitButton from './FitButton'
 import WikipediaSearch from './WikipediaSearch'
@@ -92,6 +93,7 @@ function WebsocketGraph() {
   const [breadth, setBreadth] = useState(config.CRAWL_DEFAULT_BREADTH)
   const [crawlInProgress, setCrawlInProgress] = useState(false)
   const [crawlProgress, setCrawlProgress] = useState(0)
+  const { enqueue } = useQueue({ delay: 500 })
 
   const { containerRef, nodesRef, edgesRef, networkRef } = useVisNetwork({
     nodes: [],
@@ -152,6 +154,10 @@ function WebsocketGraph() {
         console.warn(`children undefined`)
         return
       }
+
+      enqueue(() => {
+        console.log({ time: new Date().getSeconds(), data })
+      })
 
       console.log('onMessage', { wikid, nodesRef })
 
