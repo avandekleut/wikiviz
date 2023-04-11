@@ -93,12 +93,18 @@ function WebsocketGraph() {
   const [breadth, setBreadth] = useState(config.CRAWL_DEFAULT_BREADTH)
   const [crawlInProgress, setCrawlInProgress] = useState(false)
   const [crawlProgress, setCrawlProgress] = useState(0)
-  const { enqueue } = useQueue({ delay: 500 })
 
   const { containerRef, nodesRef, edgesRef, networkRef } = useVisNetwork({
     nodes: [],
     edges: [],
   })
+
+  const delay =
+    config.GRAPH_ADD_NODE_DELAY * Math.pow(nodesRef.current.length, 1 / 5)
+
+  // const { enqueue } = useQueue({ delay: config.GRAPH_ADD_NODE_DELAY })
+
+  const { enqueue } = useQueue({ delay: delay })
 
   const maxNodes = computeMaxNumNodesDAG({ depth, breadth })
 
@@ -156,56 +162,54 @@ function WebsocketGraph() {
       }
 
       enqueue(() => {
-        console.log({ time: new Date().getSeconds(), data })
-      })
+        console.log('onMessage', { wikid, nodesRef })
 
-      console.log('onMessage', { wikid, nodesRef })
-
-      try {
-        const pageNode = createVisNode(wikid)
-
-        nodesRef.current.update(pageNode)
-
-        setCrawlProgress((crawlProgress) => crawlProgress + 1)
-
-        // Update node sizes by number of neighbours
-        nodesRef.current.forEach((node) => {
-          if (node.id) {
-            const connectedTo = networkRef.current?.getConnectedNodes(
-              node.id,
-              'from',
-            )
-            const numConnectedTo = connectedTo?.length ?? 0
-
-            const size = numConnectedTo + config.GRAPH_BASE_NODE_SIZE
-            nodesRef.current.update({ ...node, size })
-          }
-        })
-      } catch (err) {
-        console.warn(err)
-      }
-
-      // IMPORTANT: only add first `breadth` children to graph since more can be returned/
-      // TODO: Fix this behaviour server-side by cacheing all children but only returning
-      // those that were requested.
-      for (const child of children.slice(0, breadth)) {
-        // // Removed this code that added children that haven't been visited by the crawler
-        // try {
-        //   const childPageNode = createVisNode(child)
-        //   nodesRef.current.update(childPageNode)
-        // } catch (err) {
-        //   console.warn(err)
-        // }
         try {
-          edgesRef.current.add({
-            from: wikid,
-            to: child,
-            id: `${wikid} -> ${child}`,
+          const pageNode = createVisNode(wikid)
+
+          nodesRef.current.update(pageNode)
+
+          setCrawlProgress((crawlProgress) => crawlProgress + 1)
+
+          // Update node sizes by number of neighbours
+          nodesRef.current.forEach((node) => {
+            if (node.id) {
+              const connectedTo = networkRef.current?.getConnectedNodes(
+                node.id,
+                'from',
+              )
+              const numConnectedTo = connectedTo?.length ?? 0
+
+              const size = numConnectedTo + config.GRAPH_BASE_NODE_SIZE
+              nodesRef.current.update({ ...node, size })
+            }
           })
-        } catch (error) {
-          console.warn(error)
+        } catch (err) {
+          console.warn(err)
         }
-      }
+
+        // IMPORTANT: only add first `breadth` children to graph since more can be returned/
+        // TODO: Fix this behaviour server-side by cacheing all children but only returning
+        // those that were requested.
+        for (const child of children.slice(0, breadth)) {
+          // // Removed this code that added children that haven't been visited by the crawler
+          // try {
+          //   const childPageNode = createVisNode(child)
+          //   nodesRef.current.update(childPageNode)
+          // } catch (err) {
+          //   console.warn(err)
+          // }
+          try {
+            edgesRef.current.add({
+              from: wikid,
+              to: child,
+              id: `${wikid} -> ${child}`,
+            })
+          } catch (error) {
+            console.warn(error)
+          }
+        }
+      })
     },
     [networkRef, nodesRef, edgesRef, breadth, maxNodes],
   )
@@ -221,14 +225,14 @@ function WebsocketGraph() {
     handlers,
   })
 
-  // add double click handler
+  // add network handlers
   useEffect(() => {
     const network = networkRef.current
     if (!network) {
       return
     }
 
-    const handleClick = (event: ClickEvent) => {
+    const handleDoubleClick = (event: ClickEvent) => {
       console.log({ event, msg: 'doubleClick' })
       if (crawlInProgress) {
         return
@@ -242,10 +246,23 @@ function WebsocketGraph() {
       }
     }
 
-    network.on('doubleClick', handleClick)
+    const handleClick = (event: ClickEvent) => {
+      const clickedNode = event.nodes?.[0]
+      if (clickedNode) {
+        console.log({ clickedNode })
+        const title = nodesRef.current.get(clickedNode)?.label
+        if (title) {
+          setInputValue(title)
+        }
+      }
+    }
+
+    network.on('doubleClick', handleDoubleClick)
+    network.on('click', handleClick)
 
     return () => {
-      network.off('doubleClick', handleClick)
+      network.off('doubleClick', handleDoubleClick)
+      network.off('click', handleClick)
     }
   }, [networkRef, breadth, depth, send, crawlInProgress])
 

@@ -6,7 +6,7 @@ type Queue = {
   enqueue: (task: Task) => void
 }
 
-const useQueue = ({ delay = 1000 }: { delay?: number } = {}): Queue => {
+const useQueue = ({ delay }: { delay: number }): Queue => {
   const tasksRef = useRef<Task[]>([])
 
   useEffect(() => {
