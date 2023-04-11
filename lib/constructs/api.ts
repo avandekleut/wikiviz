@@ -13,7 +13,7 @@ export class WikiVizApi extends Construct {
     this.api = new HttpApi(this, 'Api', {
       apiName: 'WikiVizApi',
       corsPreflight: {
-        allowOrigins: ['http://localhost:3000'],
+        allowOrigins: ['http://localhost:3000', 'http://10.0.0.57:3000'],
       },
     })
 
