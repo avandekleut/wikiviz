@@ -1,8 +1,7 @@
 import { alpha } from '@mui/material/styles'
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { Node } from 'vis'
 import { CrawlMessage, PageData } from '../../../backend'
-import { useVisNetwork } from '../hooks/useVisNetwork'
+import { PageDataNode, useVisNetwork } from '../hooks/useVisNetwork'
 import { useWebSocket, WebSocketHandlers } from '../hooks/useWebsocket'
 import FullWidth from '../utils/FullWidth'
 
@@ -60,7 +59,8 @@ function decodeWikipediaTitle(path: string): string {
   return decodedTitle
 }
 
-function createVisNode(wikid: string): Node {
+function createVisNode(pageData: PageData): PageDataNode {
+  const { wikid } = pageData
   return {
     id: wikid,
     label: decodeWikipediaTitle(wikid),
@@ -70,6 +70,7 @@ function createVisNode(wikid: string): Node {
       strokeColor: 'white',
     },
     size: 6,
+    pageData,
   }
 }
 
@@ -123,8 +124,11 @@ function WebsocketGraph() {
         }, 1000)
       }
 
-      const { type, data }: Partial<CrawlerEvent<PageData | undefined>> =
-        JSON.parse(event.data)
+      const pageData: Partial<CrawlerEvent<PageData | undefined>> = JSON.parse(
+        event.data,
+      )
+
+      const { type, data } = pageData
 
       console.log({ type, data })
 
@@ -165,7 +169,7 @@ function WebsocketGraph() {
         console.log('onMessage', { wikid, nodesRef })
 
         try {
-          const pageNode = createVisNode(wikid)
+          const pageNode = createVisNode(data)
 
           nodesRef.current.update(pageNode)
 
@@ -192,13 +196,6 @@ function WebsocketGraph() {
         // TODO: Fix this behaviour server-side by cacheing all children but only returning
         // those that were requested.
         for (const child of children.slice(0, breadth)) {
-          // // Removed this code that added children that haven't been visited by the crawler
-          // try {
-          //   const childPageNode = createVisNode(child)
-          //   nodesRef.current.update(childPageNode)
-          // } catch (err) {
-          //   console.warn(err)
-          // }
           try {
             edgesRef.current.add({
               from: wikid,

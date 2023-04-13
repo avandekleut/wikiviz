@@ -1,15 +1,23 @@
 import { useEffect, useRef } from 'react'
 import { DataSet, Edge, Network, Node, Options } from 'vis'
+import { PageData } from '../../../backend'
 
 type Props = {
-  nodes: Node[]
+  nodes: PageDataNode[]
   edges: Edge[]
+}
+
+export interface PageDataNode extends Node {
+  pageData: PageData
 }
 
 export const useVisNetwork = ({ nodes, edges }: Props) => {
   const containerRef = useRef<HTMLDivElement>(null)
   const networkRef = useRef<Network>()
-  const nodesRef = useRef<DataSet<Node>>(new DataSet<Node>(nodes))
+
+  const nodesRef = useRef<DataSet<PageDataNode>>(
+    new DataSet<PageDataNode>(nodes),
+  )
   const edgesRef = useRef<DataSet<Edge>>(new DataSet<Edge>(edges))
 
   useEffect(() => {
