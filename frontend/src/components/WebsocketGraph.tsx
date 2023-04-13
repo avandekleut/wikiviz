@@ -261,7 +261,7 @@ function WebsocketGraph() {
       network.off('doubleClick', handleDoubleClick)
       network.off('click', handleClick)
     }
-  }, [networkRef, breadth, depth, send, crawlInProgress])
+  }, [networkRef, breadth, depth, send, crawlInProgress, nodesRef])
 
   const handleResultSelect = (title: string): void => {
     if (crawlInProgress) {
