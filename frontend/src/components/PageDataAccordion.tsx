@@ -16,7 +16,14 @@ interface Props {
 const PageDataAccordion = ({ title, pageData }: Props) => {
   console.log({ pageData })
 
-  const caption = <Typography variant="caption">{pageData.summary}</Typography>
+  const caption = (
+    <Typography
+      variant="caption"
+      dangerouslySetInnerHTML={{
+        __html: pageData.summary,
+      }}
+    ></Typography>
+  )
 
   const captionWithImage = (
     <Grid container>
@@ -24,7 +31,7 @@ const PageDataAccordion = ({ title, pageData }: Props) => {
         <img
           src={pageData.mainImage}
           alt={title}
-          style={{ maxWidth: '100%' }}
+          style={{ maxWidth: '90%' }}
         ></img>
       </Grid>
       <Grid item xs={8}>

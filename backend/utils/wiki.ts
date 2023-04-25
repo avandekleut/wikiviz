@@ -3,6 +3,7 @@ import { URL } from 'url'
 import { fetchDataWithRetries } from './fetchWithBackoff'
 import { LoggerFactory } from './logger'
 import { PageData } from './pagedata'
+
 export async function wikipediaSummaryAndLinks(
   title: string,
 ): Promise<PageData> {
@@ -28,7 +29,13 @@ export async function wikipediaSummaryAndLinks(
   const html = json.parse.text['*']
   const $ = cheerio.load(html)
 
-  const summary = $('div.mw-parser-output p').first().text().trim()
+  // TODO: rename to something more appropriate
+  // TODO: Replace relative links with absolutely links
+  const summary = $('div.mw-parser-output p:not([class])').first().html()
+
+  if (summary === null) {
+    throw new Error(`Failed to extract first paragraph html from ${html}`)
+  }
 
   let mainImage: string | undefined
   const infobox = $('table.infobox').first()
@@ -45,5 +52,10 @@ export async function wikipediaSummaryAndLinks(
     .map((href) => new URL(href, 'https://en.wikipedia.org').pathname) // remove anchors, etc
     .map((href) => href.replace('/wiki/', '')) // get title from url path /wiki/<title>
 
-  return { wikid: title, summary, mainImage, children: childArticles }
+  return {
+    wikid: title,
+    summary,
+    mainImage,
+    children: childArticles,
+  }
 }
