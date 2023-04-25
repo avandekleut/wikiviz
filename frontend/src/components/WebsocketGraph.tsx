@@ -1,4 +1,5 @@
 import { alpha } from '@mui/material/styles'
+
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { CrawlMessage, PageData } from '../../../backend'
 import { PageDataNode, useVisNetwork } from '../hooks/useVisNetwork'
@@ -18,6 +19,7 @@ import { config } from '../env'
 import useQueue from '../hooks/useQueue'
 import ClearButton from './ClearButton'
 import FitButton from './FitButton'
+import PageDataAccordion from './PageDataAccordion'
 import WikipediaSearch from './WikipediaSearch'
 
 type ClickEvent = {
@@ -94,6 +96,9 @@ function WebsocketGraph() {
   const [breadth, setBreadth] = useState(config.CRAWL_DEFAULT_BREADTH)
   const [crawlInProgress, setCrawlInProgress] = useState(false)
   const [crawlProgress, setCrawlProgress] = useState(0)
+  const [selectedPageData, setSelectedPageData] = useState<
+    PageData | undefined
+  >(undefined)
 
   const { containerRef, nodesRef, edgesRef, networkRef } = useVisNetwork({
     nodes: [],
@@ -244,14 +249,28 @@ function WebsocketGraph() {
     }
 
     const handleClick = (event: ClickEvent) => {
-      const clickedNode = event.nodes?.[0]
-      if (clickedNode) {
-        console.log({ clickedNode })
-        const title = nodesRef.current.get(clickedNode)?.label
-        if (title) {
-          setInputValue(title)
-        }
+      const nodeId = event.nodes?.[0]
+      if (!nodeId) {
+        setInputValue('')
+        setSelectedPageData(undefined)
+        return
       }
+
+      const clickedNode = nodesRef.current.get(nodeId)
+      console.log({ clickedNode })
+
+      if (!clickedNode) {
+        return
+      }
+
+      const { label } = clickedNode
+
+      if (!label) {
+        return
+      }
+
+      setInputValue(label)
+      setSelectedPageData(clickedNode.pageData)
     }
 
     network.on('doubleClick', handleDoubleClick)
@@ -336,7 +355,7 @@ function WebsocketGraph() {
 
   return (
     <FullWidth>
-      <Container maxWidth="sm" sx={{ mt: 4, width: '100%' }}>
+      <Container maxWidth="sm" sx={{ mt: 4 }}>
         <Card sx={{ padding: 2, bgcolor: alpha('#000000', 0.9) }}>
           <WikipediaSearch
             value={inputValue}
@@ -355,6 +374,12 @@ function WebsocketGraph() {
           sx={{ position: 'relative', left: 0 }}
           style={{ visibility: crawlInProgress ? 'visible' : 'hidden' }}
         />
+        {selectedPageData && (
+          <PageDataAccordion
+            title={decodeWikipediaTitle(selectedPageData.wikid)}
+            pageData={selectedPageData}
+          ></PageDataAccordion>
+        )}
         {nodesRef.current.length > 0 && (
           <Grid container>
             <Grid item xs={1}>
