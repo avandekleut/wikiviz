@@ -8,6 +8,8 @@ import {
 } from '@mui/material'
 import { PageData } from '../../../backend'
 
+import ReadMoreIcon from '@mui/icons-material/ReadMore'
+
 import parse from 'html-react-parser'
 
 import { Link } from '@mui/material'
@@ -17,21 +19,21 @@ interface Props {
   pageData: PageData
 }
 
-function renderWikipediaLinks(htmlString: string) {
+function renderWikipediaLinks(htmlString: string, baseUrl: string) {
   const options = {
     replace: (node: any) => {
       if (node.type === 'tag' && node.name === 'a') {
         const href = node.attribs.href
         const updatedHref = href.startsWith('/')
           ? `https://en.wikipedia.org${href}`
+          : href.startsWith('#')
+          ? `${baseUrl}${href}`
           : href
         return (
           <Link
             href={updatedHref}
             target="_blank"
             rel="noopener noreferrer"
-            color="secondary"
-            underline="always"
             sx={{ fontWeight: 'bold' }}
           >
             {node.children[0].data}
@@ -46,7 +48,26 @@ function renderWikipediaLinks(htmlString: string) {
 const PageDataAccordion = ({ title, pageData }: Props) => {
   console.log({ pageData })
 
-  const parsed = renderWikipediaLinks(pageData.summary)
+  const baseUrl = `https://en.wikipedia.org/wiki/${pageData.wikid}`
+
+  const readMoreLink = (
+    <Typography variant="caption" sx={{ textAlign: 'right' }}>
+      <Link
+        href={baseUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        sx={{ fontWeight: 'bold' }}
+      >
+        Read more
+        <ReadMoreIcon
+          fontSize="small"
+          sx={{ alignSelf: 'baseline', mb: '-0.3em' }}
+        />
+      </Link>
+    </Typography>
+  )
+
+  const parsed = renderWikipediaLinks(pageData.summary, baseUrl)
 
   const caption = <Typography variant="caption">{parsed}</Typography>
 
@@ -61,6 +82,9 @@ const PageDataAccordion = ({ title, pageData }: Props) => {
       </Grid>
       <Grid item xs={8}>
         {caption}
+        <br />
+        <br />
+        {readMoreLink}
       </Grid>
     </Grid>
   )
