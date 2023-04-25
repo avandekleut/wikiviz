@@ -17,13 +17,23 @@ interface Props {
   pageData: PageData
 }
 
-function renderLinks(htmlString: string) {
+function renderWikipediaLinks(htmlString: string) {
   const options = {
     replace: (node: any) => {
-      if (node.name === 'a' && node.attribs.href) {
+      if (node.type === 'tag' && node.name === 'a') {
         const href = node.attribs.href
+        const updatedHref = href.startsWith('/')
+          ? `https://en.wikipedia.org${href}`
+          : href
         return (
-          <Link href={href} color="secondary" underline="always">
+          <Link
+            href={updatedHref}
+            target="_blank"
+            rel="noopener noreferrer"
+            color="secondary"
+            underline="always"
+            sx={{ fontWeight: 'bold' }}
+          >
             {node.children[0].data}
           </Link>
         )
@@ -36,7 +46,7 @@ function renderLinks(htmlString: string) {
 const PageDataAccordion = ({ title, pageData }: Props) => {
   console.log({ pageData })
 
-  const parsed = renderLinks(pageData.summary)
+  const parsed = renderWikipediaLinks(pageData.summary)
 
   const caption = <Typography variant="caption">{parsed}</Typography>
 
