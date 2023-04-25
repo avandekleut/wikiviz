@@ -20,11 +20,15 @@ const PageDataAccordion = ({ title, pageData }: Props) => {
 
   const captionWithImage = (
     <Grid container>
+      <Grid item xs={4}>
+        <img
+          src={pageData.mainImage}
+          alt={title}
+          style={{ maxWidth: '100%' }}
+        ></img>
+      </Grid>
       <Grid item xs={8}>
         {caption}
-      </Grid>
-      <Grid item xs={4}>
-        <img src={pageData.mainImage} alt={title}></img>
       </Grid>
     </Grid>
   )
