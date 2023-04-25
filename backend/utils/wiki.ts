@@ -3,9 +3,6 @@ import { URL } from 'url'
 import { fetchDataWithRetries } from './fetchWithBackoff'
 import { LoggerFactory } from './logger'
 import { PageData } from './pagedata'
-
-const TEXT_NODE_TYPE = 3
-
 export async function wikipediaSummaryAndLinks(
   title: string,
 ): Promise<PageData> {
@@ -31,15 +28,7 @@ export async function wikipediaSummaryAndLinks(
   const html = json.parse.text['*']
   const $ = cheerio.load(html)
 
-  const summary = $('div.mw-parser-output')
-    .find('*')
-    .contents()
-    .filter(
-      (_, el) => el.nodeType === TEXT_NODE_TYPE && el.data.trim().length > 0,
-    )
-    .first()
-    .text()
-    .trim()
+  const summary = $('div.mw-parser-output p').first().text().trim()
 
   let mainImage: string | undefined
   const infobox = $('table.infobox').first()
