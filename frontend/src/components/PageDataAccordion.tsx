@@ -8,22 +8,37 @@ import {
 } from '@mui/material'
 import { PageData } from '../../../backend'
 
+import parse from 'html-react-parser'
+
+import { Link } from '@mui/material'
+
 interface Props {
   title: string
   pageData: PageData
 }
 
+function renderLinks(htmlString: string) {
+  const options = {
+    replace: (node: any) => {
+      if (node.name === 'a' && node.attribs.href) {
+        const href = node.attribs.href
+        return (
+          <Link href={href} color="secondary" underline="always">
+            {node.children[0].data}
+          </Link>
+        )
+      }
+    },
+  }
+  return parse(htmlString, options)
+}
+
 const PageDataAccordion = ({ title, pageData }: Props) => {
   console.log({ pageData })
 
-  const caption = (
-    <Typography
-      variant="caption"
-      dangerouslySetInnerHTML={{
-        __html: pageData.summary,
-      }}
-    ></Typography>
-  )
+  const parsed = renderLinks(pageData.summary)
+
+  const caption = <Typography variant="caption">{parsed}</Typography>
 
   const captionWithImage = (
     <Grid container>
