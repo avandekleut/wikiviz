@@ -69,7 +69,14 @@ const PageDataAccordion = ({ title, pageData }: Props) => {
 
   const parsed = renderWikipediaLinks(pageData.summary, baseUrl)
 
-  const caption = <Typography variant="caption">{parsed}</Typography>
+  const caption = (
+    <Typography variant="caption">
+      {parsed}
+      <br />
+      <br />
+      {readMoreLink}
+    </Typography>
+  )
 
   const captionWithImage = (
     <Grid container>
@@ -82,9 +89,6 @@ const PageDataAccordion = ({ title, pageData }: Props) => {
       </Grid>
       <Grid item xs={8}>
         {caption}
-        <br />
-        <br />
-        {readMoreLink}
       </Grid>
     </Grid>
   )
