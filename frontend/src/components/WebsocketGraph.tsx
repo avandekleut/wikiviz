@@ -108,8 +108,6 @@ function WebsocketGraph() {
   const delay =
     config.GRAPH_ADD_NODE_DELAY * Math.pow(nodesRef.current.length, 1 / 5)
 
-  // const { enqueue } = useQueue({ delay: config.GRAPH_ADD_NODE_DELAY })
-
   const { enqueue } = useQueue({ delay: delay })
 
   const maxNodes = computeMaxNumNodesDAG({ depth, breadth })
@@ -303,7 +301,7 @@ function WebsocketGraph() {
   }
 
   const handleClear = () => {
-    console.log('Cleared')
+    nodesRef.current.clear()
   }
 
   const handleFit = () => {
@@ -353,6 +351,18 @@ function WebsocketGraph() {
     </Grid>
   )
 
+  const networkButtons = (
+    <Grid container>
+      <Grid item xs={1}>
+        <FitButton onClick={() => handleFit()}></FitButton>
+      </Grid>
+      <Grid item xs={10}></Grid>
+      <Grid item xs={1}>
+        <ClearButton onClick={() => handleClear()}></ClearButton>
+      </Grid>
+    </Grid>
+  )
+
   return (
     <FullWidth>
       <Container maxWidth="sm" sx={{ mt: 4 }}>
@@ -380,17 +390,7 @@ function WebsocketGraph() {
             pageData={selectedPageData}
           ></PageDataAccordion>
         )}
-        {nodesRef.current.length > 0 && (
-          <Grid container>
-            <Grid item xs={1}>
-              <ClearButton onClick={() => handleClear()}></ClearButton>
-            </Grid>
-            <Grid item xs={10}></Grid>
-            <Grid item xs={1}>
-              <FitButton onClick={() => handleFit()}></FitButton>
-            </Grid>
-          </Grid>
-        )}
+        {nodesRef.current.length > 0 && networkButtons}
       </Container>
       <div
         ref={containerRef}
