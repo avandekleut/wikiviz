@@ -46,8 +46,6 @@ function renderWikipediaLinks(htmlString: string, baseUrl: string) {
 }
 
 const PageDataAccordion = ({ title, pageData }: Props) => {
-  console.log({ pageData })
-
   const baseUrl = `https://en.wikipedia.org/wiki/${pageData.wikid}`
 
   const readMoreLink = (
@@ -69,7 +67,7 @@ const PageDataAccordion = ({ title, pageData }: Props) => {
 
   const parsed = renderWikipediaLinks(pageData.summary, baseUrl)
 
-  const caption = (
+  const summary = (
     <Typography variant="caption">
       {parsed}
       <br />
@@ -78,17 +76,26 @@ const PageDataAccordion = ({ title, pageData }: Props) => {
     </Typography>
   )
 
-  const captionWithImage = (
-    <Grid container>
-      <Grid item xs={4}>
-        <img
-          src={pageData.mainImage}
-          alt={title}
-          style={{ maxWidth: '90%' }}
-        ></img>
-      </Grid>
+  const image = (
+    <>
+      <img
+        src={pageData.mainImage}
+        alt={pageData.mainImageCaption ?? title}
+        style={{ maxWidth: '90%' }}
+      ></img>
+      {pageData.mainImageCaption && (
+        <Typography variant="caption">{pageData.mainImageCaption}</Typography>
+      )}
+    </>
+  )
+
+  const summaryWithImage = (
+    <Grid container spacing={1} justifyContent="center">
       <Grid item xs={8}>
-        {caption}
+        {summary}
+      </Grid>
+      <Grid item xs={4}>
+        {image}
       </Grid>
     </Grid>
   )
@@ -99,7 +106,7 @@ const PageDataAccordion = ({ title, pageData }: Props) => {
         <Typography variant="body1">{title}</Typography>
       </AccordionSummary>
       <AccordionDetails>
-        {pageData.mainImage ? captionWithImage : caption}
+        {pageData.mainImage ? summaryWithImage : summary}
       </AccordionDetails>
     </Accordion>
   )

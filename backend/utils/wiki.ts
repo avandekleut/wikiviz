@@ -38,12 +38,15 @@ export async function wikipediaSummaryAndLinks(
   }
 
   let mainImage: string | undefined
+  let mainImageCaption: string | undefined
   const infobox = $('table.infobox').first()
   if (infobox.length > 0) {
     const tbody = infobox.find('tbody').first()
     mainImage = tbody.find('img').first().attr('src')
+    mainImageCaption = $('.infobox-caption').first().text()
   } else {
     mainImage = $('div.thumbinner img').first().attr('src')
+    mainImageCaption = $('.thumbcaption').first().text()
   }
 
   const childArticles = $('div.mw-parser-output a[href^="/wiki/"]')
@@ -58,6 +61,7 @@ export async function wikipediaSummaryAndLinks(
     wikid: title,
     summary,
     mainImage,
+    mainImageCaption,
     children: childArticles,
   }
 }
