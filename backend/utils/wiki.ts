@@ -42,6 +42,8 @@ export async function wikipediaSummaryAndLinks(
   if (infobox.length > 0) {
     const tbody = infobox.find('tbody').first()
     mainImage = tbody.find('img').first().attr('src')
+  } else {
+    mainImage = $('div.thumbinner img').first().attr('src')
   }
 
   const childArticles = $('div.mw-parser-output a[href^="/wiki/"]')
