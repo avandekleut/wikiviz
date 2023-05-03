@@ -1,5 +1,6 @@
 import Clear from '@mui/icons-material/Clear'
 import IconButton from '@mui/material/IconButton'
+import Tooltip from '@mui/material/Tooltip'
 
 interface ClearButtonProps {
   onClick: () => void
@@ -7,9 +8,11 @@ interface ClearButtonProps {
 
 const ClearButton = ({ onClick }: ClearButtonProps) => {
   return (
-    <IconButton onClick={onClick}>
-      <Clear />
-    </IconButton>
+    <Tooltip title="Clear">
+      <IconButton onClick={onClick}>
+        <Clear />
+      </IconButton>
+    </Tooltip>
   )
 }
 
