@@ -20,6 +20,7 @@ import useQueue from '../hooks/useQueue'
 import ClearButton from './ClearButton'
 import FitButton from './FitButton'
 import PageDataAccordion from './PageDataAccordion'
+import SettingsButton from './SettingsButton'
 import WikipediaSearch from './WikipediaSearch'
 
 type ClickEvent = {
@@ -363,10 +364,28 @@ function WebsocketGraph() {
     </Grid>
   )
 
+  const settingsButton = (
+    <Grid container>
+      <Grid item xs={11}></Grid>
+      <Grid item xs={1}>
+        <SettingsButton
+          onClick={() => {
+            console.log('Settings clicked')
+          }}
+        ></SettingsButton>
+      </Grid>
+    </Grid>
+  )
+
   return (
     <FullWidth>
       <Container maxWidth="sm" sx={{ mt: 4 }}>
-        <Card sx={{ padding: 2, bgcolor: alpha('#000000', 0.9) }}>
+        <Card
+          sx={{
+            bgcolor: alpha('#000000', 0.9),
+          }}
+        >
+          {settingsButton}
           <WikipediaSearch
             value={inputValue}
             handleChange={(event) => setInputValue(event.target.value)}
@@ -375,7 +394,9 @@ function WebsocketGraph() {
             handleResultSelect={handleResultSelect}
             submitDisabled={crawlInProgress}
           />
-          {sliders}
+
+          {/* TODO: Re-enable sliders in contextual menu
+          {false && sliders} */}
         </Card>
         <LinearProgress
           variant={crawlProgress === 0 ? 'indeterminate' : 'determinate'}
@@ -400,7 +421,7 @@ function WebsocketGraph() {
           left: 0,
           width: '100%',
           height: '100%',
-          zIndex: -999,
+          zIndex: -1,
         }}
       />
     </FullWidth>
