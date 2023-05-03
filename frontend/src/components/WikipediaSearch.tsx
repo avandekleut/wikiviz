@@ -7,6 +7,7 @@ import {
   ListItemAvatar,
   ListItemButton,
   ListItemText,
+  Skeleton,
   TextField,
 } from '@mui/material'
 import { useEffect, useRef, useState } from 'react'
@@ -97,8 +98,29 @@ function WikipediaSearch(props: Props): JSX.Element {
     setSearchResultsOpen(false)
   }
 
+  const skeletonListItem = (key: number) => (
+    <ListItemButton
+      key={key}
+      sx={{
+        position: 'relative',
+        width: '100%',
+        flexGrow: 1,
+      }}
+    >
+      <ListItemAvatar>
+        <Skeleton
+          variant="rectangular"
+          width={48}
+          height={48}
+          animation="wave"
+        />
+      </ListItemAvatar>
+      <ListItemText primary={<Skeleton variant="text" animation="wave" />} />
+    </ListItemButton>
+  )
+
   return (
-    <Grid container spacing={2} alignItems="center">
+    <Grid container spacing={2} alignItems="center" sx={{ padding: 2 }}>
       <Grid item xs={10}>
         <TextField
           label="Search"
@@ -120,41 +142,42 @@ function WikipediaSearch(props: Props): JSX.Element {
           Crawl
         </Button>
       </Grid>
-      <ClickAwayListener onClickAway={handleClickAway}>
-        <Grid item xs={8}>
-          <List
-            style={{
-              // position: 'absolute',
-              zIndex: 9999,
-              // width: '100%',
-            }}
-          >
-            {searchResultsOpen &&
-              searchResults?.pages.map((page) => (
-                <ListItemButton
-                  key={page.id}
-                  onClick={() => handleResultClick(page.title)}
-                  sx={{
-                    position: 'relative',
-                    width: '100%',
-                    flexGrow: 1,
-                  }}
-                >
-                  <ListItemAvatar>
-                    {page.thumbnail?.url && (
-                      <Avatar
-                        alt={page.title}
-                        src={page.thumbnail.url}
-                        variant="square"
-                      ></Avatar>
-                    )}
-                  </ListItemAvatar>
-                  <ListItemText primary={page.title} />
-                </ListItemButton>
-              ))}
-          </List>
-        </Grid>
-      </ClickAwayListener>
+      {searchResultsOpen && props.value && (
+        <ClickAwayListener onClickAway={handleClickAway}>
+          <Grid item xs={8}>
+            <List
+              style={{
+                zIndex: 9999,
+              }}
+            >
+              {searchResults
+                ? searchResults.pages.map((page) => (
+                    <ListItemButton
+                      key={page.id}
+                      onClick={() => handleResultClick(page.title)}
+                      sx={{
+                        position: 'relative',
+                        width: '100%',
+                        flexGrow: 1,
+                      }}
+                    >
+                      <ListItemAvatar>
+                        {page.thumbnail?.url && (
+                          <Avatar
+                            alt={page.title}
+                            src={page.thumbnail.url}
+                            variant="square"
+                          ></Avatar>
+                        )}
+                      </ListItemAvatar>
+                      <ListItemText primary={page.title} />
+                    </ListItemButton>
+                  ))
+                : [1, 2, 3].map((key) => skeletonListItem(key))}
+            </List>
+          </Grid>
+        </ClickAwayListener>
+      )}
     </Grid>
   )
 }
