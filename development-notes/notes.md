@@ -7,12 +7,17 @@
 [] disable physics selectively
 [] hide oldest nodes as new ones are added
 [] batch update nodes and edges using `update` with an array on the vis `Datasets`
-[] timed event queue client-side to buffer adding nodes
+[x] timed event queue client-side to buffer adding nodes
 
 #### interaction
 
-[] show wiki title, summary, and image on hover or tap and hold
-[] button for clear and fit network
+[x] show wiki title, summary, and image on click
+[x] button for clear and fit network
+[] search results skeleton
+
+#### features
+
+[] grouping / community detection via louvain
 
 #### Cacheing
 
@@ -20,6 +25,11 @@
 [x] lambda in-memory
 [] dynamodb cache
 [] localstorage cache
+
+#### tools
+
+[] icon drawer for tools
+[] settings icon -> depth, breadth
 
 ## Concerns:
 
